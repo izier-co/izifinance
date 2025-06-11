@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@supabase-config'; // Use the appropriate client
+import { supabase } from '@supabase-config'; 
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    console.error('Signup error:', error);
+    console.error('Sign Up error:', error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
   return NextResponse.json({
-    message: 'Signup successful! Please check your email for confirmation.',
+    message: 'Sign Up successful! Please check your email for confirmation.',
     user: data.user,
-    accessToken: data.session?.access_token, // May be null if email confirmation is required
+    accessToken: data.session?.access_token, 
     refreshToken: data.session?.refresh_token,
   });
 }
