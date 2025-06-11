@@ -12,8 +12,8 @@ export const GET = async (req: NextRequest) => {
     );
   const pageId = Number.parseInt(page);
   const { data, error } = await supabase
-    .from("reinbursement_notes")
-    .select("*, reinbursement_items(*)")
+    .from("reimbursement_notes")
+    .select("*, reimbursement_items(*)")
     .range((pageId - 1) * 100, pageId * 100);
 
   if (error)
@@ -33,9 +33,9 @@ export const PUT = async (req: NextRequest) => {
     );
   const id = Number.parseInt(idParam);
   const { data, error } = await supabase
-    .from("reinbursement_notes")
+    .from("reimbursement_notes")
     .select("*")
-    .eq("inReinbursementNoteID", id);
+    .eq("inReimbursementNoteID", id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -45,8 +45,8 @@ export const PUT = async (req: NextRequest) => {
   data[0]["txStatus"] = "Void";
 
   await supabase
-    .from("reinbursement_notes")
+    .from("reimbursement_notes")
     .update(data)
-    .eq("inReinbursementNoteID", id);
+    .eq("inReimbursementNoteID", id);
   return NextResponse.json({ message: "Data Successfully Updated!" });
 };

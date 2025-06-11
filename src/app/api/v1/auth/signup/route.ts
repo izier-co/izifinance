@@ -1,4 +1,3 @@
-// app/api/auth/signup/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@supabase-config'; // Use the appropriate client
 

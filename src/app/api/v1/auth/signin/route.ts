@@ -1,4 +1,3 @@
-// app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config"; // Use the appropriate client
 
@@ -15,8 +14,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
 
-  // If successful, Supabase returns a session object
-  // The session object contains the access_token and refresh_token
   return NextResponse.json({
     message: "Login successful",
     user: data.user,
