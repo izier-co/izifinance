@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@supabase-config": ["./src/app/api/supabase.config.ts"]
+      "@supabase-config": ["./src/app/api/supabase.config.ts"],
+      "@drizzle-db": ["./drizzle-db.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

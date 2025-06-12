@@ -4,6 +4,12 @@ import { supabase } from "@supabase-config";
 
 import { z } from "zod";
 
+import { db } from "@drizzle-db";
+import {
+  reimbursementItemsInDtDwh,
+  reimbursementNotesInDtDwh,
+} from "@/db/schema";
+
 const reimbursementSchema = z.object({
   daCreatedAt: z.date(),
   daUpdatedAt: z.date(),
@@ -28,6 +34,18 @@ const reimbursementItemSchema = z.object({
   txCurrency: z.string(),
   inCategoryID: z.number().int(),
 });
+
+type ReimbursementItems = {
+  daCreatedAt: Date;
+  daUpdatedAt: Date;
+  inReimbursementNoteID: number;
+  txName: string;
+  inQuantity: number;
+  deIndividualPrice: number;
+  deTotalPrice: number;
+  txCurrency: string;
+  inCategoryID: number;
+};
 
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -65,7 +83,7 @@ export const POST = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const items = [];
+  const items: ReimbursementItems[] = [];
   if (
     body["reimbursement_items"] === null ||
     body["reimbursement_items"] === undefined
@@ -89,6 +107,32 @@ export const POST = async (req: NextRequest) => {
       items.push(itemModel.data);
     }
   }
+  try {
+    // await db.transaction(async (trx) => {
+    //   await trx.insert(reimbursementNotesInDtDwh).values(noteModel);
+    //   for (const item of items) {
+    //     await trx.insert(reimbursementItemsInDtDwh).values({
+    //       daCreatedAt: item.daCreatedAt.toString(),
+    //       daUpdatedAt: item.daUpdatedAt.toString(),
+    //       inReimbursementNoteId: item.inReimbursementNoteID,
+    //       txName: item.txName,
+    //       inQuantity: item.inQuantity,
+    //       deIndividualPrice: item.deIndividualPrice,
+    //       deTotalPrice: item.deTotalPrice,
+    //       txCurrency: item.txCurrency,
+    //       inCategoryId: item.inCategoryID,
+    //     });
+    //   }
+    // });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "500 Internal Server Error : Something went wrong at our end" },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({
+    message: "Data Successfully Inserted!",
+  });
 };
 
 export const PUT = async (req: NextRequest) => {
