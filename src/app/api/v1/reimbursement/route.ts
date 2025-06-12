@@ -93,7 +93,7 @@ export const POST = async (req: NextRequest) => {
 
 export const PUT = async (req: NextRequest) => {
   // TODO : admin
-  // Currently only supports voiding
+  // Currently only supports voiding (daLastUpdated still not reflected)
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");
   if (idParam === null)
@@ -104,20 +104,14 @@ export const PUT = async (req: NextRequest) => {
   const id = Number.parseInt(idParam);
   const { data, error } = await supabase
     .from("reimbursement_notes")
-    .select("*")
-    .eq("inReimbursementNoteID", id)
-    .single();
+    .update({ txStatus: "Void", daUpdatedAt: new Date().toISOString() })
+    .eq("inReimbursementNoteID", id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  if (data.length === 0)
-    return NextResponse.json({ error: "Data Not Found" }, { status: 404 });
 
-  data["txStatus"] = "Void";
-
-  await supabase
-    .from("reimbursement_notes")
-    .update(data)
-    .eq("inReimbursementNoteID", id);
-  return NextResponse.json({ message: "Data Successfully Updated!" });
+  return NextResponse.json({
+    message: "Data Successfully Updated!",
+    data: data,
+  });
 };
