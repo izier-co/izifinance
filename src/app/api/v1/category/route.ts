@@ -5,8 +5,8 @@ import { supabase } from "@supabase-config";
 import { z } from "zod";
 
 const categorySchema = z.object({
-  daCreatedAt: z.date(),
-  daUpdatedAt: z.date(),
+  daCreatedAt: z.string().datetime(),
+  daUpdatedAt: z.string().datetime(),
   inCategoryID: z.number().int(),
   txCategoryName: z.string(),
   txCategoryDescription: z.string().nullable(),
@@ -48,8 +48,8 @@ export const POST = async (req: NextRequest) => {
   let body;
   try {
     body = await req.json();
-    body["daCreatedAt"] = new Date(body["daCreatedAt"]);
-    body["daUpdatedAt"] = new Date(body["daUpdatedAt"]);
+    // body["daCreatedAt"] = new Date(body["daCreatedAt"]);
+    // body["daUpdatedAt"] = new Date(body["daUpdatedAt"]);
   } catch {
     return NextResponse.json(
       { error: "400 Bad Request : Invalid JSON Payload" },
@@ -65,7 +65,7 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("m_category")
     .insert(categoryModel.data);
 
@@ -73,7 +73,6 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({
     message: "Data Successfully Inserted!",
-    data: data,
   });
 };
 
