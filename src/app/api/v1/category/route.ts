@@ -48,8 +48,6 @@ export const POST = async (req: NextRequest) => {
   let body;
   try {
     body = await req.json();
-    // body["daCreatedAt"] = new Date(body["daCreatedAt"]);
-    // body["daUpdatedAt"] = new Date(body["daUpdatedAt"]);
   } catch {
     return NextResponse.json(
       { error: "400 Bad Request : Invalid JSON Payload" },
