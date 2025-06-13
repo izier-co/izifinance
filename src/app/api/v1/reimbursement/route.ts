@@ -11,8 +11,8 @@ import {
 } from "@/db/schema";
 
 const reimbursementSchema = z.object({
-  daCreatedAt: z.date(),
-  daUpdatedAt: z.date(),
+  daCreatedAt: z.string().datetime(),
+  daUpdatedAt: z.string().datetime(),
   inReimbursementNoteID: z.number().int(),
   txStatus: z.string(),
   txNotes: z.string().nullable(),
@@ -24,8 +24,8 @@ const reimbursementSchema = z.object({
 });
 
 const reimbursementItemSchema = z.object({
-  daCreatedAt: z.date(),
-  daUpdatedAt: z.date(),
+  daCreatedAt: z.string().datetime(),
+  daUpdatedAt: z.string().datetime(),
   inReimbursementNoteID: z.number().int(),
   txName: z.string(),
   inQuantity: z.number().int(),
@@ -36,8 +36,8 @@ const reimbursementItemSchema = z.object({
 });
 
 type ReimbursementItems = {
-  daCreatedAt: Date;
-  daUpdatedAt: Date;
+  daCreatedAt: string;
+  daUpdatedAt: string;
   inReimbursementNoteID: number;
   txName: string;
   inQuantity: number;
@@ -66,6 +66,9 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
+  // Expects JSON payload for reimbursement_notes table
+  // with reimbursement_items field that contains the payload
+  // of reimbursement_items in an array
   let body;
   try {
     body = await req.json();
@@ -75,14 +78,14 @@ export const POST = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-
   const noteModel = reimbursementSchema.safeParse(body);
   if (!noteModel.success) {
     return NextResponse.json(
-      { error: `400 Bad Request : ${noteModel.error}` },
+      { error: `400 Bad Request : ${noteModel.error.message}` },
       { status: 400 }
     );
   }
+  const noteItem = noteModel.data;
   const items: ReimbursementItems[] = [];
   if (
     body["reimbursement_items"] === null ||
@@ -100,7 +103,7 @@ export const POST = async (req: NextRequest) => {
     );
     if (!itemModel.success) {
       return NextResponse.json(
-        { error: "400 Bad Request : Invalid JSON Payload" },
+        { error: "400 Bad Request : " + itemModel.error },
         { status: 400 }
       );
     } else {
@@ -108,25 +111,32 @@ export const POST = async (req: NextRequest) => {
     }
   }
   try {
-    // await db.transaction(async (trx) => {
-    //   await trx.insert(reimbursementNotesInDtDwh).values(noteModel);
-    //   for (const item of items) {
-    //     await trx.insert(reimbursementItemsInDtDwh).values({
-    //       daCreatedAt: item.daCreatedAt.toString(),
-    //       daUpdatedAt: item.daUpdatedAt.toString(),
-    //       inReimbursementNoteId: item.inReimbursementNoteID,
-    //       txName: item.txName,
-    //       inQuantity: item.inQuantity,
-    //       deIndividualPrice: item.deIndividualPrice,
-    //       deTotalPrice: item.deTotalPrice,
-    //       txCurrency: item.txCurrency,
-    //       inCategoryId: item.inCategoryID,
-    //     });
-    //   }
-    // });
+    await db.transaction(async (trx) => {
+      await trx.insert(reimbursementNotesInDtDwh).values({
+        inReimbursementNoteID: noteItem.inReimbursementNoteID,
+        txStatus: noteItem.txStatus,
+        txNotes: noteItem.txNotes,
+        txRecipientAccount: noteItem.txRecipientAccount,
+        inBankTypeCode: noteItem.inBankTypeCode,
+        inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
+        txBankAccountCode: noteItem.txBankAccountCode,
+        txChangeReason: noteItem.txChangeReason,
+      });
+      for (const item of items) {
+        await trx.insert(reimbursementItemsInDtDwh).values({
+          inReimbursementNoteID: item.inReimbursementNoteID,
+          txName: item.txName,
+          inQuantity: item.inQuantity,
+          deIndividualPrice: item.deIndividualPrice.toFixed(2),
+          deTotalPrice: item.deTotalPrice.toFixed(2),
+          txCurrency: item.txCurrency,
+          inCategoryID: item.inCategoryID,
+        });
+      }
+    });
   } catch (error) {
     return NextResponse.json(
-      { error: "500 Internal Server Error : Something went wrong at our end" },
+      { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }
     );
   }

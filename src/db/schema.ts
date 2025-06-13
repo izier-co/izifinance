@@ -212,40 +212,43 @@ export const mPositionInDtDwh = dtDwh.table(
 export const reimbursementItemsInDtDwh = dtDwh.table(
   "reimbursement_items",
   {
-    uiReimbursementItemId: uuid().defaultRandom().primaryKey().notNull(),
-    daCreatedAt: timestamp("daCreatedAt", {
+    uiReimbursementItemID: uuid().defaultRandom().primaryKey().notNull(),
+    daCreatedAt: timestamp({
       withTimezone: true,
       mode: "string",
     })
+      .notNull()
       .defaultNow()
       .notNull(),
-    daUpdatedAt: timestamp("daUpdatedAt", {
+    daUpdatedAt: timestamp({
       withTimezone: true,
       mode: "string",
-    }).notNull(),
-    inReimbursementNoteId: integer("inReimbursementNoteId").notNull(),
-    txName: text("txName").notNull(),
-    inQuantity: integer("inQuantity").notNull(),
-    deIndividualPrice: numeric("deIndividualPrice", {
+    })
+      .notNull()
+      .defaultNow(),
+    inReimbursementNoteID: integer().notNull(),
+    txName: text().notNull(),
+    inQuantity: integer().notNull(),
+    deIndividualPrice: numeric({
       precision: 100,
       scale: 2,
     }).notNull(),
-    deTotalPrice: numeric("deTotalPrice", {
+    deTotalPrice: numeric({
       precision: 100,
       scale: 2,
     }).notNull(),
-    txCurrency: text("txCurrency").notNull(),
-    inCategoryId: smallint("inCategoryId").notNull(),
+    txCurrency: text().notNull(),
+    inCategoryID: smallint().notNull(),
   },
   (table) => [
     foreignKey({
-      columns: [table.inReimbursementNoteId],
-      foreignColumns: [reimbursementNotesInDtDwh.inReimbursementNoteId],
+      columns: [table.inReimbursementNoteID],
+      foreignColumns: [reimbursementNotesInDtDwh.inReimbursementNoteID],
       name: "reimbursement_items_inReimbursementNoteID_fkey",
     }),
     foreignKey({
-      columns: [table.inCategoryId],
-      foreignColumns: [mCategoryInDtDwh.inCategoryId],
+      columns: [table.inCategoryID],
+      foreignColumns: [mCategoryInDtDwh.inCategoryID],
       name: "reinbursement_items_inCategoryID_fkey",
     }),
     pgPolicy("Enable read access for all users", {
@@ -386,14 +389,14 @@ export const mEmployeesInDtDwh = dtDwh.table(
 export const reimbursementNotesInDtDwh = dtDwh.table(
   "reimbursement_notes",
   {
-    uiReimbursementId: uuid().defaultRandom().primaryKey().notNull(),
+    uiReimbursementID: uuid().defaultRandom().primaryKey().notNull(),
     daCreatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
     daUpdatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    inReimbursementNoteId: integer().notNull(),
+    inReimbursementNoteID: integer().notNull(),
     txStatus: text().notNull(),
     txNotes: text(),
     txRecipientAccount: text().notNull(),
@@ -414,7 +417,7 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
       name: "reinbursement_notes_inRecipientCompanyCode_fkey",
     }),
     unique("reinbursement_notes_inReinbursementNoteID_key").on(
-      table.inReimbursementNoteId
+      table.inReimbursementNoteID
     ),
     pgPolicy("Enable update for authenticated users", {
       as: "permissive",
@@ -476,14 +479,14 @@ export const mCategoryInDtDwh = dtDwh.table(
     daUpdatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    inCategoryId: smallint().notNull(),
+    inCategoryID: smallint().notNull(),
     txCategoryName: text().notNull(),
     txCategoryDescription: text(),
     boActive: boolean().default(true).notNull(),
     boStatus: boolean().default(true).notNull(),
   },
   (table) => [
-    unique("m_category_inCategoryID_key").on(table.inCategoryId),
+    unique("m_category_inCategoryID_key").on(table.inCategoryID),
     pgPolicy("Enable update for authenticated users", {
       as: "permissive",
       for: "update",
