@@ -17,13 +17,28 @@ const categorySchema = z.object({
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const page = Number.parseInt(searchParams.get("page") || "1");
-  const { data, error } = await supabase
+  const name = searchParams.get("name");
+  const isAlphabetical = searchParams.get("is-alphabetical");
+  const query = supabase
     .from("m_category")
     .select("*")
     .range((page - 1) * 100, page * 100)
     .eq("boActive", true)
     .eq("boStatus", true);
+  if (name) {
+    query.eq("txCategoryName", name);
+  }
+  if (isAlphabetical === "true") {
+    query.order("txCategoryName", {
+      ascending: true,
+    });
+  } else if (isAlphabetical === "false") {
+    query.order("txCategoryName", {
+      ascending: false,
+    });
+  }
 
+  const { data, error } = await query;
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data }, { status: 200 });
