@@ -9,6 +9,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
+import { table } from "console";
 
 const reimbursementSchema = z.object({
   daCreatedAt: z.string().datetime(),
@@ -50,16 +51,65 @@ type ReimbursementItems = {
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const page = searchParams.get("page");
+  const id = searchParams.get("id");
+  const status = searchParams.get("status");
+  const bankTypeCode = searchParams.get("bank-type-code");
+  const recipientCompanyCode = searchParams.get("recipient-company-code");
+  const withNotes = searchParams.get("with-notes");
+
   if (page === null)
     return NextResponse.json(
       { error: "400 Bad Request : page parameter is required" },
       { status: 400 }
     );
   const pageId = Number.parseInt(page);
-  const { data, error } = await supabase
+  var tableQueryString = "*"; // indicates SELECT * without JOIN
+  if (withNotes && id) {
+    // if details are requested (only when ID is given)
+    tableQueryString = "*, reimbursement_items(*)";
+  }
+  const query = supabase
     .from("reimbursement_notes")
-    .select("*, reimbursement_items(*)")
+    .select(tableQueryString)
     .range((pageId - 1) * 100, pageId * 100);
+
+  if (id) {
+    const numID = Number.parseInt(id);
+    query.eq("inReimbursementNoteID", numID);
+  }
+  if (status) {
+    switch (status) {
+      case "Pending": {
+        query.eq("txStatus", status);
+        break;
+      }
+      case "Approved": {
+        query.eq("txStatus", status);
+        break;
+      }
+      case "Rejected": {
+        query.eq("txStatus", status);
+        break;
+      }
+      case "Void": {
+        console.log(status);
+        query.eq("txStatus", status);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  if (bankTypeCode) {
+    const bankID = Number.parseInt(bankTypeCode);
+    query.eq("inBankTypeCode", bankID);
+  }
+  if (recipientCompanyCode) {
+    const recipientID = Number.parseInt(recipientCompanyCode);
+    query.eq("inRecipientCompanyCode", recipientID);
+  }
+  const { data, error } = await query;
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data }, { status: 200 });
