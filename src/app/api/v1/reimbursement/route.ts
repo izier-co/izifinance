@@ -55,6 +55,10 @@ export const GET = async (req: NextRequest) => {
   const bankTypeCode = searchParams.get("bank-type-code");
   const recipientCompanyCode = searchParams.get("recipient-company-code");
   const withNotes = searchParams.get("with-notes");
+  const createdBeforeTimestamp = searchParams.get("created-before");
+  const createdAfterTimestamp = searchParams.get("created-after");
+  const updatedBeforeTimestamp = searchParams.get("updated-before");
+  const updatedAfterTimestamp = searchParams.get("updated-after");
 
   if (page === null)
     return NextResponse.json(
@@ -76,6 +80,7 @@ export const GET = async (req: NextRequest) => {
     const numID = Number.parseInt(id);
     query.eq("inReimbursementNoteID", numID);
   }
+
   if (status) {
     switch (status) {
       case "Pending": {
@@ -107,6 +112,32 @@ export const GET = async (req: NextRequest) => {
   if (recipientCompanyCode) {
     const recipientID = Number.parseInt(recipientCompanyCode);
     query.eq("inRecipientCompanyCode", recipientID);
+  }
+
+  if (createdBeforeTimestamp) {
+    const timestampValue = Number.parseInt(createdBeforeTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.lt("daCreatedAt", new Date(timestampValue).toISOString());
+    }
+  }
+  if (createdAfterTimestamp) {
+    const timestampValue = Number.parseInt(createdAfterTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.gt("daCreatedAt", new Date(timestampValue).toISOString());
+    }
+  }
+
+  if (updatedBeforeTimestamp) {
+    const timestampValue = Number.parseInt(updatedBeforeTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
+    }
+  }
+  if (updatedAfterTimestamp) {
+    const timestampValue = Number.parseInt(updatedAfterTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
+    }
   }
   const { data, error } = await query;
   if (error)

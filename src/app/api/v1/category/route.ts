@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 
 import { supabase } from "@supabase-config";
 
@@ -19,6 +19,11 @@ export const GET = async (req: NextRequest) => {
   const page = Number.parseInt(searchParams.get("page") || "1");
   const name = searchParams.get("name");
   const isAlphabetical = searchParams.get("is-alphabetical");
+  const createdBeforeTimestamp = searchParams.get("created-before");
+  const createdAfterTimestamp = searchParams.get("created-after");
+  const updatedBeforeTimestamp = searchParams.get("updated-before");
+  const updatedAfterTimestamp = searchParams.get("updated-after");
+
   const query = supabase
     .from("m_category")
     .select("*")
@@ -37,7 +42,31 @@ export const GET = async (req: NextRequest) => {
       ascending: false,
     });
   }
+  if (createdBeforeTimestamp) {
+    const timestampValue = Number.parseInt(createdBeforeTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.lt("daCreatedAt", new Date(timestampValue).toISOString());
+    }
+  }
+  if (createdAfterTimestamp) {
+    const timestampValue = Number.parseInt(createdAfterTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.gt("daCreatedAt", new Date(timestampValue).toISOString());
+    }
+  }
 
+  if (updatedBeforeTimestamp) {
+    const timestampValue = Number.parseInt(updatedBeforeTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
+    }
+  }
+  if (updatedAfterTimestamp) {
+    const timestampValue = Number.parseInt(updatedAfterTimestamp);
+    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
+      query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
+    }
+  }
   const { data, error } = await query;
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
