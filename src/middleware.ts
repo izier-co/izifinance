@@ -8,13 +8,13 @@ const ratelimiter = new Ratelimit({
 });
 
 export async function middleware(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  // const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  // console.log(ip);
+  // const { success } = await ratelimiter.limit(ip);
 
-  const { success } = await ratelimiter.limit(ip);
-
-  if (!success) {
-    return NextResponse.json({ message: "Too many requests" }, { status: 429 });
-  }
+  // if (!success) {
+  //   return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+  // }
   return NextResponse.next();
 }
 
