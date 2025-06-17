@@ -396,7 +396,13 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     daUpdatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    inReimbursementNoteID: integer().notNull(),
+    inReimbursementNoteID: integer().generatedByDefaultAsIdentity({
+      name: "dt_dwh.reimbursement_notes.inReimbursementNoteID_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 32767,
+    }),
     txStatus: text().notNull(),
     txNotes: text(),
     txRecipientAccount: text().notNull(),

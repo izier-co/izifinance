@@ -13,7 +13,6 @@ import {
 const reimbursementSchema = z.object({
   daCreatedAt: z.string().datetime(),
   daUpdatedAt: z.string().datetime(),
-  inReimbursementNoteID: z.number().int(),
   txStatus: z.string(),
   txNotes: z.string().nullable(),
   txRecipientAccount: z.string(),
@@ -26,7 +25,6 @@ const reimbursementSchema = z.object({
 const reimbursementItemSchema = z.object({
   daCreatedAt: z.string().datetime(),
   daUpdatedAt: z.string().datetime(),
-  inReimbursementNoteID: z.number().int(),
   txName: z.string(),
   inQuantity: z.number().int(),
   deIndividualPrice: z.number(),
@@ -38,7 +36,6 @@ const reimbursementItemSchema = z.object({
 type ReimbursementItems = {
   daCreatedAt: string;
   daUpdatedAt: string;
-  inReimbursementNoteID: number;
   txName: string;
   inQuantity: number;
   deIndividualPrice: number;
@@ -192,19 +189,26 @@ export const POST = async (req: NextRequest) => {
   }
   try {
     await db.transaction(async (trx) => {
-      await trx.insert(reimbursementNotesInDtDwh).values({
-        inReimbursementNoteID: noteItem.inReimbursementNoteID,
-        txStatus: noteItem.txStatus,
-        txNotes: noteItem.txNotes,
-        txRecipientAccount: noteItem.txRecipientAccount,
-        inBankTypeCode: noteItem.inBankTypeCode,
-        inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
-        txBankAccountCode: noteItem.txBankAccountCode,
-        txChangeReason: noteItem.txChangeReason,
-      });
+      const insertedID = await trx
+        .insert(reimbursementNotesInDtDwh)
+        .values({
+          txStatus: noteItem.txStatus,
+          txNotes: noteItem.txNotes,
+          txRecipientAccount: noteItem.txRecipientAccount,
+          inBankTypeCode: noteItem.inBankTypeCode,
+          inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
+          txBankAccountCode: noteItem.txBankAccountCode,
+          txChangeReason: noteItem.txChangeReason,
+        })
+        .returning({
+          inReimbursementNoteID:
+            reimbursementNotesInDtDwh.inReimbursementNoteID,
+        });
+      const idForKey = insertedID[0].inReimbursementNoteID;
+      // todo get the id in transaction
       for (const item of items) {
         await trx.insert(reimbursementItemsInDtDwh).values({
-          inReimbursementNoteID: item.inReimbursementNoteID,
+          inReimbursementNoteID: idForKey,
           txName: item.txName,
           inQuantity: item.inQuantity,
           deIndividualPrice: item.deIndividualPrice.toFixed(2),
