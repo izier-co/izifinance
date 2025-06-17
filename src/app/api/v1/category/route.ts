@@ -1,4 +1,4 @@
-import { after, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { supabase } from "@supabase-config";
 
@@ -7,7 +7,6 @@ import { z } from "zod";
 const categorySchema = z.object({
   daCreatedAt: z.string().datetime(),
   daUpdatedAt: z.string().datetime(),
-  inCategoryID: z.number().int(),
   txCategoryName: z.string(),
   txCategoryDescription: z.string().nullable(),
   boActive: z.boolean(),
