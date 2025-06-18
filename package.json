@@ -6,12 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
+  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
     "@upstash/ratelimit": "^2.0.5",
     "@vercel/kv": "^3.0.0",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2",
     "next": "15.3.3",
@@ -31,10 +34,12 @@
     "drizzle-kit": "^0.31.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "jest": "^30.0.0",
     "tailwindcss": "^4",
+    "ts-jest": "^29.4.0",
     "tsx": "^4.20.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
