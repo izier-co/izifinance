@@ -26,13 +26,18 @@ describe("DELETE /categories tests", () => {
     mockSupabase.then.mockImplementation((onFulfilled) => {
       onFulfilled({ data: null, error: null });
     });
-    req.nextUrl.searchParams.append("id", "1");
+    const idParam = "1";
+    req.nextUrl.searchParams.append("id", idParam);
     const response = await DELETE(req);
     const body = await response.json();
+    expect(mockSupabase.eq).toHaveBeenCalledWith(
+      "inCategoryID",
+      Number.parseInt(idParam)
+    );
     expect(response.status).toBe(200);
     expect(body).toEqual({ message: "Data Successfully Deleted!" });
   });
-  
+
   test("DELETE with ID parameter but there is an error", async () => {
     const mockError = Error();
     mockSupabase.then.mockImplementation((onFulfilled) => {
