@@ -1,7 +1,7 @@
 import { describe, test, expect, vitest } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
-import { DELETE } from "../../src/app/api/v1/category/route";
+import { DELETE } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {
