@@ -5,12 +5,8 @@ import { supabase } from "@supabase-config";
 import { z } from "zod";
 
 const categorySchema = z.object({
-  daCreatedAt: z.string().datetime(),
-  daUpdatedAt: z.string().datetime(),
   txCategoryName: z.string(),
   txCategoryDescription: z.string().nullable(),
-  boActive: z.boolean(),
-  boStatus: z.boolean(),
 });
 
 export const GET = async (req: NextRequest) => {

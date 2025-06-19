@@ -11,8 +11,6 @@ import {
 } from "@/db/schema";
 
 const reimbursementSchema = z.object({
-  daCreatedAt: z.string().datetime(),
-  daUpdatedAt: z.string().datetime(),
   txStatus: z.string(),
   txNotes: z.string().nullable(),
   txRecipientAccount: z.string(),
@@ -23,8 +21,6 @@ const reimbursementSchema = z.object({
 });
 
 const reimbursementItemSchema = z.object({
-  daCreatedAt: z.string().datetime(),
-  daUpdatedAt: z.string().datetime(),
   txName: z.string(),
   inQuantity: z.number().int(),
   deIndividualPrice: z.number(),
@@ -34,8 +30,6 @@ const reimbursementItemSchema = z.object({
 });
 
 type ReimbursementItems = {
-  daCreatedAt: string;
-  daUpdatedAt: string;
   txName: string;
   inQuantity: number;
   deIndividualPrice: number;
