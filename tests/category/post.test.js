@@ -1,6 +1,7 @@
 import { describe, test, expect, vitest } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
+import { createMockRequestWithBody } from "../__helpers__/lib";
 import { POST } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
 
@@ -11,24 +12,12 @@ vitest.mock("@supabase-config", () => {
 });
 
 const url = "localhost:3000";
-
 const req = new NextRequest(url);
 
 const mockPayload = {
   txCategoryName: "Mock Category",
   txCategoryDescription: "Mock Description",
 };
-
-function createMockRequestWithBody(method, body) {
-  const request = new Request(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  return new NextRequest(request);
-}
 
 describe("POST /categories tests", () => {
   test("POST without parameters", async () => {
