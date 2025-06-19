@@ -1,6 +1,6 @@
 import { vitest } from "vitest";
 
-const mockSupabase = {
+export const mockSupabase = {
   from: vitest.fn().mockReturnThis(),
   select: vitest.fn().mockReturnThis(),
   insert: vitest.fn().mockReturnThis(),
@@ -9,8 +9,9 @@ const mockSupabase = {
   lt: vitest.fn().mockReturnThis(),
   gt: vitest.fn().mockReturnThis(),
   order: vitest.fn().mockReturnThis(),
-  single: vitest.fn(),
-  then: vitest.fn(),
+  single: vitest.fn().mockResolvedValue(),
+  then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+    onFulfilled({ data: null, error: null });
+    return Promise.resolve({ data: null, error: null });
+  }),
 };
-
-export default mockSupabase;

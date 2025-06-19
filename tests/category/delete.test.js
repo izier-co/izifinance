@@ -1,7 +1,8 @@
 import { describe, test, expect, vitest } from "vitest";
 
-import mockSupabase from "../__mocks__/supabase.mock";
-import DELETE from "../../src/app/api/v1/category/route";
+import { mockSupabase } from "../__mocks__/supabase.mock";
+import { DELETE } from "../../src/app/api/v1/category/route";
+import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -9,15 +10,38 @@ vitest.mock("@supabase-config", () => {
   };
 });
 
+const req = new NextRequest("localhost:3000");
+
 describe("DELETE /categories tests", () => {
   test("DELETE without parameters", async () => {
-    const response = await DELETE(null);
+    const response = await DELETE(req);
     const body = await response.json();
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
     expect(body).toEqual({
       error: "400 Bad Request : id parameter is required",
     });
   });
 
-  test("DELETE with ID parameter", () => {});
+  test("DELETE with ID parameter", async () => {
+    mockSupabase.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: null, error: null });
+    });
+    req.nextUrl.searchParams.append("id", "1");
+    const response = await DELETE(req);
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ message: "Data Successfully Deleted!" });
+  });
+  
+  test("DELETE with ID parameter but there is an error", async () => {
+    const mockError = Error();
+    mockSupabase.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: null, error: mockError });
+    });
+    req.nextUrl.searchParams.append("id", "1");
+    const response = await DELETE(req);
+    const body = await response.json();
+    expect(response.status).toBe(500);
+    expect(body).toEqual({ error: mockError.message });
+  });
 });

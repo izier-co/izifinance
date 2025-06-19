@@ -111,12 +111,10 @@ export const DELETE = async (req: NextRequest) => {
       { status: 400 }
     );
   const id = Number.parseInt(idParam);
-
   const { error } = await supabase
     .from("m_category")
     .update({ boActive: false, boStatus: false })
     .eq("inCategoryID", id);
-
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
