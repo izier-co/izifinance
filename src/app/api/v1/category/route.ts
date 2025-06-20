@@ -28,11 +28,11 @@ export const GET = async (req: NextRequest) => {
   if (name) {
     query.eq("txCategoryName", name);
   }
-  if (isAlphabetical === "true") {
+  if (isAlphabetical?.toLowerCase() === "true") {
     query.order("txCategoryName", {
       ascending: true,
     });
-  } else if (isAlphabetical === "false") {
+  } else if (isAlphabetical?.toLowerCase() === "false") {
     query.order("txCategoryName", {
       ascending: false,
     });

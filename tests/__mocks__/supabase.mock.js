@@ -9,6 +9,7 @@ export const mockSupabase = {
   lt: vitest.fn().mockReturnThis(),
   gt: vitest.fn().mockReturnThis(),
   order: vitest.fn().mockReturnThis(),
+  range: vitest.fn().mockReturnThis(),
   single: vitest.fn().mockResolvedValue(),
   then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
     onFulfilled({ data: null, error: null });
