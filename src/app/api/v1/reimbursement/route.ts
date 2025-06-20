@@ -51,14 +51,9 @@ export const GET = async (req: NextRequest) => {
   const updatedBeforeTimestamp = searchParams.get("updated-before");
   const updatedAfterTimestamp = searchParams.get("updated-after");
 
-  if (page === null)
-    return NextResponse.json(
-      { error: "400 Bad Request : page parameter is required" },
-      { status: 400 }
-    );
-  const pageId = Number.parseInt(page);
+  const pageId = Number.parseInt(page || "1");
   var tableQueryString = "*"; // indicates SELECT * without JOIN
-  if (withNotes && id) {
+  if (withNotes?.toLocaleLowerCase() === "true" && id) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
