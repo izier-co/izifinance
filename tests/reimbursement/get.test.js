@@ -141,6 +141,11 @@ describe("GET /reimbursement tests", () => {
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
+    expect(mockSupabase.range).toHaveBeenCalledWith(
+      (Number.parseInt(testPageID) - 1) * 100,
+      Number.parseInt(testPageID) * 100
+    );
+
     expect(mockSupabase.select).toHaveBeenCalledWith(
       "*, reimbursement_items(*)"
     );

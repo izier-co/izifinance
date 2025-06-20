@@ -36,7 +36,8 @@ describe("GET /categories tests", () => {
   });
 
   test("GET with all parameters", async () => {
-    req.nextUrl.searchParams.append("page", "2");
+    const pageIDStr = "2";
+    req.nextUrl.searchParams.append("page", pageIDStr);
     req.nextUrl.searchParams.append("name", "abc");
     req.nextUrl.searchParams.append("is-alphabetical", "true");
 
@@ -48,6 +49,10 @@ describe("GET /categories tests", () => {
 
     const response = await GET(req);
 
+    expect(mockSupabase.range).toHaveBeenCalledWith(
+      (Number.parseInt(pageIDStr) - 1) * 100,
+      Number.parseInt(pageIDStr) * 100
+    );
     expect(mockSupabase.order).toHaveBeenCalledWith("txCategoryName", {
       ascending: true,
     });
