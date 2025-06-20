@@ -244,6 +244,5 @@ export const PUT = async (req: NextRequest) => {
 
   return NextResponse.json({
     message: "Data Successfully Updated!",
-    data: data,
   });
 };
