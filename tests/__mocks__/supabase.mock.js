@@ -1,4 +1,8 @@
-import { vitest } from "vitest";
+import { beforeEach, vitest } from "vitest";
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 export const mockSupabase = {
   from: vitest.fn().mockReturnThis(),
