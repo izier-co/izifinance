@@ -15,6 +15,25 @@ export const mockSupabase = {
   order: vitest.fn().mockReturnThis(),
   range: vitest.fn().mockReturnThis(),
   single: vitest.fn().mockResolvedValue(),
+  auth: {
+    signInWithPassword: vitest.fn().mockImplementation(() => {
+      return {
+        data: {
+          user: "Mock User",
+          session: {
+            access_token: "blablabla",
+            refresh_token: "blahblahblah",
+            expires_at: "123456",
+          },
+        },
+        error: null,
+      };
+    }),
+    then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+      onFulfilled({ data: null, error: null });
+      return Promise.resolve({ data: null, error: null });
+    }),
+  },
   then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
     onFulfilled({ data: null, error: null });
     return Promise.resolve({ data: null, error: null });
