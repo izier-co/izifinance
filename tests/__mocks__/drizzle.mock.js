@@ -1,12 +1,25 @@
 import { vitest } from "vitest";
 
+beforeEach(() => {
+  vitest.clearAllMocks();
+});
+
+export const mockNestedDrizzle = {
+  insert: vitest.fn().mockReturnThis(),
+  values: vitest.fn().mockReturnThis(),
+  // hardcoded for now
+  returning: vitest.fn().mockResolvedValue([{ inReimbursementNoteID: 1 }]),
+};
+
 export const mockDrizzle = {
-  transaction: vitest.fn(),
+  transaction: vitest.fn().mockImplementation((callback) => {
+    return callback(mockNestedDrizzle);
+  }),
   insert: vitest.fn().mockReturnThis(),
   values: vitest.fn().mockReturnThis(),
   returning: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
-    onFulfilled({ data: null });
-    return Promise.resolve({ data: null });
+    onFulfilled([{ inReimbursementNoteID: 1 }]);
+    return Promise.resolve([{ inReimbursementNoteID: 1 }]);
   }),
   then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
     onFulfilled(null);
