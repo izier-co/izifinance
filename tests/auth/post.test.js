@@ -15,6 +15,15 @@ const mockPayload = {
   password: "mockpassword123",
 };
 
+// supresses error message
+beforeEach(() => {
+  vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  console.error.mockRestore();
+});
+
 describe("Test Login", () => {
   test("Successful Login Case", async () => {
     const mockRequest = createMockRequestWithBody("POST", mockPayload);
