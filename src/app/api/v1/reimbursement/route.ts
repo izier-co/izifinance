@@ -82,7 +82,6 @@ export const GET = async (req: NextRequest) => {
         break;
       }
       case "Void": {
-        console.log(status);
         query.eq("txStatus", status);
         break;
       }
@@ -194,7 +193,6 @@ export const POST = async (req: NextRequest) => {
             reimbursementNotesInDtDwh.inReimbursementNoteID,
         });
       const idForKey = insertedID[0].inReimbursementNoteID;
-      // todo get the id in transaction
       for (const item of items) {
         await trx.insert(reimbursementItemsInDtDwh).values({
           inReimbursementNoteID: idForKey,
