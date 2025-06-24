@@ -215,27 +215,3 @@ export const POST = async (req: NextRequest) => {
     message: "Data Successfully Inserted!",
   });
 };
-
-export const PUT = async (req: NextRequest) => {
-  // TODO : admin
-  // Currently only supports voiding (daLastUpdated still not reflected)
-  const params = req.nextUrl.searchParams;
-  const idParam = params.get("id");
-  if (idParam === null)
-    return NextResponse.json(
-      { error: "400 Bad Request : id parameter is required" },
-      { status: 400 }
-    );
-  const id = Number.parseInt(idParam);
-  const { data, error } = await supabase
-    .from("reimbursement_notes")
-    .update({ txStatus: "Void", daUpdatedAt: new Date().toISOString() })
-    .eq("inReimbursementNoteID", id);
-
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({
-    message: "Data Successfully Updated!",
-  });
-};
