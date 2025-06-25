@@ -1,14 +1,14 @@
-import { supabase } from "@/app/api/supabase.config";
+import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 
-const {
-  data: { session },
-  error: authError,
-} = await supabase.auth.getSession();
-
 export const PUT = async (req: NextRequest) => {
+  const {
+    data: { session },
+    error: authError,
+  } = await supabase.auth.getSession();
+  
   if (!session || authError) {
-    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
   }
 
   const params = req.nextUrl.searchParams;

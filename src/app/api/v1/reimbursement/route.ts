@@ -38,14 +38,14 @@ type ReimbursementItems = {
   inCategoryID: number;
 };
 
-const {
-  data: { session },
-  error: authError,
-} = await supabase.auth.getSession();
-
 export const GET = async (req: NextRequest) => {
+  const {
+    data: { session },
+    error: authError,
+  } = await supabase.auth.getSession();
+  
   if (!session || authError) {
-    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
   }
 
   const searchParams = req.nextUrl.searchParams;
@@ -144,8 +144,13 @@ export const POST = async (req: NextRequest) => {
   // with reimbursement_items field that contains the payload
   // of reimbursement_items in an array
 
+  const {
+    data: { session },
+    error: authError,
+  } = await supabase.auth.getSession();
+
   if (!session || authError) {
-    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
   }
 
   let body;
