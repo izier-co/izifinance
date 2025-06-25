@@ -1,7 +1,16 @@
 import { supabase } from "@/app/api/supabase.config";
 import { NextRequest, NextResponse } from "next/server";
 
+const {
+  data: { session },
+  error: authError,
+} = await supabase.auth.getSession();
+
 export const PUT = async (req: NextRequest) => {
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
+
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");
   if (idParam === null)

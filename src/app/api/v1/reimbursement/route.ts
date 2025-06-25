@@ -38,7 +38,16 @@ type ReimbursementItems = {
   inCategoryID: number;
 };
 
+const {
+  data: { session },
+  error: authError,
+} = await supabase.auth.getSession();
+
 export const GET = async (req: NextRequest) => {
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
+
   const searchParams = req.nextUrl.searchParams;
   const page = searchParams.get("page");
   const id = searchParams.get("id");
@@ -134,6 +143,11 @@ export const POST = async (req: NextRequest) => {
   // Expects JSON payload for reimbursement_notes table
   // with reimbursement_items field that contains the payload
   // of reimbursement_items in an array
+
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
+
   let body;
   try {
     body = await req.json();

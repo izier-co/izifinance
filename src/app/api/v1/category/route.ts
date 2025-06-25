@@ -9,7 +9,15 @@ const categorySchema = z.object({
   txCategoryDescription: z.string().nullable(),
 });
 
+const {
+  data: { session },
+  error: authError,
+} = await supabase.auth.getSession();
+
 export const GET = async (req: NextRequest) => {
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
   const searchParams = req.nextUrl.searchParams;
   const page = Number.parseInt(searchParams.get("page") || "1");
   const name = searchParams.get("name");
@@ -69,6 +77,9 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
   let body;
   try {
     body = await req.json();
@@ -99,6 +110,9 @@ export const POST = async (req: NextRequest) => {
 };
 
 export const DELETE = async (req: NextRequest) => {
+  if (!session || authError) {
+    return NextResponse.json({ message: "401 Unauthorized" }, { status: 401 });
+  }
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");
   if (idParam === null)
