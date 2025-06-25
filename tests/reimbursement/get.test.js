@@ -4,6 +4,7 @@ import { mockSupabase } from "../__mocks__/supabase.mock";
 import { mockDrizzle } from "../__mocks__/drizzle.mock";
 import { GET } from "@/app/api/v1/reimbursement/route";
 import { NextRequest } from "next/server";
+import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -15,6 +16,10 @@ vitest.mock("@drizzle-db", () => {
   return {
     db: mockDrizzle,
   };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
 });
 
 const url = "localhost:3000";
@@ -53,6 +58,34 @@ const expectedLtCalls = [
 ];
 
 describe("GET /reimbursement tests", () => {
+  test("GET without authorization", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: new AuthError(),
+    });
+    const response = await GET(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
+  test("GET with unregistered user", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: null,
+    });
+    const response = await GET(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
   test("GET without parameters", async () => {
     const response = await GET(req);
     expect(response.status).toBe(200);

@@ -3,11 +3,16 @@ import { describe, test, expect, vitest } from "vitest";
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { GET } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
+import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
     supabase: mockSupabase,
   };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
 });
 
 const url = "localhost:3000";
@@ -30,6 +35,35 @@ const expectedLtCalls = [
   ["daUpdatedAt", new Date(DAY_AFTER_TOMORROW).toISOString()],
 ];
 describe("GET /categories tests", () => {
+  test("GET without authorization", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: new AuthError(),
+    });
+    const response = await GET(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
+  test("GET with unregistered user", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: null,
+    });
+    const response = await GET(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
+
   test("GET without parameters", async () => {
     const response = await GET(req);
     expect(response.status).toBe(200);

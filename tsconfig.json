@@ -24,6 +24,17 @@
       "@drizzle-db": ["./drizzle-db.ts"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tests/category/get.test.js", "tests/category/delete.test.js", "tests/category/post.test.js", "tests/reimbursement/get.test.js", "tests/reimbursement/post.test.js", "tests/reimbursement/put.test.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tests/category/get.test.js",
+    "tests/category/delete.test.js",
+    "tests/category/post.test.js",
+    "tests/reimbursement/get.test.js",
+    "tests/reimbursement/post.test.js",
+    "tests/reimbursement/void/put.test.js"
+  ],
   "exclude": ["node_modules"]
 }

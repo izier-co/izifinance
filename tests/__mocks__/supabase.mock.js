@@ -29,14 +29,10 @@ export const mockSupabase = {
         error: null,
       };
     }),
-    getSession: vitest.fn().mockResolvedValue(
-      Promise.resolve({
-        data: {
-          session: "abc",
-        },
-        error: null,
-      })
-    ),
+    getSession: vitest.fn().mockResolvedValue({
+      data: { session: "abc" },
+      error: null,
+    }),
     signOut: vitest.fn().mockResolvedValue(Promise.resolve({ error: null })),
     then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
       onFulfilled({ data: null, error: null });

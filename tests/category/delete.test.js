@@ -3,6 +3,7 @@ import { describe, test, expect, vitest } from "vitest";
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { DELETE } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
+import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -10,9 +11,41 @@ vitest.mock("@supabase-config", () => {
   };
 });
 
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 const req = new NextRequest("localhost:3000");
 
 describe("DELETE /categories tests", () => {
+  test("DELETE without authorization", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: new AuthError(),
+    });
+    const response = await DELETE(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
+  test("DELETE with unregistered user", async () => {
+    mockSupabase.auth.getSession.mockResolvedValueOnce({
+      data: {
+        session: null,
+      },
+      error: null,
+    });
+    const response = await DELETE(req);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body).toEqual({
+      error: "401 Unauthorized",
+    });
+  });
   test("DELETE without parameters", async () => {
     const response = await DELETE(req);
     const body = await response.json();
