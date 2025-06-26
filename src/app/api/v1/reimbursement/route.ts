@@ -9,6 +9,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
+
 import { verifyAuthentication } from "@/lib/lib";
 
 const reimbursementSchema = z.object({
@@ -44,49 +45,42 @@ export const GET = async (req: NextRequest) => {
   if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
-  const page = searchParams.get("page");
-  const id = searchParams.get("id");
-  const status = searchParams.get("status");
-  const bankTypeCode = searchParams.get("bank-type-code");
-  const recipientCompanyCode = searchParams.get("recipient-company-code");
-  const withNotes = searchParams.get("with-notes");
-  const createdBeforeTimestamp = searchParams.get("created-before");
-  const createdAfterTimestamp = searchParams.get("created-after");
-  const updatedBeforeTimestamp = searchParams.get("updated-before");
-  const updatedAfterTimestamp = searchParams.get("updated-after");
-
-  const pageId = Number.parseInt(page || "1");
+  const params = Object.fromEntries(searchParams.entries());
+  const pageId = Number.parseInt(params["page"] || "1");
+  
   var tableQueryString = "*"; // indicates SELECT * without JOIN
-  if (withNotes?.toLocaleLowerCase() === "true" && id) {
+
+  if (params["with-notes"]?.toLocaleLowerCase() === "true" && params["id"]) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
+  const paginationSize = 100;
   const query = supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
-    .range((pageId - 1) * 100, pageId * 100);
+    .range((pageId - 1) * paginationSize, pageId * paginationSize);
 
-  if (id) {
-    const numID = Number.parseInt(id);
+  if (params["id"]) {
+    const numID = Number.parseInt(params["id"]);
     query.eq("inReimbursementNoteID", numID);
   }
 
-  if (status) {
-    switch (status) {
+  if (params["status"]) {
+    switch (params["status"]) {
       case "Pending": {
-        query.eq("txStatus", status);
+        query.eq("txStatus", params["status"]);
         break;
       }
       case "Approved": {
-        query.eq("txStatus", status);
+        query.eq("txStatus", params["status"]);
         break;
       }
       case "Rejected": {
-        query.eq("txStatus", status);
+        query.eq("txStatus", params["status"]);
         break;
       }
       case "Void": {
-        query.eq("txStatus", status);
+        query.eq("txStatus", params["status"]);
         break;
       }
       default: {
@@ -94,36 +88,36 @@ export const GET = async (req: NextRequest) => {
       }
     }
   }
-  if (bankTypeCode) {
-    const bankID = Number.parseInt(bankTypeCode);
+  if (params["bank-type-code"]) {
+    const bankID = Number.parseInt(params["bank-type-code"]);
     query.eq("inBankTypeCode", bankID);
   }
-  if (recipientCompanyCode) {
-    const recipientID = Number.parseInt(recipientCompanyCode);
+  if (params["recipient-company-code"]) {
+    const recipientID = Number.parseInt(params["recipient-company-code"]);
     query.eq("inRecipientCompanyCode", recipientID);
   }
 
-  if (createdBeforeTimestamp) {
-    const timestampValue = Number.parseInt(createdBeforeTimestamp);
+  if (params["created-before"]) {
+    const timestampValue = Number.parseInt(params["created-before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (createdAfterTimestamp) {
-    const timestampValue = Number.parseInt(createdAfterTimestamp);
+  if (params["created-after"]) {
+    const timestampValue = Number.parseInt(params["created-after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (updatedBeforeTimestamp) {
-    const timestampValue = Number.parseInt(updatedBeforeTimestamp);
+  if (params["updated-before"]) {
+    const timestampValue = Number.parseInt(params["updated-before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (updatedAfterTimestamp) {
-    const timestampValue = Number.parseInt(updatedAfterTimestamp);
+  if (params["updated-after"]) {
+    const timestampValue = Number.parseInt(params["updated-after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }

@@ -15,57 +15,54 @@ export const GET = async (req: NextRequest) => {
   if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
-  const page = Number.parseInt(searchParams.get("page") || "1");
-  const name = searchParams.get("name");
-  const isAlphabetical = searchParams.get("is-alphabetical");
-  const createdBeforeTimestamp = searchParams.get("created-before");
-  const createdAfterTimestamp = searchParams.get("created-after");
-  const updatedBeforeTimestamp = searchParams.get("updated-before");
-  const updatedAfterTimestamp = searchParams.get("updated-after");
+  const params = Object.fromEntries(searchParams.entries());
+  const pageNum = Number.parseInt(params["page"] || "1");
+  const paginationSize = 100;
 
   const query = supabase
     .from("m_category")
     .select("*")
-    .range((page - 1) * 100, page * 100)
+    .range((pageNum - 1) * paginationSize, pageNum * paginationSize)
     .eq("boActive", true)
     .eq("boStatus", true);
-  if (name) {
-    query.eq("txCategoryName", name);
+  if (params["name"]) {
+    query.eq("txCategoryName", params["name"]);
   }
-  if (isAlphabetical?.toLowerCase() === "true") {
+  if (params["is-alphabetical"]?.toLowerCase() === "true") {
     query.order("txCategoryName", {
       ascending: true,
     });
-  } else if (isAlphabetical?.toLowerCase() === "false") {
+  } else if (params["is-alphabetical"]?.toLowerCase() === "false") {
     query.order("txCategoryName", {
       ascending: false,
     });
   }
-  if (createdBeforeTimestamp) {
-    const timestampValue = Number.parseInt(createdBeforeTimestamp);
+  if (params["created-before"]) {
+    const timestampValue = Number.parseInt(params["created-before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (createdAfterTimestamp) {
-    const timestampValue = Number.parseInt(createdAfterTimestamp);
+  if (params["created-after"]) {
+    const timestampValue = Number.parseInt(params["created-after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (updatedBeforeTimestamp) {
-    const timestampValue = Number.parseInt(updatedBeforeTimestamp);
+  if (params["updated-before"]) {
+    const timestampValue = Number.parseInt(params["updated-before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (updatedAfterTimestamp) {
-    const timestampValue = Number.parseInt(updatedAfterTimestamp);
+  if (params["updated-after"]) {
+    const timestampValue = Number.parseInt(params["updated-after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
+
   const { data, error } = await query;
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -108,7 +105,7 @@ export const POST = async (req: NextRequest) => {
 export const DELETE = async (req: NextRequest) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
-  
+
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");
   if (idParam === null)
