@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@supabase-config": ["./src/app/api/supabase.config.ts"],
-      "@drizzle-db": ["./drizzle-db.ts"]
+      "@drizzle-db": ["./drizzle-db.ts"],
+      "@lib/*": ["./lib/*"]
     }
   },
   "include": [

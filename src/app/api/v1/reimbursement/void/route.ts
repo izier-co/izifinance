@@ -1,15 +1,10 @@
+import { verifyAuthentication } from "@/lib/lib";
 import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 
 export const PUT = async (req: NextRequest) => {
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-  
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");

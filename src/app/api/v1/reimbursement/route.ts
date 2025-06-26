@@ -9,6 +9,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
+import { verifyAuthentication } from "@/lib/lib";
 
 const reimbursementSchema = z.object({
   txStatus: z.string(),
@@ -39,14 +40,8 @@ type ReimbursementItems = {
 };
 
 export const GET = async (req: NextRequest) => {
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-  
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
   const page = searchParams.get("page");
@@ -144,14 +139,8 @@ export const POST = async (req: NextRequest) => {
   // with reimbursement_items field that contains the payload
   // of reimbursement_items in an array
 
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   let body;
   try {

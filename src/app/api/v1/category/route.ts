@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config";
 
 import { z } from "zod";
+import { verifyAuthentication } from "@/lib/lib";
 
 const categorySchema = z.object({
   txCategoryName: z.string(),
@@ -10,13 +11,9 @@ const categorySchema = z.object({
 });
 
 export const GET = async (req: NextRequest) => {
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
+
   const searchParams = req.nextUrl.searchParams;
   const page = Number.parseInt(searchParams.get("page") || "1");
   const name = searchParams.get("name");
@@ -76,13 +73,9 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
+
   let body;
   try {
     body = await req.json();
@@ -113,14 +106,9 @@ export const POST = async (req: NextRequest) => {
 };
 
 export const DELETE = async (req: NextRequest) => {
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
-
-  if (!session || authError) {
-    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
-  }
+  const unauthorizedResponse = await verifyAuthentication();
+  if (unauthorizedResponse) return unauthorizedResponse;
+  
   const params = req.nextUrl.searchParams;
   const idParam = params.get("id");
   if (idParam === null)
