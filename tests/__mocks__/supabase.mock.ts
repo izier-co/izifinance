@@ -1,7 +1,7 @@
 import { beforeEach, vitest } from "vitest";
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 export const mockSupabase = {
@@ -14,7 +14,7 @@ export const mockSupabase = {
   gt: vitest.fn().mockReturnThis(),
   order: vitest.fn().mockReturnThis(),
   range: vitest.fn().mockReturnThis(),
-  single: vitest.fn().mockResolvedValue(),
+  single: vitest.fn().mockResolvedValue({}), // sample overrideable value
   auth: {
     signInWithPassword: vitest.fn().mockImplementation(() => {
       return {
@@ -34,12 +34,12 @@ export const mockSupabase = {
       error: null,
     }),
     signOut: vitest.fn().mockResolvedValue(Promise.resolve({ error: null })),
-    then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+    then: vitest.fn().mockImplementation((onFulfilled) => {
       onFulfilled({ data: null, error: null });
       return Promise.resolve({ data: null, error: null });
     }),
   },
-  then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+  then: vitest.fn().mockImplementation((onFulfilled) => {
     onFulfilled({ data: null, error: null });
     return Promise.resolve({ data: null, error: null });
   }),

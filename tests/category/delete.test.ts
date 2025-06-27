@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { DELETE } from "@/app/api/v1/category/route";
@@ -12,7 +12,7 @@ vitest.mock("@supabase-config", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const req = new NextRequest("localhost:3000");
@@ -23,7 +23,7 @@ describe("DELETE /categories tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await DELETE(req);
     const body = await response.json();

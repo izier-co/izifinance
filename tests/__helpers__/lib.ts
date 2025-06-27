@@ -2,7 +2,10 @@ import { NextRequest } from "next/server";
 
 const url = "localhost:3000";
 
-export function createMockRequestWithBody(method, body) {
+export function createMockRequestWithBody(
+  method: string,
+  body: Record<string, any>
+) {
   const request = new Request(url, {
     method,
     headers: {

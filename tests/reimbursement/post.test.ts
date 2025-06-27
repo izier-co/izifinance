@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { mockDrizzle, mockNestedDrizzle } from "../__mocks__/drizzle.mock";
@@ -20,13 +20,14 @@ vitest.mock("@drizzle-db", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const url = "localhost:3000";
 const req = new NextRequest(url);
 
-const reimbursementPayload = {
+// makes properties deleteable with the record type
+const reimbursementPayload: Record<string, any> = {
   txStatus: "Pending",
   txNotes: "",
   txRecipientAccount: "0987654321",
@@ -60,7 +61,7 @@ describe("POST /without parameters tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await POST(req);
     const body = await response.json();

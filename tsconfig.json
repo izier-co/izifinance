@@ -30,12 +30,12 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "tests/category/get.test.js",
-    "tests/category/delete.test.js",
-    "tests/category/post.test.js",
-    "tests/reimbursement/get.test.js",
-    "tests/reimbursement/post.test.js",
-    "tests/reimbursement/void/put.test.js"
+    "tests/category/get.test.ts",
+    "tests/category/delete.test.ts",
+    "tests/category/post.test.ts",
+    "tests/reimbursement/get.test.ts",
+    "tests/reimbursement/post.test.ts",
+    "tests/reimbursement/void/put.test.ts"
   ],
   "exclude": ["node_modules"]
 }

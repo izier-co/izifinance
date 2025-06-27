@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { POST } from "@/app/api/v1/auth/signin/route";
@@ -17,11 +17,7 @@ const mockPayload = {
 
 // supresses error message
 beforeEach(() => {
-  vi.spyOn(console, "error").mockImplementation(() => {});
-});
-
-afterEach(() => {
-  console.error.mockRestore();
+  vitest.spyOn(console, "error").mockImplementation(() => {});
 });
 
 describe("Test Login", () => {

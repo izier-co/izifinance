@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { GET } from "@/app/api/v1/category/route";
@@ -12,7 +12,7 @@ vitest.mock("@supabase-config", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const url = "localhost:3000";
@@ -40,7 +40,7 @@ describe("GET /categories tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await GET(req);
     const body = await response.json();
@@ -71,21 +71,23 @@ describe("GET /categories tests", () => {
 
   test("GET with all parameters", async () => {
     const pageIDStr = "2";
-    req.nextUrl.searchParams.append("page", pageIDStr);
-    req.nextUrl.searchParams.append("name", "abc");
-    req.nextUrl.searchParams.append("is-alphabetical", "true");
+    const mockSearchParams = req.nextUrl.searchParams;
+    mockSearchParams.append("page", pageIDStr);
+    mockSearchParams.append("name", "abc");
+    mockSearchParams.append("is-alphabetical", "true");
 
     // uses timestamp as input
-    req.nextUrl.searchParams.append("created-before", TOMORROW);
-    req.nextUrl.searchParams.append("created-after", YESTERDAY);
-    req.nextUrl.searchParams.append("updated-before", DAY_AFTER_TOMORROW);
-    req.nextUrl.searchParams.append("updated-after", DAY_BEFORE_YESTERDAY);
+    mockSearchParams.append("created-before", TOMORROW.toString());
+    mockSearchParams.append("created-after", YESTERDAY.toString());
+    mockSearchParams.append("updated-before", DAY_AFTER_TOMORROW.toString());
+    mockSearchParams.append("updated-after", DAY_BEFORE_YESTERDAY.toString());
 
     const response = await GET(req);
+    const paginationSize = 100;
 
     expect(mockSupabase.range).toHaveBeenCalledWith(
-      (Number.parseInt(pageIDStr) - 1) * 100,
-      Number.parseInt(pageIDStr) * 100
+      (Number.parseInt(pageIDStr) - 1) * paginationSize,
+      Number.parseInt(pageIDStr) * paginationSize
     );
     expect(mockSupabase.order).toHaveBeenCalledWith("txCategoryName", {
       ascending: true,

@@ -1,4 +1,4 @@
-import { vitest } from "vitest";
+import { vitest, beforeEach } from "vitest";
 
 beforeEach(() => {
   vitest.clearAllMocks();
@@ -17,11 +17,11 @@ export const mockDrizzle = {
   }),
   insert: vitest.fn().mockReturnThis(),
   values: vitest.fn().mockReturnThis(),
-  returning: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+  returning: vitest.fn().mockImplementation((onFulfilled) => {
     onFulfilled([{ inReimbursementNoteID: 1 }]);
     return Promise.resolve([{ inReimbursementNoteID: 1 }]);
   }),
-  then: vitest.fn().mockImplementation((onFulfilled, onRejected) => {
+  then: vitest.fn().mockImplementation((onFulfilled) => {
     onFulfilled(null);
     return Promise.resolve(null);
   }),

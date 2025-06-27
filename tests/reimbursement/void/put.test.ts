@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../../__mocks__/supabase.mock";
 import { mockDrizzle } from "../../__mocks__/drizzle.mock";
@@ -19,7 +19,7 @@ vitest.mock("@drizzle-db", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const req = new NextRequest("localhost:3000");
@@ -31,7 +31,7 @@ describe("PUT /reimbursement tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await PUT(req);
     const body = await response.json();
@@ -83,7 +83,7 @@ describe("PUT /reimbursement tests", () => {
     expect(response.status).toBe(200);
     expect(body).toEqual({ message: "Data Successfully Updated!" });
 
-    vi.useRealTimers();
+    vitest.useRealTimers();
   });
 
   test("PUT with ID parameter but there is an error", async () => {

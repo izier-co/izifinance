@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
@@ -13,7 +13,7 @@ vitest.mock("@supabase-config", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const url = "localhost:3000";
@@ -30,7 +30,7 @@ describe("POST /categories tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await POST(req);
     const body = await response.json();

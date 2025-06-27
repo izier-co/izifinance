@@ -1,4 +1,4 @@
-import { describe, test, expect, vitest } from "vitest";
+import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { mockDrizzle } from "../__mocks__/drizzle.mock";
@@ -19,7 +19,7 @@ vitest.mock("@drizzle-db", () => {
 });
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 const url = "localhost:3000";
@@ -63,7 +63,7 @@ describe("GET /reimbursement tests", () => {
       data: {
         session: null,
       },
-      error: new AuthError(),
+      error: new AuthError("Mock Auth Error"),
     });
     const response = await GET(req);
     const body = await response.json();
@@ -92,26 +92,18 @@ describe("GET /reimbursement tests", () => {
   });
 
   test("GET lists without detail", async () => {
-    reqWithoutDetails.nextUrl.searchParams.append("page", testPageID);
-    reqWithoutDetails.nextUrl.searchParams.append("id", testIDStr);
-    reqWithoutDetails.nextUrl.searchParams.append("status", testStatus);
-    reqWithoutDetails.nextUrl.searchParams.append("bank-type-code", testBankID);
-    reqWithoutDetails.nextUrl.searchParams.append(
-      "recipient-company-code",
-      testRecipientCode
-    );
+    const mockSearchParams = reqWithoutDetails.nextUrl.searchParams;
+    mockSearchParams.append("page", testPageID);
+    mockSearchParams.append("id", testIDStr);
+    mockSearchParams.append("status", testStatus);
+    mockSearchParams.append("bank-type-code", testBankID);
+    mockSearchParams.append("recipient-company-code", testRecipientCode);
 
     // uses timestamp as input
-    reqWithoutDetails.nextUrl.searchParams.append("created-before", TOMORROW);
-    reqWithoutDetails.nextUrl.searchParams.append("created-after", YESTERDAY);
-    reqWithoutDetails.nextUrl.searchParams.append(
-      "updated-before",
-      DAY_AFTER_TOMORROW
-    );
-    reqWithoutDetails.nextUrl.searchParams.append(
-      "updated-after",
-      DAY_BEFORE_YESTERDAY
-    );
+    mockSearchParams.append("created-before", TOMORROW.toString());
+    mockSearchParams.append("created-after", YESTERDAY.toString());
+    mockSearchParams.append("updated-before", DAY_AFTER_TOMORROW.toString());
+    mockSearchParams.append("updated-after", DAY_BEFORE_YESTERDAY.toString());
 
     await GET(reqWithoutDetails);
 
@@ -147,36 +139,31 @@ describe("GET /reimbursement tests", () => {
   });
 
   test("GET a list with detail", async () => {
-    reqWithDetails.nextUrl.searchParams.append("page", testPageID);
-    reqWithDetails.nextUrl.searchParams.append("id", testIDStr);
-    reqWithDetails.nextUrl.searchParams.append("status", testStatus);
-    reqWithDetails.nextUrl.searchParams.append("bank-type-code", testBankID);
-    reqWithDetails.nextUrl.searchParams.append("with-notes", "true");
-    reqWithDetails.nextUrl.searchParams.append(
-      "recipient-company-code",
-      testRecipientCode
-    );
+    const mockSearchParams = reqWithDetails.nextUrl.searchParams;
+    mockSearchParams.append("page", testPageID);
+    mockSearchParams.append("id", testIDStr);
+    mockSearchParams.append("status", testStatus);
+    mockSearchParams.append("bank-type-code", testBankID);
+    mockSearchParams.append("with-notes", "true");
+    mockSearchParams.append("recipient-company-code", testRecipientCode);
 
     // uses timestamp as input
-    reqWithDetails.nextUrl.searchParams.append("created-before", TOMORROW);
-    reqWithDetails.nextUrl.searchParams.append("created-after", YESTERDAY);
-    reqWithDetails.nextUrl.searchParams.append(
-      "updated-before",
-      DAY_AFTER_TOMORROW
-    );
-    reqWithDetails.nextUrl.searchParams.append(
-      "updated-after",
-      DAY_BEFORE_YESTERDAY
-    );
+    mockSearchParams.append("created-before", TOMORROW.toString());
+    mockSearchParams.append("created-after", YESTERDAY.toString());
+    mockSearchParams.append("updated-before", DAY_AFTER_TOMORROW.toString());
+    mockSearchParams.append("updated-after", DAY_BEFORE_YESTERDAY.toString());
+
     await GET(reqWithDetails);
 
     const eqCalls = mockSupabase.eq.mock.calls;
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
+    const paginationSize = 100;
+
     expect(mockSupabase.range).toHaveBeenCalledWith(
-      (Number.parseInt(testPageID) - 1) * 100,
-      Number.parseInt(testPageID) * 100
+      (Number.parseInt(testPageID) - 1) * paginationSize,
+      Number.parseInt(testPageID) * paginationSize
     );
 
     expect(mockSupabase.select).toHaveBeenCalledWith(
