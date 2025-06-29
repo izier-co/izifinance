@@ -11,6 +11,7 @@ import {
 } from "@/db/schema";
 
 import { verifyAuthentication } from "@/lib/lib";
+import { JSONValue } from "postgres";
 
 const reimbursementSchema = z.object({
   txStatus: z.string(),
@@ -47,10 +48,10 @@ export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const params = Object.fromEntries(searchParams.entries());
   const pageId = Number.parseInt(params["page"] || "1");
-  
-  var tableQueryString = "*"; // indicates SELECT * without JOIN
 
-  if (params["with-notes"]?.toLocaleLowerCase() === "true" && params["id"]) {
+  let tableQueryString = "*"; // indicates SELECT * without JOIN
+
+  if (params["with_notes"]?.toLocaleLowerCase() === "true" && params["id"]) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
@@ -88,36 +89,36 @@ export const GET = async (req: NextRequest) => {
       }
     }
   }
-  if (params["bank-type-code"]) {
-    const bankID = Number.parseInt(params["bank-type-code"]);
+  if (params["bank_type_code"]) {
+    const bankID = Number.parseInt(params["bank_type_code"]);
     query.eq("inBankTypeCode", bankID);
   }
-  if (params["recipient-company-code"]) {
-    const recipientID = Number.parseInt(params["recipient-company-code"]);
+  if (params["recipient_company_code"]) {
+    const recipientID = Number.parseInt(params["recipient_company_code"]);
     query.eq("inRecipientCompanyCode", recipientID);
   }
 
-  if (params["created-before"]) {
-    const timestampValue = Number.parseInt(params["created-before"]);
+  if (params["created_before"]) {
+    const timestampValue = Number.parseInt(params["created_before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["created-after"]) {
-    const timestampValue = Number.parseInt(params["created-after"]);
+  if (params["created_after"]) {
+    const timestampValue = Number.parseInt(params["created_after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (params["updated-before"]) {
-    const timestampValue = Number.parseInt(params["updated-before"]);
+  if (params["updated_before"]) {
+    const timestampValue = Number.parseInt(params["updated_before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["updated-after"]) {
-    const timestampValue = Number.parseInt(params["updated-after"]);
+  if (params["updated_after"]) {
+    const timestampValue = Number.parseInt(params["updated_after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
@@ -136,7 +137,7 @@ export const POST = async (req: NextRequest) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
 
-  let body;
+  let body: Record<string, string> = {};
   try {
     body = await req.json();
   } catch {
@@ -164,8 +165,8 @@ export const POST = async (req: NextRequest) => {
     );
   }
   const itemModels = body["reimbursement_items"];
-  for (var i = 0; i < itemModels.length; i++) {
-    var itemModel = reimbursementItemSchema.safeParse(
+  for (let i = 0; i < itemModels.length; i++) {
+    const itemModel = reimbursementItemSchema.safeParse(
       body["reimbursement_items"][i]
     );
     if (!itemModel.success) {

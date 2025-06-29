@@ -28,36 +28,36 @@ export const GET = async (req: NextRequest) => {
   if (params["name"]) {
     query.eq("txCategoryName", params["name"]);
   }
-  if (params["is-alphabetical"]?.toLowerCase() === "true") {
+  if (params["is_alphabetical"]?.toLowerCase() === "true") {
     query.order("txCategoryName", {
       ascending: true,
     });
-  } else if (params["is-alphabetical"]?.toLowerCase() === "false") {
+  } else if (params["is_alphabetical"]?.toLowerCase() === "false") {
     query.order("txCategoryName", {
       ascending: false,
     });
   }
-  if (params["created-before"]) {
-    const timestampValue = Number.parseInt(params["created-before"]);
+  if (params["created_before"]) {
+    const timestampValue = Number.parseInt(params["created_before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["created-after"]) {
-    const timestampValue = Number.parseInt(params["created-after"]);
+  if (params["created_after"]) {
+    const timestampValue = Number.parseInt(params["created_after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (params["updated-before"]) {
-    const timestampValue = Number.parseInt(params["updated-before"]);
+  if (params["updated_before"]) {
+    const timestampValue = Number.parseInt(params["updated_before"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["updated-after"]) {
-    const timestampValue = Number.parseInt(params["updated-after"]);
+  if (params["updated_after"]) {
+    const timestampValue = Number.parseInt(params["updated_after"]);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
@@ -73,7 +73,7 @@ export const POST = async (req: NextRequest) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
 
-  let body;
+  let body: Record<string, string> = {};
   try {
     body = await req.json();
   } catch {
