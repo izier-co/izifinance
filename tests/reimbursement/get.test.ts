@@ -27,11 +27,12 @@ const req = new NextRequest(url);
 const reqWithoutDetails = new NextRequest(url);
 const reqWithDetails = new NextRequest(url);
 
-const SECONDS_IN_DAY = 60 * 60 * 24;
-const YESTERDAY = Date.now() - SECONDS_IN_DAY;
-const TOMORROW = Date.now() + SECONDS_IN_DAY;
-const DAY_BEFORE_YESTERDAY = Date.now() - SECONDS_IN_DAY;
-const DAY_AFTER_TOMORROW = Date.now() + SECONDS_IN_DAY;
+const MILISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
+const NOW = Date.now();
+const YESTERDAY = new Date(NOW - MILISECONDS_IN_DAY).toISOString();
+const TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
+const DAY_BEFORE_YESTERDAY = new Date(NOW - MILISECONDS_IN_DAY).toISOString();
+const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
 const testPageID = "2";
 const testIDStr = "1";
@@ -93,17 +94,17 @@ describe("GET /reimbursement tests", () => {
 
   test("GET lists without detail", async () => {
     const mockSearchParams = reqWithoutDetails.nextUrl.searchParams;
-    mockSearchParams.append("page", testPageID);
+    mockSearchParams.append("paginationPage", testPageID);
     mockSearchParams.append("id", testIDStr);
     mockSearchParams.append("status", testStatus);
-    mockSearchParams.append("bank-type-code", testBankID);
-    mockSearchParams.append("recipient-company-code", testRecipientCode);
+    mockSearchParams.append("bankTypeCode", testBankID);
+    mockSearchParams.append("recipientCompanyCode", testRecipientCode);
 
     // uses timestamp as input
-    mockSearchParams.append("created-before", TOMORROW.toString());
-    mockSearchParams.append("created-after", YESTERDAY.toString());
-    mockSearchParams.append("updated-before", DAY_AFTER_TOMORROW.toString());
-    mockSearchParams.append("updated-after", DAY_BEFORE_YESTERDAY.toString());
+    mockSearchParams.append("createdBefore", TOMORROW);
+    mockSearchParams.append("createdAfter", YESTERDAY);
+    mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
+    mockSearchParams.append("updatedAfter", DAY_BEFORE_YESTERDAY);
 
     await GET(reqWithoutDetails);
 
@@ -140,18 +141,18 @@ describe("GET /reimbursement tests", () => {
 
   test("GET a list with detail", async () => {
     const mockSearchParams = reqWithDetails.nextUrl.searchParams;
-    mockSearchParams.append("page", testPageID);
+    mockSearchParams.append("paginationPage", testPageID);
     mockSearchParams.append("id", testIDStr);
     mockSearchParams.append("status", testStatus);
-    mockSearchParams.append("bank-type-code", testBankID);
-    mockSearchParams.append("with-notes", "true");
-    mockSearchParams.append("recipient-company-code", testRecipientCode);
+    mockSearchParams.append("bankTypeCode", testBankID);
+    mockSearchParams.append("recipientCompanyCode", testRecipientCode);
+    mockSearchParams.append("withNotes", "true");
 
     // uses timestamp as input
-    mockSearchParams.append("created-before", TOMORROW.toString());
-    mockSearchParams.append("created-after", YESTERDAY.toString());
-    mockSearchParams.append("updated-before", DAY_AFTER_TOMORROW.toString());
-    mockSearchParams.append("updated-after", DAY_BEFORE_YESTERDAY.toString());
+    mockSearchParams.append("createdBefore", TOMORROW);
+    mockSearchParams.append("createdAfter", YESTERDAY);
+    mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
+    mockSearchParams.append("updatedAfter", DAY_BEFORE_YESTERDAY);
 
     await GET(reqWithDetails);
 
@@ -193,6 +194,16 @@ describe("GET /reimbursement tests", () => {
       );
       expect(found).toBe(true);
     }
+  });
+
+  test("GET normally but with there is no data", async () => {
+    mockSupabase.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: [], error: null });
+    });
+    const response = await GET(req);
+    const body = await response.json();
+    expect(response.status).toBe(404);
+    expect(body).toEqual({ error: "Error 404 : Data Not Found." });
   });
 
   test("GET normally but with error in database", async () => {
