@@ -10,31 +10,45 @@ const categorySchema = z.object({
   txCategoryDescription: z.string().nullable(),
 });
 
+const getRequestParams = z.object({
+  paginationPage: z.coerce.number().default(1),
+  paginationSize: z.coerce.number().optional(),
+  name: z.string().optional(),
+  isAlphabetical: z.coerce.boolean().optional(),
+  createdBefore: z.string().datetime().optional(),
+  createdAfter: z.string().datetime().optional(),
+  updatedBefore: z.string().datetime().optional(),
+  updatedAfter: z.string().datetime().optional(),
+});
+
 export const GET = async (req: NextRequest) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
-  const params = Object.fromEntries(searchParams.entries());
-  const pageNum = Number.parseInt(params.page || "1");
-  const paginationSize = 100;
+  const urlParams = Object.fromEntries(searchParams.entries());
+  const params = getRequestParams.parse(urlParams);
+  const paginationDefaultSize = 100;
 
   const query = supabase
     .from("m_category")
     .select("*")
-    .range((pageNum - 1) * paginationSize, pageNum * paginationSize)
+    .range(
+      (params.paginationPage - 1) * paginationDefaultSize,
+      params.paginationPage * paginationDefaultSize
+    )
     .eq("boActive", true)
     .eq("boStatus", true);
   if (params.name) {
     query.eq("txCategoryName", params.name);
   }
-  if (params.isAlphabetical?.toLowerCase() === "true") {
+  if (params.isAlphabetical === true) {
     query.order("txCategoryName", {
-      ascending: true,
+      ascending: params.isAlphabetical,
     });
-  } else if (params.isAlphabetical?.toLowerCase() === "false") {
+  } else if (params.isAlphabetical === false) {
     query.order("txCategoryName", {
-      ascending: false,
+      ascending: params.isAlphabetical,
     });
   }
 

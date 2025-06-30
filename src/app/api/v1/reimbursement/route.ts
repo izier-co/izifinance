@@ -31,6 +31,20 @@ const reimbursementItemSchema = z.object({
   inCategoryID: z.number().int(),
 });
 
+const getRequestParams = z.object({
+  paginationPage: z.coerce.number().default(1),
+  paginationSize: z.coerce.number().optional(),
+  id: z.coerce.number().optional(),
+  status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
+  bankTypeCode: z.string().optional(),
+  recipientCompanyCode: z.string().optional(),
+  withNotes: z.coerce.boolean().default(false),
+  createdBefore: z.string().datetime().optional(),
+  createdAfter: z.string().datetime().optional(),
+  updatedBefore: z.string().datetime().optional(),
+  updatedAfter: z.string().datetime().optional(),
+});
+
 type ReimbursementItems = {
   txName: string;
   inQuantity: number;
@@ -45,30 +59,29 @@ export const GET = async (req: NextRequest) => {
   if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
-  const params = Object.fromEntries(searchParams.entries());
-  const pageId = Number.parseInt(params.page || "1");
+  const urlParams = Object.fromEntries(searchParams.entries());
+  const params = getRequestParams.parse(urlParams);
 
   let tableQueryString = "*"; // indicates SELECT * without JOIN
 
-  if (params.withNotes?.toLocaleLowerCase() === "true" && params.id) {
+  if (params.withNotes && params.id) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
   let paginationSize = 100;
   if (params.paginationSize) {
-    const paginationParam = Number.parseInt(params.paginationSize);
-    if (paginationParam > 1) {
-      paginationSize = paginationParam;
-    }
+    paginationSize = params.paginationSize;
   }
   const query = supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
-    .range((pageId - 1) * paginationSize, pageId * paginationSize);
+    .range(
+      (params.paginationPage - 1) * paginationSize,
+      params.paginationPage * paginationSize
+    );
 
   if (params.id) {
-    const numID = Number.parseInt(params.id);
-    query.eq("inReimbursementNoteID", numID);
+    query.eq("inReimbursementNoteID", params.id);
   }
 
   if (params.status) {
