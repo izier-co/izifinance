@@ -50,11 +50,17 @@ export const GET = async (req: NextRequest) => {
 
   let tableQueryString = "*"; // indicates SELECT * without JOIN
 
-  if (params.with_notes?.toLocaleLowerCase() === "true" && params.id) {
+  if (params.withNotes?.toLocaleLowerCase() === "true" && params.id) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
-  const paginationSize = 100;
+  let paginationSize = 100;
+  if (params.paginationSize) {
+    const paginationParam = Number.parseInt(params.paginationSize);
+    if (paginationParam > 1) {
+      paginationSize = paginationParam;
+    }
+  }
   const query = supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
@@ -88,41 +94,35 @@ export const GET = async (req: NextRequest) => {
       }
     }
   }
-  if (params.bank_type_code) {
-    const bankID = Number.parseInt(params.bank_type_code);
+  if (params.bankTypeCode) {
+    const bankID = Number.parseInt(params.bankTypeCode);
     query.eq("inBankTypeCode", bankID);
   }
-  if (params.recipient_company_code) {
-    const recipientID = Number.parseInt(params.recipient_company_code);
+  if (params.recipientCompanyCode) {
+    const recipientID = Number.parseInt(params.recipientCompanyCode);
     query.eq("inRecipientCompanyCode", recipientID);
   }
 
-  if (params.created_before) {
-    const timestampValue = Number.parseInt(params.created_before);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.lt("daCreatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.createdBefore) {
+    query.lt("daCreatedAt", params.createdBefore);
   }
-  if (params.created_after) {
-    const timestampValue = Number.parseInt(params.created_after);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.gt("daCreatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.createdAfter) {
+    query.gt("daCreatedAt", params.createdAfter);
   }
 
-  if (params.updated_before) {
-    const timestampValue = Number.parseInt(params.updated_before);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.updatedBefore) {
+    query.lt("daUpdatedAt", params.updatedBefore);
   }
-  if (params.updated_after) {
-    const timestampValue = Number.parseInt(params.updated_after);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.updatedAfter) {
+    query.gt("daUpdatedAt", params.updatedAfter);
   }
   const { data, error } = await query;
+  if (data && data.length === 0) {
+    return NextResponse.json(
+      { error: "Error 404 : Data Not Found." },
+      { status: 404 }
+    );
+  }
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data }, { status: 200 });

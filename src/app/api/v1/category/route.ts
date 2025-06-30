@@ -28,42 +28,37 @@ export const GET = async (req: NextRequest) => {
   if (params.name) {
     query.eq("txCategoryName", params.name);
   }
-  if (params.is_alphabetical?.toLowerCase() === "true") {
+  if (params.isAlphabetical?.toLowerCase() === "true") {
     query.order("txCategoryName", {
       ascending: true,
     });
-  } else if (params.is_alphabetical?.toLowerCase() === "false") {
+  } else if (params.isAlphabetical?.toLowerCase() === "false") {
     query.order("txCategoryName", {
       ascending: false,
     });
   }
-  if (params.created_before) {
-    const timestampValue = Number.parseInt(params.created_before);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.lt("daCreatedAt", new Date(timestampValue).toISOString());
-    }
+
+  if (params.createdBefore) {
+    query.lt("daCreatedAt", params.createdBefore);
   }
-  if (params.created_after) {
-    const timestampValue = Number.parseInt(params.created_after);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.gt("daCreatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.createdAfter) {
+    query.gt("daCreatedAt", params.createdAfter);
   }
 
-  if (params.updated_before) {
-    const timestampValue = Number.parseInt(params.updated_before);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.updatedBefore) {
+    query.lt("daUpdatedAt", params.updatedBefore);
   }
-  if (params.updated_after) {
-    const timestampValue = Number.parseInt(params.updated_after);
-    if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
-      query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
-    }
+  if (params.updatedAfter) {
+    query.gt("daUpdatedAt", params.updatedAfter);
   }
 
   const { data, error } = await query;
+  if (data && data.length === 0) {
+    return NextResponse.json(
+      { error: "Error 404 : Data Not Found." },
+      { status: 404 }
+    );
+  }
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data }, { status: 200 });
