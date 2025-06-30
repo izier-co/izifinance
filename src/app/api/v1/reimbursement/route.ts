@@ -11,7 +11,6 @@ import {
 } from "@/db/schema";
 
 import { verifyAuthentication } from "@/lib/lib";
-import { JSONValue } from "postgres";
 
 const reimbursementSchema = z.object({
   txStatus: z.string(),
@@ -47,11 +46,11 @@ export const GET = async (req: NextRequest) => {
 
   const searchParams = req.nextUrl.searchParams;
   const params = Object.fromEntries(searchParams.entries());
-  const pageId = Number.parseInt(params["page"] || "1");
+  const pageId = Number.parseInt(params.page || "1");
 
   let tableQueryString = "*"; // indicates SELECT * without JOIN
 
-  if (params["with_notes"]?.toLocaleLowerCase() === "true" && params["id"]) {
+  if (params.with_notes?.toLocaleLowerCase() === "true" && params.id) {
     // if details are requested (only when ID is given)
     tableQueryString = "*, reimbursement_items(*)";
   }
@@ -61,27 +60,27 @@ export const GET = async (req: NextRequest) => {
     .select(tableQueryString)
     .range((pageId - 1) * paginationSize, pageId * paginationSize);
 
-  if (params["id"]) {
-    const numID = Number.parseInt(params["id"]);
+  if (params.id) {
+    const numID = Number.parseInt(params.id);
     query.eq("inReimbursementNoteID", numID);
   }
 
-  if (params["status"]) {
-    switch (params["status"]) {
+  if (params.status) {
+    switch (params.status) {
       case "Pending": {
-        query.eq("txStatus", params["status"]);
+        query.eq("txStatus", params.status);
         break;
       }
       case "Approved": {
-        query.eq("txStatus", params["status"]);
+        query.eq("txStatus", params.status);
         break;
       }
       case "Rejected": {
-        query.eq("txStatus", params["status"]);
+        query.eq("txStatus", params.status);
         break;
       }
       case "Void": {
-        query.eq("txStatus", params["status"]);
+        query.eq("txStatus", params.status);
         break;
       }
       default: {
@@ -89,36 +88,36 @@ export const GET = async (req: NextRequest) => {
       }
     }
   }
-  if (params["bank_type_code"]) {
-    const bankID = Number.parseInt(params["bank_type_code"]);
+  if (params.bank_type_code) {
+    const bankID = Number.parseInt(params.bank_type_code);
     query.eq("inBankTypeCode", bankID);
   }
-  if (params["recipient_company_code"]) {
-    const recipientID = Number.parseInt(params["recipient_company_code"]);
+  if (params.recipient_company_code) {
+    const recipientID = Number.parseInt(params.recipient_company_code);
     query.eq("inRecipientCompanyCode", recipientID);
   }
 
-  if (params["created_before"]) {
-    const timestampValue = Number.parseInt(params["created_before"]);
+  if (params.created_before) {
+    const timestampValue = Number.parseInt(params.created_before);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["created_after"]) {
-    const timestampValue = Number.parseInt(params["created_after"]);
+  if (params.created_after) {
+    const timestampValue = Number.parseInt(params.created_after);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (params["updated_before"]) {
-    const timestampValue = Number.parseInt(params["updated_before"]);
+  if (params.updated_before) {
+    const timestampValue = Number.parseInt(params.updated_before);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["updated_after"]) {
-    const timestampValue = Number.parseInt(params["updated_after"]);
+  if (params.updated_after) {
+    const timestampValue = Number.parseInt(params.updated_after);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
@@ -145,6 +144,8 @@ export const POST = async (req: NextRequest) => {
       { error: "400 Bad Request : Invalid JSON Payload" },
       { status: 400 }
     );
+  } finally {
+    // TODO : handle something regarding logging
   }
   const noteModel = reimbursementSchema.safeParse(body);
   if (!noteModel.success) {
@@ -213,6 +214,8 @@ export const POST = async (req: NextRequest) => {
       { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }
     );
+  } finally {
+    // TODO : handle something regarding to logging
   }
   return NextResponse.json({
     message: "Data Successfully Inserted!",

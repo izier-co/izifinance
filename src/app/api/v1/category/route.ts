@@ -16,7 +16,7 @@ export const GET = async (req: NextRequest) => {
 
   const searchParams = req.nextUrl.searchParams;
   const params = Object.fromEntries(searchParams.entries());
-  const pageNum = Number.parseInt(params["page"] || "1");
+  const pageNum = Number.parseInt(params.page || "1");
   const paginationSize = 100;
 
   const query = supabase
@@ -25,39 +25,39 @@ export const GET = async (req: NextRequest) => {
     .range((pageNum - 1) * paginationSize, pageNum * paginationSize)
     .eq("boActive", true)
     .eq("boStatus", true);
-  if (params["name"]) {
-    query.eq("txCategoryName", params["name"]);
+  if (params.name) {
+    query.eq("txCategoryName", params.name);
   }
-  if (params["is_alphabetical"]?.toLowerCase() === "true") {
+  if (params.is_alphabetical?.toLowerCase() === "true") {
     query.order("txCategoryName", {
       ascending: true,
     });
-  } else if (params["is_alphabetical"]?.toLowerCase() === "false") {
+  } else if (params.is_alphabetical?.toLowerCase() === "false") {
     query.order("txCategoryName", {
       ascending: false,
     });
   }
-  if (params["created_before"]) {
-    const timestampValue = Number.parseInt(params["created_before"]);
+  if (params.created_before) {
+    const timestampValue = Number.parseInt(params.created_before);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["created_after"]) {
-    const timestampValue = Number.parseInt(params["created_after"]);
+  if (params.created_after) {
+    const timestampValue = Number.parseInt(params.created_after);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daCreatedAt", new Date(timestampValue).toISOString());
     }
   }
 
-  if (params["updated_before"]) {
-    const timestampValue = Number.parseInt(params["updated_before"]);
+  if (params.updated_before) {
+    const timestampValue = Number.parseInt(params.updated_before);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.lt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
   }
-  if (params["updated_after"]) {
-    const timestampValue = Number.parseInt(params["updated_after"]);
+  if (params.updated_after) {
+    const timestampValue = Number.parseInt(params.updated_after);
     if (!Number.isNaN(timestampValue) && timestampValue >= 0) {
       query.gt("daUpdatedAt", new Date(timestampValue).toISOString());
     }
@@ -81,6 +81,8 @@ export const POST = async (req: NextRequest) => {
       { error: "400 Bad Request : Invalid JSON Payload" },
       { status: 400 }
     );
+  } finally {
+    // TODO : handle something regarding logging
   }
 
   const categoryModel = categorySchema.safeParse(body);
