@@ -36,8 +36,8 @@ const getRequestParams = z.object({
   paginationSize: z.coerce.number().optional(),
   id: z.coerce.number().optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
-  bankTypeCode: z.string().optional(),
-  recipientCompanyCode: z.string().optional(),
+  bankTypeCode: z.coerce.number().optional(),
+  recipientCompanyCode: z.coerce.number().optional(),
   withNotes: z.coerce.boolean().default(false),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
@@ -108,12 +108,10 @@ export const GET = async (req: NextRequest) => {
     }
   }
   if (params.bankTypeCode) {
-    const bankID = Number.parseInt(params.bankTypeCode);
-    query.eq("inBankTypeCode", bankID);
+    query.eq("inBankTypeCode", params.bankTypeCode);
   }
   if (params.recipientCompanyCode) {
-    const recipientID = Number.parseInt(params.recipientCompanyCode);
-    query.eq("inRecipientCompanyCode", recipientID);
+    query.eq("inRecipientCompanyCode", params.recipientCompanyCode);
   }
 
   if (params.createdBefore) {
@@ -129,6 +127,7 @@ export const GET = async (req: NextRequest) => {
   if (params.updatedAfter) {
     query.gt("daUpdatedAt", params.updatedAfter);
   }
+  
   const { data, error } = await query;
   if (data && data.length === 0) {
     return NextResponse.json(
