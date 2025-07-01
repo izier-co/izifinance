@@ -60,7 +60,15 @@ export const GET = async (req: NextRequest) => {
 
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
-  const params = getRequestParams.parse(urlParams);
+  const paramModel = getRequestParams.safeParse(urlParams);
+  
+  if (!paramModel.success) {
+    return NextResponse.json(
+      { error: `400 Bad Request : ${paramModel.error}` },
+      { status: 400 }
+    );
+  }
+  const params = paramModel.data;
 
   let tableQueryString = "*"; // indicates SELECT * without JOIN
 
@@ -127,7 +135,7 @@ export const GET = async (req: NextRequest) => {
   if (params.updatedAfter) {
     query.gt("daUpdatedAt", params.updatedAfter);
   }
-  
+
   const { data, error } = await query;
   if (data && data.length === 0) {
     return NextResponse.json(

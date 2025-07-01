@@ -27,15 +27,27 @@ export const GET = async (req: NextRequest) => {
 
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
-  const params = getRequestParams.parse(urlParams);
-  const paginationDefaultSize = 100;
+  const paramModel = getRequestParams.safeParse(urlParams);
+
+  if (!paramModel.success) {
+    return NextResponse.json(
+      { error: `400 Bad Request : ${paramModel.error}` },
+      { status: 400 }
+    );
+  }
+  const params = paramModel.data;
+
+  let paginationSize = 100;
+  if (params.paginationSize) {
+    paginationSize = params.paginationSize;
+  }
 
   const query = supabase
     .from("m_category")
     .select("*")
     .range(
-      (params.paginationPage - 1) * paginationDefaultSize,
-      params.paginationPage * paginationDefaultSize
+      (params.paginationPage - 1) * paginationSize,
+      params.paginationPage * paginationSize
     )
     .eq("boActive", true)
     .eq("boStatus", true);
