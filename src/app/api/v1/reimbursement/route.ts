@@ -61,7 +61,7 @@ export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
   const paramModel = getRequestParams.safeParse(urlParams);
-  
+
   if (!paramModel.success) {
     return NextResponse.json(
       { error: `400 Bad Request : ${paramModel.error}` },
@@ -137,12 +137,6 @@ export const GET = async (req: NextRequest) => {
   }
 
   const { data, error } = await query;
-  if (data && data.length === 0) {
-    return NextResponse.json(
-      { error: "Error 404 : Data Not Found." },
-      { status: 404 }
-    );
-  }
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data }, { status: 200 });

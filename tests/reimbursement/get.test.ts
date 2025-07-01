@@ -195,15 +195,6 @@ describe("GET /reimbursement tests", () => {
     }
   });
 
-  test("GET normally but with there is no data", async () => {
-    mockSupabase.then.mockImplementation((onFulfilled) => {
-      onFulfilled({ data: [], error: null });
-    });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(404);
-    expect(body).toEqual({ error: "Error 404 : Data Not Found." });
-  });
 
   test("GET normally but with error in database", async () => {
     const mockError = Error();
