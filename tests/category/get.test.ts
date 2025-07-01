@@ -25,6 +25,9 @@ const TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 const DAY_BEFORE_YESTERDAY = new Date(NOW - MILISECONDS_IN_DAY).toISOString();
 const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
+const pageIDStr = "2";
+const paginationSize = "50";
+
 // expected to become ISO string in API
 const expectedGtCalls = [
   ["daCreatedAt", new Date(YESTERDAY).toISOString()],
@@ -71,24 +74,22 @@ describe("GET /categories tests", () => {
   });
 
   test("GET with all parameters", async () => {
-    const pageIDStr = "2";
     const mockSearchParams = req.nextUrl.searchParams;
     mockSearchParams.append("paginationPage", pageIDStr);
+    mockSearchParams.append("paginationSize", paginationSize);
     mockSearchParams.append("name", "abc");
     mockSearchParams.append("isAlphabetical", "true");
 
-    // uses timestamp as input
     mockSearchParams.append("createdBefore", TOMORROW);
     mockSearchParams.append("createdAfter", YESTERDAY);
     mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
     mockSearchParams.append("updatedAfter", DAY_BEFORE_YESTERDAY);
 
     const response = await GET(req);
-    const paginationSize = 100;
 
     expect(mockSupabase.range).toHaveBeenCalledWith(
-      (Number.parseInt(pageIDStr) - 1) * paginationSize,
-      Number.parseInt(pageIDStr) * paginationSize
+      (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize),
+      Number.parseInt(pageIDStr) * Number.parseInt(paginationSize)
     );
     expect(mockSupabase.order).toHaveBeenCalledWith("txCategoryName", {
       ascending: true,

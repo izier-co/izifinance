@@ -36,6 +36,7 @@ const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
 const testPageID = "2";
 const testIDStr = "1";
+const paginationSize = "50";
 const testStatus = "Pending";
 const testBankID = "123456";
 const testRecipientCode = "98765";
@@ -142,13 +143,13 @@ describe("GET /reimbursement tests", () => {
   test("GET a list with detail", async () => {
     const mockSearchParams = reqWithDetails.nextUrl.searchParams;
     mockSearchParams.append("paginationPage", testPageID);
+    mockSearchParams.append("paginationSize", paginationSize);
     mockSearchParams.append("id", testIDStr);
     mockSearchParams.append("status", testStatus);
     mockSearchParams.append("bankTypeCode", testBankID);
     mockSearchParams.append("recipientCompanyCode", testRecipientCode);
     mockSearchParams.append("withNotes", "true");
 
-    // uses timestamp as input
     mockSearchParams.append("createdBefore", TOMORROW);
     mockSearchParams.append("createdAfter", YESTERDAY);
     mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
@@ -160,11 +161,9 @@ describe("GET /reimbursement tests", () => {
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
-    const paginationSize = 100;
-
     expect(mockSupabase.range).toHaveBeenCalledWith(
-      (Number.parseInt(testPageID) - 1) * paginationSize,
-      Number.parseInt(testPageID) * paginationSize
+      (Number.parseInt(testPageID) - 1) * Number.parseInt(paginationSize),
+      Number.parseInt(testPageID) * Number.parseInt(paginationSize)
     );
 
     expect(mockSupabase.select).toHaveBeenCalledWith(
