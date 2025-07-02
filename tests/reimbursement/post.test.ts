@@ -27,7 +27,9 @@ const url = "localhost:3000";
 const req = new NextRequest(url);
 
 // makes properties deleteable with the record type
+
 const reimbursementPayload: Record<string, any> = {
+  inReimbursementNoteID: 1,
   txStatus: "Pending",
   txNotes: "",
   txRecipientAccount: "0987654321",
@@ -135,6 +137,11 @@ describe("POST /without parameters tests", () => {
   });
   test("POST with correct data", async () => {
     const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
+    // simulating the returned object as an array
+    mockNestedDrizzle.returning
+      .mockResolvedValueOnce([reimbursementPayload])
+      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[0]])
+      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[1]]);
     const response = await POST(mockRequest);
     const body = await response.json();
     const reimbursementItemsArray = reimbursementPayload.reimbursement_items;
@@ -158,7 +165,7 @@ describe("POST /without parameters tests", () => {
     const returnedObject =
       await mockNestedDrizzle.returning.mock.results[0].value;
     const returnedValue = returnedObject[0].inReimbursementNoteID;
-    for (var i = 0; i < reimbursementItemsArray.length; i++) {
+    for (let i = 0; i < reimbursementItemsArray.length; i++) {
       expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(i + 2, {
         inReimbursementNoteID: returnedValue,
         txName: reimbursementItemsArray[i].txName,
@@ -170,8 +177,9 @@ describe("POST /without parameters tests", () => {
         inCategoryID: reimbursementItemsArray[i].inCategoryID,
       });
     }
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(body).toEqual({
+      data: reimbursementPayload,
       message: "Data Successfully Inserted!",
     });
   });

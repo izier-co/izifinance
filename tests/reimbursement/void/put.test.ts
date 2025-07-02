@@ -67,7 +67,7 @@ describe("PUT /reimbursement tests", () => {
     vitest.useFakeTimers();
     vitest.setSystemTime(new Date()); // fixes the time
     mockSupabase.then.mockImplementation((onFulfilled) => {
-      onFulfilled({ data: null, error: null });
+      onFulfilled({ data: {}, error: null });
     });
     req.nextUrl.searchParams.append("id", idParam);
     const response = await PUT(req);
@@ -81,7 +81,7 @@ describe("PUT /reimbursement tests", () => {
       Number.parseInt(idParam)
     );
     expect(response.status).toBe(200);
-    expect(body).toEqual({ message: "Data Successfully Updated!" });
+    expect(body).toEqual({ message: "Data Successfully Updated!", data: {} });
 
     vitest.useRealTimers();
   });

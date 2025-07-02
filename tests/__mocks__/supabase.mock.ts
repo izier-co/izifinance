@@ -15,6 +15,7 @@ export const mockSupabase = {
   order: vitest.fn().mockReturnThis(),
   range: vitest.fn().mockReturnThis(),
   single: vitest.fn().mockResolvedValue({}), // sample overrideable value
+  ilike: vitest.fn().mockReturnThis(),
   auth: {
     signInWithPassword: vitest.fn().mockImplementation(() => {
       return {

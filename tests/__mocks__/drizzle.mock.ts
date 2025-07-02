@@ -7,8 +7,11 @@ beforeEach(() => {
 export const mockNestedDrizzle = {
   insert: vitest.fn().mockReturnThis(),
   values: vitest.fn().mockReturnThis(),
-  // hardcoded for now
-  returning: vitest.fn().mockResolvedValue([{ inReimbursementNoteID: 1 }]),
+  returning: vitest.fn(),
+  then: vitest.fn().mockImplementation((onFulfilled) => {
+    onFulfilled(null);
+    return Promise.resolve(null);
+  }),
 };
 
 export const mockDrizzle = {

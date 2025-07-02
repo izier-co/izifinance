@@ -56,8 +56,12 @@ describe("DELETE /categories tests", () => {
   });
 
   test("DELETE with ID parameter", async () => {
+    const deletedPayload = {
+      categoryName: "abc",
+      categoryDescription: "def",
+    };
     mockSupabase.then.mockImplementation((onFulfilled) => {
-      onFulfilled({ data: null, error: null });
+      onFulfilled({ data: deletedPayload, error: null });
     });
     const idParam = "1";
     req.nextUrl.searchParams.append("id", idParam);
@@ -68,7 +72,10 @@ describe("DELETE /categories tests", () => {
       Number.parseInt(idParam)
     );
     expect(response.status).toBe(200);
-    expect(body).toEqual({ message: "Data Successfully Deleted!" });
+    expect(body).toEqual({
+      data: deletedPayload,
+      message: "Data Successfully Deleted!",
+    });
   });
 
   test("DELETE with ID parameter but there is an error", async () => {

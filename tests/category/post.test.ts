@@ -78,20 +78,32 @@ describe("POST /categories tests", () => {
       txCategoryName: mockPayload.txCategoryName,
       txCategoryDescription: null,
     };
+    mockSupabase.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: payload, error: null });
+    });
     const mockRequest = createMockRequestWithBody("POST", payload);
     const response = await POST(mockRequest);
     const body = await response.json();
-    expect(response.status).toBe(200);
-    expect(body).toEqual({ message: "Data Successfully Inserted!" });
+    expect(response.status).toBe(201);
+    expect(body).toEqual({
+      data: payload,
+      message: "Data Successfully Inserted!",
+    });
   });
 
   test("POST normally", async () => {
     const mockRequest = createMockRequestWithBody("POST", mockPayload);
+    mockSupabase.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: mockPayload, error: null });
+    });
     const response = await POST(mockRequest);
     const body = await response.json();
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(mockSupabase.insert);
-    expect(body).toEqual({ message: "Data Successfully Inserted!" });
+    expect(body).toEqual({
+      data: mockPayload,
+      message: "Data Successfully Inserted!",
+    });
   });
 
   test("POST normally but with error in database", async () => {

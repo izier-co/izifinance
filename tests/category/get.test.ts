@@ -98,11 +98,11 @@ describe("GET /categories tests", () => {
     // checks if within the eq, lt and gt chain
     // contains the desired parameters (order doesn't matter)
 
-    const eqCalls = mockSupabase.eq.mock.calls;
+    const ilikeCalls = mockSupabase.ilike.mock.calls;
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
-    const hasExpectedCall = eqCalls.some(
+    const hasExpectedCall = ilikeCalls.some(
       ([key, value]) => key === "txCategoryName" && value === "abc"
     );
     expect(hasExpectedCall).toBe(true);
