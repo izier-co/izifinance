@@ -44,14 +44,15 @@ export const GET = async (req: NextRequest) => {
 
   const query = supabase
     .from("m_category")
-    .select("*")
+    .select("*", { count: "exact" })
     .range(
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
     )
     .eq("boActive", true)
     .eq("boStatus", true);
-  if (params.name) { // case insensitive matching
+  if (params.name) {
+    // case insensitive matching
     query.ilike("txCategoryName", params.name);
   }
   if (params.isAlphabetical === true) {
@@ -78,10 +79,29 @@ export const GET = async (req: NextRequest) => {
     query.gt("daUpdatedAt", params.updatedAfter);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
+  let pageCount: number | null = null;
+  if (count) {
+    pageCount = Math.floor(count / paginationSize);
+  }
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ data }, { status: 200 });
+  return NextResponse.json(
+    {
+      data: data,
+      meta: {
+        isFirstPage: params.paginationPage === 1,
+        isLastPage: data.length < paginationSize,
+        dataCount: data.length,
+        totalDataCount: count,
+        pageCount: pageCount,
+        offset: (params.paginationPage - 1) * paginationSize,
+        pageNumber: params.paginationPage,
+        paginationSize: paginationSize,
+      },
+    },
+    { status: 200 }
+  );
 };
 
 export const POST = async (req: NextRequest) => {

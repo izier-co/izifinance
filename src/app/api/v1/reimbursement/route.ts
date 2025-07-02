@@ -84,7 +84,7 @@ export const GET = async (req: NextRequest) => {
   }
   const query = supabase
     .from("reimbursement_notes")
-    .select(tableQueryString)
+    .select(tableQueryString, { count: "exact" })
     .range(
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
@@ -138,10 +138,31 @@ export const GET = async (req: NextRequest) => {
     query.gt("daUpdatedAt", params.updatedAfter);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
+  let pageCount: number | null = null;
+  if (count) {
+    pageCount = Math.floor(count / paginationSize);
+  }
+
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ data }, { status: 200 });
+  // TODO : pagination fields like isFirst, isLast, pageNum, and paginationSize
+  return NextResponse.json(
+    {
+      data: data,
+      meta: {
+        isFirstPage: params.paginationPage === 1,
+        isLastPage: data.length < paginationSize,
+        dataCount: data.length,
+        totalDataCount: count,
+        pageCount: pageCount,
+        offset: (params.paginationPage - 1) * paginationSize,
+        pageNumber: params.paginationPage,
+        paginationSize: paginationSize,
+      },
+    },
+    { status: 200 }
+  );
 };
 
 export const POST = async (req: NextRequest) => {
@@ -211,9 +232,6 @@ export const POST = async (req: NextRequest) => {
           txChangeReason: noteItem.txChangeReason,
         })
         .returning();
-      console.log("parent data");
-      console.log(insertedParentData);
-        
       const idForKey = insertedParentData[0].inReimbursementNoteID;
       returnedParentData = insertedParentData[0];
 
