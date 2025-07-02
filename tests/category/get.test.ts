@@ -1,6 +1,6 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
-import { mockSupabase } from "../__mocks__/supabase.mock";
+import { mockSupabase, testingGlobalVars } from "../__mocks__/supabase.mock";
 import { GET } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
 import { AuthError } from "@supabase/supabase-js";
@@ -87,6 +87,10 @@ describe("GET /categories tests", () => {
 
     const response = await GET(req);
 
+    expect(mockSupabase.select).toHaveBeenCalledWith("*", {
+      count: "exact",
+    });
+
     expect(mockSupabase.range).toHaveBeenCalledWith(
       (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize),
       Number.parseInt(pageIDStr) * Number.parseInt(paginationSize)
@@ -122,6 +126,30 @@ describe("GET /categories tests", () => {
       );
       expect(found).toBe(true);
     }
+
+    const responseData = await response.json();
+    const responseMetadata = responseData["meta"];
+
+    expect(responseMetadata["isFirstPage"]).toBe(
+      Number.parseInt(pageIDStr) === 1
+    );
+    expect(responseMetadata["isLastPage"]).toBe(
+      responseMetadata["dataCount"] < Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["dataCount"]).toBe(responseData["data"].length);
+    expect(responseMetadata["totalDataCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT
+    );
+    expect(responseMetadata["pageCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT / Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["offset"]).toBe(
+      (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["pageNumber"]).toBe(Number.parseInt(pageIDStr));
+    expect(responseMetadata["paginationSize"]).toBe(
+      Number.parseInt(paginationSize)
+    );
 
     expect(response.status).toBe(200);
   });

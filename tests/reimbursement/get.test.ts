@@ -1,6 +1,6 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
-import { mockSupabase } from "../__mocks__/supabase.mock";
+import { mockSupabase, testingGlobalVars } from "../__mocks__/supabase.mock";
 import { mockDrizzle } from "../__mocks__/drizzle.mock";
 import { GET } from "@/app/api/v1/reimbursement/route";
 import { NextRequest } from "next/server";
@@ -34,7 +34,7 @@ const TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 const DAY_BEFORE_YESTERDAY = new Date(NOW - MILISECONDS_IN_DAY).toISOString();
 const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
-const testPageID = "2";
+const pageIDStr = "2";
 const testIDStr = "1";
 const paginationSize = "50";
 const testStatus = "Pending";
@@ -95,7 +95,8 @@ describe("GET /reimbursement tests", () => {
 
   test("GET lists without detail", async () => {
     const mockSearchParams = reqWithoutDetails.nextUrl.searchParams;
-    mockSearchParams.append("paginationPage", testPageID);
+    mockSearchParams.append("paginationPage", pageIDStr);
+    mockSearchParams.append("paginationSize", paginationSize);
     mockSearchParams.append("id", testIDStr);
     mockSearchParams.append("status", testStatus);
     mockSearchParams.append("bankTypeCode", testBankID);
@@ -107,13 +108,17 @@ describe("GET /reimbursement tests", () => {
     mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
     mockSearchParams.append("updatedAfter", DAY_BEFORE_YESTERDAY);
 
-    await GET(reqWithoutDetails);
+    const response = await GET(reqWithoutDetails);
 
     const eqCalls = mockSupabase.eq.mock.calls;
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
-    expect(mockSupabase.select).toHaveBeenCalledWith("*");
+    expect(response.status).toBe(200);
+
+    expect(mockSupabase.select).toHaveBeenCalledWith("*", {
+      count: "exact",
+    });
 
     for (const [expectedKey, expectedValue] of expectedEqCalls) {
       const found = eqCalls.some(
@@ -138,11 +143,34 @@ describe("GET /reimbursement tests", () => {
       );
       expect(found).toBe(true);
     }
+    const responseData = await response.json();
+    const responseMetadata = responseData["meta"];
+
+    expect(responseMetadata["isFirstPage"]).toBe(
+      Number.parseInt(testBankID) === 1
+    );
+    expect(responseMetadata["isLastPage"]).toBe(
+      responseMetadata["dataCount"] < Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["dataCount"]).toBe(responseData["data"].length);
+    expect(responseMetadata["totalDataCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT
+    );
+    expect(responseMetadata["pageCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT / Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["offset"]).toBe(
+      (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["pageNumber"]).toBe(Number.parseInt(pageIDStr));
+    expect(responseMetadata["paginationSize"]).toBe(
+      Number.parseInt(paginationSize)
+    );
   });
 
   test("GET a list with detail", async () => {
     const mockSearchParams = reqWithDetails.nextUrl.searchParams;
-    mockSearchParams.append("paginationPage", testPageID);
+    mockSearchParams.append("paginationPage", pageIDStr);
     mockSearchParams.append("paginationSize", paginationSize);
     mockSearchParams.append("id", testIDStr);
     mockSearchParams.append("status", testStatus);
@@ -155,19 +183,24 @@ describe("GET /reimbursement tests", () => {
     mockSearchParams.append("updatedBefore", DAY_AFTER_TOMORROW);
     mockSearchParams.append("updatedAfter", DAY_BEFORE_YESTERDAY);
 
-    await GET(reqWithDetails);
+    const response = await GET(reqWithDetails);
 
     const eqCalls = mockSupabase.eq.mock.calls;
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
+    expect(response.status).toBe(200);
+
     expect(mockSupabase.range).toHaveBeenCalledWith(
-      (Number.parseInt(testPageID) - 1) * Number.parseInt(paginationSize),
-      Number.parseInt(testPageID) * Number.parseInt(paginationSize)
+      (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize),
+      Number.parseInt(pageIDStr) * Number.parseInt(paginationSize)
     );
 
     expect(mockSupabase.select).toHaveBeenCalledWith(
-      "*, reimbursement_items(*)"
+      "*, reimbursement_items(*)",
+      {
+        count: "exact",
+      }
     );
 
     for (const [expectedKey, expectedValue] of expectedEqCalls) {
@@ -193,8 +226,31 @@ describe("GET /reimbursement tests", () => {
       );
       expect(found).toBe(true);
     }
-  });
 
+    const responseData = await response.json();
+    const responseMetadata = responseData["meta"];
+
+    expect(responseMetadata["isFirstPage"]).toBe(
+      Number.parseInt(pageIDStr) === 1
+    );
+    expect(responseMetadata["isLastPage"]).toBe(
+      responseMetadata["dataCount"] < Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["dataCount"]).toBe(responseData["data"].length);
+    expect(responseMetadata["totalDataCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT
+    );
+    expect(responseMetadata["pageCount"]).toBe(
+      testingGlobalVars.MOCK_COUNT / Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["offset"]).toBe(
+      (Number.parseInt(pageIDStr) - 1) * Number.parseInt(paginationSize)
+    );
+    expect(responseMetadata["pageNumber"]).toBe(Number.parseInt(pageIDStr));
+    expect(responseMetadata["paginationSize"]).toBe(
+      Number.parseInt(paginationSize)
+    );
+  });
 
   test("GET normally but with error in database", async () => {
     const mockError = Error();
