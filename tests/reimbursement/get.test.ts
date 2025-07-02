@@ -40,6 +40,7 @@ const paginationSize = "50";
 const testStatus = "Pending";
 const testBankID = "123456";
 const testRecipientCode = "98765";
+const fieldsStr = "inReimbursementNoteID,inRecipientCompanyCode";
 
 // expected to become ISO string in API
 const expectedEqCalls = [
@@ -101,6 +102,7 @@ describe("GET /reimbursement tests", () => {
     mockSearchParams.append("status", testStatus);
     mockSearchParams.append("bankTypeCode", testBankID);
     mockSearchParams.append("recipientCompanyCode", testRecipientCode);
+    mockSearchParams.append("fields", fieldsStr);
 
     // uses timestamp as input
     mockSearchParams.append("createdBefore", TOMORROW);
@@ -116,7 +118,7 @@ describe("GET /reimbursement tests", () => {
 
     expect(response.status).toBe(200);
 
-    expect(mockSupabase.select).toHaveBeenCalledWith("*", {
+    expect(mockSupabase.select).toHaveBeenCalledWith(fieldsStr, {
       count: "exact",
     });
 
@@ -177,6 +179,7 @@ describe("GET /reimbursement tests", () => {
     mockSearchParams.append("bankTypeCode", testBankID);
     mockSearchParams.append("recipientCompanyCode", testRecipientCode);
     mockSearchParams.append("withNotes", "true");
+    mockSearchParams.append("fields", fieldsStr);
 
     mockSearchParams.append("createdBefore", TOMORROW);
     mockSearchParams.append("createdAfter", YESTERDAY);
@@ -197,7 +200,7 @@ describe("GET /reimbursement tests", () => {
     );
 
     expect(mockSupabase.select).toHaveBeenCalledWith(
-      "*, reimbursement_items(*)",
+      fieldsStr + ", reimbursement_items(*)",
       {
         count: "exact",
       }

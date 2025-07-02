@@ -27,6 +27,7 @@ const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
 const pageIDStr = "2";
 const paginationSize = "50";
+const fieldsStr = "txCategoryName,txCategoryDescription";
 
 // expected to become ISO string in API
 const expectedGtCalls = [
@@ -79,6 +80,7 @@ describe("GET /categories tests", () => {
     mockSearchParams.append("paginationSize", paginationSize);
     mockSearchParams.append("name", "abc");
     mockSearchParams.append("isAlphabetical", "true");
+    mockSearchParams.append("fields", fieldsStr);
 
     mockSearchParams.append("createdBefore", TOMORROW);
     mockSearchParams.append("createdAfter", YESTERDAY);
@@ -87,7 +89,7 @@ describe("GET /categories tests", () => {
 
     const response = await GET(req);
 
-    expect(mockSupabase.select).toHaveBeenCalledWith("*", {
+    expect(mockSupabase.select).toHaveBeenCalledWith(fieldsStr, {
       count: "exact",
     });
 
