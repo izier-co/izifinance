@@ -52,7 +52,7 @@ export const GET = async (req: NextRequest) => {
     .eq("boActive", true)
     .eq("boStatus", true);
   if (params.name) {
-    query.eq("txCategoryName", params.name);
+    query.ilike("txCategoryName", params.name);
   }
   if (params.isAlphabetical === true) {
     query.order("txCategoryName", {
@@ -108,15 +108,20 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("m_category")
-    .insert(categoryModel.data);
+    .insert(categoryModel.data)
+    .select();
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({
-    message: "Data Successfully Inserted!",
-  });
+  return NextResponse.json(
+    {
+      message: "Data Successfully Inserted!",
+      data: data,
+    },
+    { status: 201 }
+  );
 };
 
 export const DELETE = async (req: NextRequest) => {
@@ -131,14 +136,17 @@ export const DELETE = async (req: NextRequest) => {
       { status: 400 }
     );
   const id = Number.parseInt(idParam);
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("m_category")
     .update({ boActive: false, boStatus: false })
-    .eq("inCategoryID", id);
+    .eq("inCategoryID", id)
+    .select();
+
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({
     message: "Data Successfully Deleted!",
+    data: data,
   });
 };

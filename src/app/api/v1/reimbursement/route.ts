@@ -54,6 +54,8 @@ type ReimbursementItems = {
   inCategoryID: number;
 };
 
+type ReturnedData = Record<string, number | string>;
+
 export const GET = async (req: NextRequest) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
@@ -193,9 +195,11 @@ export const POST = async (req: NextRequest) => {
       items.push(itemModel.data);
     }
   }
+  let returnedParentData = {};
+  const returnedChildData: Array<ReturnedData> = [];
   try {
     await db.transaction(async (trx) => {
-      const insertedID = await trx
+      const insertedParentData = await trx
         .insert(reimbursementNotesInDtDwh)
         .values({
           txStatus: noteItem.txStatus,
@@ -206,24 +210,31 @@ export const POST = async (req: NextRequest) => {
           txBankAccountCode: noteItem.txBankAccountCode,
           txChangeReason: noteItem.txChangeReason,
         })
-        .returning({
-          inReimbursementNoteID:
-            reimbursementNotesInDtDwh.inReimbursementNoteID,
-        });
-      const idForKey = insertedID[0].inReimbursementNoteID;
+        .returning();
+      console.log("parent data");
+      console.log(insertedParentData);
+        
+      const idForKey = insertedParentData[0].inReimbursementNoteID;
+      returnedParentData = insertedParentData[0];
+
       for (const item of items) {
-        await trx.insert(reimbursementItemsInDtDwh).values({
-          inReimbursementNoteID: idForKey,
-          txName: item.txName,
-          inQuantity: item.inQuantity,
-          deIndividualPrice: item.deIndividualPrice.toFixed(2),
-          deTotalPrice: item.deTotalPrice.toFixed(2),
-          txCurrency: item.txCurrency,
-          inCategoryID: item.inCategoryID,
-        });
+        const insertedChildData = await trx
+          .insert(reimbursementItemsInDtDwh)
+          .values({
+            inReimbursementNoteID: idForKey,
+            txName: item.txName,
+            inQuantity: item.inQuantity,
+            deIndividualPrice: item.deIndividualPrice.toFixed(2),
+            deTotalPrice: item.deTotalPrice.toFixed(2),
+            txCurrency: item.txCurrency,
+            inCategoryID: item.inCategoryID,
+          })
+          .returning();
+        returnedChildData.push(insertedChildData[0]);
       }
     });
   } catch (error) {
+    // console.log(error);
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }
@@ -231,7 +242,14 @@ export const POST = async (req: NextRequest) => {
   } finally {
     // TODO : handle something regarding to logging
   }
-  return NextResponse.json({
-    message: "Data Successfully Inserted!",
-  });
+  return NextResponse.json(
+    {
+      message: "Data Successfully Inserted!",
+      data: {
+        ...returnedParentData,
+        reimbursement_items: returnedChildData,
+      },
+    },
+    { status: 201 }
+  );
 };

@@ -14,15 +14,17 @@ export const PUT = async (req: NextRequest) => {
       { status: 400 }
     );
   const id = Number.parseInt(idParam);
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("reimbursement_notes")
     .update({ txStatus: "Void", daUpdatedAt: new Date().toISOString() })
-    .eq("inReimbursementNoteID", id);
+    .eq("inReimbursementNoteID", id)
+    .select();
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({
     message: "Data Successfully Updated!",
+    data: data,
   });
 };
