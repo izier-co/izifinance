@@ -51,7 +51,7 @@ export const GET = async (req: NextRequest) => {
     )
     .eq("boActive", true)
     .eq("boStatus", true);
-  if (params.name) {
+  if (params.name) { // case insensitive matching
     query.ilike("txCategoryName", params.name);
   }
   if (params.isAlphabetical === true) {
