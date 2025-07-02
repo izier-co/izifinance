@@ -15,6 +15,7 @@ const getRequestParams = z.object({
   paginationSize: z.coerce.number().optional(),
   name: z.string().optional(),
   isAlphabetical: z.coerce.boolean().optional(),
+  fields: z.string().optional(),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
   updatedBefore: z.string().datetime().optional(),
@@ -41,10 +42,15 @@ export const GET = async (req: NextRequest) => {
   if (params.paginationSize) {
     paginationSize = params.paginationSize;
   }
+  let tableFields = "*";
+
+  if (params.fields) {
+    tableFields = params.fields;
+  }
 
   const query = supabase
     .from("m_category")
-    .select("*", { count: "exact" })
+    .select(tableFields, { count: "exact" })
     .range(
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
