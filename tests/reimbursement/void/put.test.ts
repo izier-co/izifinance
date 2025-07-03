@@ -22,10 +22,54 @@ beforeEach(() => {
   vitest.clearAllMocks();
 });
 
+// separation to not pollute the original request
 const req = new NextRequest("localhost:3000");
+const reqWithParams = new NextRequest("localhost:3000");
 const idParam = "1";
 
-describe("PUT /reimbursement tests", () => {
+const mockResponseObject = {
+  uiReimbursementID: "some-id",
+  daCreatedAt: new Date().toISOString(),
+  daUpdatedAt: new Date().toISOString(),
+  inReimbursementNoteID: 123,
+  txStatus: "Void",
+  txNotes: "Mock Reason",
+  txRecipientAccount: "1234567890",
+  inBankTypeCode: 1,
+  inRecipientCompanyCode: 1,
+  txBankAccountCode: "12345678901234567890",
+  txChangeReason: null,
+};
+
+describe("PUT /reimbursement success cases", () => {
+  test("PUT with ID parameter", async () => {
+    vitest.useFakeTimers();
+    vitest.setSystemTime(new Date()); // fixes the time
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
+      onFulfilled({ data: mockResponseObject, error: null });
+    });
+    reqWithParams.nextUrl.searchParams.append("id", idParam);
+    const response = await PUT(reqWithParams);
+    const body = await response.json();
+    expect(mockSupabase.update).toHaveBeenCalledWith({
+      txStatus: "Void",
+      daUpdatedAt: new Date().toISOString(),
+    });
+    expect(mockSupabase.eq).toHaveBeenCalledWith(
+      "inReimbursementNoteID",
+      Number.parseInt(idParam)
+    );
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      message: "Data Successfully Updated!",
+      data: mockResponseObject,
+    });
+
+    vitest.useRealTimers();
+  });
+});
+
+describe("PUT /reimbursement failure cases", () => {
   test("PUT without authorization", async () => {
     mockSupabase.auth.getSession.mockResolvedValueOnce({
       data: {
@@ -63,32 +107,9 @@ describe("PUT /reimbursement tests", () => {
     });
   });
 
-  test("PUT with ID parameter", async () => {
-    vitest.useFakeTimers();
-    vitest.setSystemTime(new Date()); // fixes the time
-    mockSupabase.then.mockImplementation((onFulfilled) => {
-      onFulfilled({ data: {}, error: null });
-    });
-    req.nextUrl.searchParams.append("id", idParam);
-    const response = await PUT(req);
-    const body = await response.json();
-    expect(mockSupabase.update).toHaveBeenCalledWith({
-      txStatus: "Void",
-      daUpdatedAt: new Date().toISOString(),
-    });
-    expect(mockSupabase.eq).toHaveBeenCalledWith(
-      "inReimbursementNoteID",
-      Number.parseInt(idParam)
-    );
-    expect(response.status).toBe(200);
-    expect(body).toEqual({ message: "Data Successfully Updated!", data: {} });
-
-    vitest.useRealTimers();
-  });
-
   test("PUT with ID parameter but there is an error", async () => {
     const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     req.nextUrl.searchParams.append("id", idParam);
