@@ -11,6 +11,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
     "@upstash/ratelimit": "^2.0.5",
     "@vercel/kv": "^3.0.0",
