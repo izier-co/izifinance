@@ -26,9 +26,29 @@ beforeEach(() => {
 const url = "localhost:3000";
 const req = new NextRequest(url);
 
-// makes properties deleteable with the record type
+// optional properties for deletion purposes
+type ReimbursementPayload = {
+  inReimbursementNoteID: number;
+  txStatus?: string;
+  txNotes: string;
+  txRecipientAccount: string;
+  inBankTypeCode: number;
+  inRecipientCompanyCode: number;
+  txBankAccountCode: string;
+  txChangeReason: string;
+  reimbursement_items: Array<ReimbursementItems>;
+};
 
-const reimbursementPayload: Record<string, any> = {
+type ReimbursementItems = {
+  txName?: string;
+  inQuantity: number;
+  deIndividualPrice: number;
+  deTotalPrice: number;
+  txCurrency: string;
+  inCategoryID: number;
+};
+
+const reimbursementPayload: ReimbursementPayload = {
   inReimbursementNoteID: 1,
   txStatus: "Pending",
   txNotes: "",
@@ -57,7 +77,63 @@ const reimbursementPayload: Record<string, any> = {
   ],
 };
 
-describe("POST /without parameters tests", () => {
+describe("POST /reimbursement success cases", () => {
+  test("POST with correct data", async () => {
+    const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
+
+    // simulating the returned object as an array
+    mockNestedDrizzle.returning
+      .mockResolvedValueOnce([reimbursementPayload])
+      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[0]])
+      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[1]]);
+
+    const response = await POST(mockRequest);
+    const body = await response.json();
+    const reimbursementItemsArray = reimbursementPayload.reimbursement_items;
+
+    expect(mockDrizzle.transaction).toHaveBeenCalled();
+    expect(mockNestedDrizzle.insert).toHaveBeenCalledTimes(
+      1 + reimbursementItemsArray.length
+    );
+    expect(mockNestedDrizzle.values).toHaveBeenCalledTimes(
+      1 + reimbursementItemsArray.length
+    );
+    expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(1, {
+      txStatus: reimbursementPayload.txStatus,
+      txNotes: reimbursementPayload.txNotes,
+      txRecipientAccount: reimbursementPayload.txRecipientAccount,
+      inBankTypeCode: reimbursementPayload.inBankTypeCode,
+      inRecipientCompanyCode: reimbursementPayload.inRecipientCompanyCode,
+      txBankAccountCode: reimbursementPayload.txBankAccountCode,
+      txChangeReason: reimbursementPayload.txChangeReason,
+    });
+
+    const returnedObject =
+      await mockNestedDrizzle.returning.mock.results[0].value;
+    const returnedValue = returnedObject[0].inReimbursementNoteID;
+
+    for (let i = 0; i < reimbursementItemsArray.length; i++) {
+      // + 2 because the 1st one is for the reimbursement note
+      expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(i + 2, {
+        inReimbursementNoteID: returnedValue,
+        txName: reimbursementItemsArray[i].txName,
+        inQuantity: reimbursementItemsArray[i].inQuantity,
+        deIndividualPrice:
+          reimbursementItemsArray[i].deIndividualPrice.toFixed(2),
+        deTotalPrice: reimbursementItemsArray[i].deTotalPrice.toFixed(2),
+        txCurrency: reimbursementItemsArray[i].txCurrency,
+        inCategoryID: reimbursementItemsArray[i].inCategoryID,
+      });
+    }
+    expect(response.status).toBe(201);
+    expect(body).toEqual({
+      data: reimbursementPayload,
+      message: "Data Successfully Inserted!",
+    });
+  });
+});
+
+describe("POST /reimbursement failure cases", () => {
   test("POST without authorization", async () => {
     mockSupabase.auth.getSession.mockResolvedValueOnce({
       data: {
@@ -107,8 +183,9 @@ describe("POST /without parameters tests", () => {
   });
 
   test("POST without reimbursement items", async () => {
-    const payloadWithoutItems = structuredClone(reimbursementPayload);
-    delete payloadWithoutItems.reimbursement_items;
+    const standardPayload = structuredClone(reimbursementPayload);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { reimbursement_items, ...payloadWithoutItems } = standardPayload;
     const mockRequest = createMockRequestWithBody("POST", payloadWithoutItems);
     const response = await POST(mockRequest);
     const body = await response.json();
@@ -134,54 +211,6 @@ describe("POST /without parameters tests", () => {
     const body = await response.json();
     expect(response.status).toBe(400);
     expect(body.error).toContain("400 Bad Request :");
-  });
-  test("POST with correct data", async () => {
-    const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
-    // simulating the returned object as an array
-    mockNestedDrizzle.returning
-      .mockResolvedValueOnce([reimbursementPayload])
-      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[0]])
-      .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[1]]);
-    const response = await POST(mockRequest);
-    const body = await response.json();
-    const reimbursementItemsArray = reimbursementPayload.reimbursement_items;
-
-    expect(mockDrizzle.transaction).toHaveBeenCalled();
-    expect(mockNestedDrizzle.insert).toHaveBeenCalledTimes(
-      1 + reimbursementItemsArray.length
-    );
-    expect(mockNestedDrizzle.values).toHaveBeenCalledTimes(
-      1 + reimbursementItemsArray.length
-    );
-    expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(1, {
-      txStatus: reimbursementPayload.txStatus,
-      txNotes: reimbursementPayload.txNotes,
-      txRecipientAccount: reimbursementPayload.txRecipientAccount,
-      inBankTypeCode: reimbursementPayload.inBankTypeCode,
-      inRecipientCompanyCode: reimbursementPayload.inRecipientCompanyCode,
-      txBankAccountCode: reimbursementPayload.txBankAccountCode,
-      txChangeReason: reimbursementPayload.txChangeReason,
-    });
-    const returnedObject =
-      await mockNestedDrizzle.returning.mock.results[0].value;
-    const returnedValue = returnedObject[0].inReimbursementNoteID;
-    for (let i = 0; i < reimbursementItemsArray.length; i++) {
-      expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(i + 2, {
-        inReimbursementNoteID: returnedValue,
-        txName: reimbursementItemsArray[i].txName,
-        inQuantity: reimbursementItemsArray[i].inQuantity,
-        deIndividualPrice:
-          reimbursementItemsArray[i].deIndividualPrice.toFixed(2),
-        deTotalPrice: reimbursementItemsArray[i].deTotalPrice.toFixed(2),
-        txCurrency: reimbursementItemsArray[i].txCurrency,
-        inCategoryID: reimbursementItemsArray[i].inCategoryID,
-      });
-    }
-    expect(response.status).toBe(201);
-    expect(body).toEqual({
-      data: reimbursementPayload,
-      message: "Data Successfully Inserted!",
-    });
   });
   test("POST with correct data but with error in database", async () => {
     mockDrizzle.transaction.mockImplementation(() => {
