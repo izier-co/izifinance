@@ -104,27 +104,23 @@ describe("GET /reimbursement success cases", () => {
     const response = await GET(reqWithoutDetails);
 
     const responseData = await response.json();
-    const responseMetadata = responseData["meta"];
+    const metadata = responseData["meta"];
 
     expect(response.status).toBe(200);
-    expect(responseMetadata["isFirstPage"]).toBe(urlParams.pageIDNum === 1);
-    expect(responseMetadata["isLastPage"]).toBe(
-      responseMetadata["dataCount"] < urlParams.paginationSizeNum
+    expect(metadata["isFirstPage"]).toBe(urlParams.pageIDNum === 1);
+    expect(metadata["isLastPage"]).toBe(
+      metadata["dataCount"] < urlParams.paginationSizeNum
     );
-    expect(responseMetadata["dataCount"]).toBe(responseData["data"].length);
-    expect(responseMetadata["totalDataCount"]).toBe(
-      testingGlobalVars.MOCK_COUNT
-    );
-    expect(responseMetadata["pageCount"]).toBe(
+    expect(metadata["dataCount"]).toBe(responseData["data"].length);
+    expect(metadata["totalDataCount"]).toBe(testingGlobalVars.MOCK_COUNT);
+    expect(metadata["pageCount"]).toBe(
       testingGlobalVars.MOCK_COUNT / urlParams.paginationSizeNum
     );
-    expect(responseMetadata["offset"]).toBe(
+    expect(metadata["offset"]).toBe(
       (urlParams.pageIDNum - 1) * urlParams.paginationSizeNum
     );
-    expect(responseMetadata["pageNumber"]).toBe(urlParams.pageIDNum);
-    expect(responseMetadata["paginationSize"]).toBe(
-      urlParams.paginationSizeNum
-    );
+    expect(metadata["pageNumber"]).toBe(urlParams.pageIDNum);
+    expect(metadata["paginationSize"]).toBe(urlParams.paginationSizeNum);
   });
 
   test("GET lists with correct Supabase function parameters", async () => {
