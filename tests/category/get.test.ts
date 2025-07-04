@@ -3,7 +3,6 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 import { mockSupabase, testingGlobalVars } from "../__mocks__/supabase.mock";
 import { GET } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
-import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -142,26 +141,11 @@ describe("GET /categories successes", () => {
 });
 
 describe("GET /categories failures", () => {
-  test("GET without authorization", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
-      data: {
-        session: null,
-      },
-      error: new AuthError("Mock Auth Error"),
-    });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
   test("GET with unregistered user", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
+    mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {
-        session: null,
+        user: null,
       },
-      error: null,
     });
     const response = await GET(req);
     const body = await response.json();

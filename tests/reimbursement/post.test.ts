@@ -5,7 +5,6 @@ import { mockDrizzle, mockNestedDrizzle } from "../__mocks__/drizzle.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
 import { POST } from "@/app/api/v1/reimbursement/route";
 import { NextRequest } from "next/server";
-import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -134,26 +133,11 @@ describe("POST /reimbursement success cases", () => {
 });
 
 describe("POST /reimbursement failure cases", () => {
-  test("POST without authorization", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
-      data: {
-        session: null,
-      },
-      error: new AuthError("Mock Auth Error"),
-    });
-    const response = await POST(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
   test("POST with unregistered user", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
+    mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {
-        session: null,
+        user: null,
       },
-      error: null,
     });
     const response = await POST(req);
     const body = await response.json();

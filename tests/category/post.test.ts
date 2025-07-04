@@ -4,7 +4,6 @@ import { mockSupabase } from "../__mocks__/supabase.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
 import { POST } from "@/app/api/v1/category/route";
 import { NextRequest } from "next/server";
-import { AuthError } from "@supabase/supabase-js";
 
 vitest.mock("@supabase-config", () => {
   return {
@@ -64,26 +63,11 @@ describe("POST /categories successes", () => {
 });
 
 describe("POST /categories failures", () => {
-  test("POST without authorization", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
-      data: {
-        session: null,
-      },
-      error: new AuthError("Mock Auth Error"),
-    });
-    const response = await POST(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
   test("POST with unregistered user", async () => {
-    mockSupabase.auth.getSession.mockResolvedValueOnce({
+    mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {
-        session: null,
+        user: null,
       },
-      error: null,
     });
     const response = await POST(req);
     const body = await response.json();

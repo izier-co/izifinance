@@ -20,6 +20,7 @@ export const testingGlobalVars = {
   emptyObject: {},
   emptyArray: [],
   authSessionData: { session: "abc" },
+  authUserData: { user: "abc" },
 };
 
 export const mockSupabase = {
@@ -40,6 +41,10 @@ export const mockSupabase = {
     }),
     getSession: vitest.fn().mockResolvedValue({
       data: testingGlobalVars.authSessionData,
+      error: null,
+    }),
+    getUser: vitest.fn().mockResolvedValue({
+      data: testingGlobalVars.authUserData,
       error: null,
     }),
     signOut: vitest.fn().mockResolvedValue(Promise.resolve({ error: null })),
