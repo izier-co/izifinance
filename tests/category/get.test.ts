@@ -1,7 +1,7 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase, testingGlobalVars } from "../__mocks__/supabase.mock";
-import { GET } from "@/app/api/v1/category/route";
+import { GET } from "@/app/api/v1/categories/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {

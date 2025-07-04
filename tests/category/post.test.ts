@@ -2,7 +2,7 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
-import { POST } from "@/app/api/v1/category/route";
+import { POST } from "@/app/api/v1/categories/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {

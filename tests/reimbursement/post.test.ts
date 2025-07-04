@@ -3,7 +3,7 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 import { mockSupabase } from "../__mocks__/supabase.mock";
 import { mockDrizzle, mockNestedDrizzle } from "../__mocks__/drizzle.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
-import { POST } from "@/app/api/v1/reimbursement/route";
+import { POST } from "@/app/api/v1/reimbursements/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {
@@ -76,7 +76,7 @@ const reimbursementPayload: ReimbursementPayload = {
   ],
 };
 
-describe("POST /reimbursement success cases", () => {
+describe("POST /reimbursements success cases", () => {
   test("POST with correct data", async () => {
     const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
 
@@ -132,7 +132,7 @@ describe("POST /reimbursement success cases", () => {
   });
 });
 
-describe("POST /reimbursement failure cases", () => {
+describe("POST /reimbursements failure cases", () => {
   test("POST with unregistered user", async () => {
     mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {

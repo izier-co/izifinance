@@ -2,7 +2,7 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase, testingGlobalVars } from "../__mocks__/supabase.mock";
 import { mockDrizzle } from "../__mocks__/drizzle.mock";
-import { GET } from "@/app/api/v1/reimbursement/route";
+import { GET } from "@/app/api/v1/reimbursements/route";
 import { NextRequest } from "next/server";
 import { afterEach } from "node:test";
 
@@ -93,7 +93,7 @@ const expectedLtCalls = [
   ["daUpdatedAt", DAY_AFTER_TOMORROW],
 ];
 
-describe("GET /reimbursement success cases", () => {
+describe("GET /reimbursements success cases", () => {
   test("GET without parameters", async () => {
     const response = await GET(req);
     expect(response.status).toBe(200);
@@ -173,7 +173,7 @@ describe("GET /reimbursement success cases", () => {
   });
 });
 
-describe("GET /reimbursement failure cases", () => {
+describe("GET /reimbursements failure cases", () => {
   test("GET with unregistered user", async () => {
     mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {

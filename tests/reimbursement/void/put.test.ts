@@ -2,7 +2,7 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../../__mocks__/supabase.mock";
 import { mockDrizzle } from "../../__mocks__/drizzle.mock";
-import { PUT } from "@/app/api/v1/reimbursement/void/route";
+import { PUT } from "@/app/api/v1/reimbursements/void/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {
@@ -40,7 +40,7 @@ const mockResponseObject = {
   txChangeReason: null,
 };
 
-describe("PUT /reimbursement success cases", () => {
+describe("PUT /reimbursements success cases", () => {
   test("PUT with ID parameter", async () => {
     vitest.useFakeTimers();
     vitest.setSystemTime(new Date()); // fixes the time
@@ -68,7 +68,7 @@ describe("PUT /reimbursement success cases", () => {
   });
 });
 
-describe("PUT /reimbursement failure cases", () => {
+describe("PUT /reimbursements failure cases", () => {
   test("PUT with unregistered user", async () => {
     mockSupabase.auth.getUser.mockResolvedValueOnce({
       data: {
