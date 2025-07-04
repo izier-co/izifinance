@@ -2,18 +2,15 @@ import { verifyAuthentication } from "@/lib/lib";
 import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 
-export const PUT = async (req: NextRequest) => {
+export const PUT = async (
+  req: NextRequest,
+  props: { params: Promise<{ id: number }> }
+) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
 
-  const params = req.nextUrl.searchParams;
-  const idParam = params.get("id");
-  if (idParam === null)
-    return NextResponse.json(
-      { error: "400 Bad Request : id parameter is required" },
-      { status: 400 }
-    );
-  const id = Number.parseInt(idParam);
+  const params = await props.params;
+  const id = params.id;
   const { data, error } = await supabase
     .from("reimbursement_notes")
     .update({ txStatus: "Void", daUpdatedAt: new Date().toISOString() })

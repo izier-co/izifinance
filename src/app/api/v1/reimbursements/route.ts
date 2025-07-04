@@ -79,10 +79,10 @@ export const GET = async (req: NextRequest) => {
     tableQueryString = params.fields;
   }
 
-  if (params.withNotes && params.id) {
-    // if details are requested (only when ID is given)
-    tableQueryString += ", reimbursement_items(*)";
-  }
+  // if (params.withNotes && params.id) {
+  //   // if details are requested (only when ID is given)
+  //   tableQueryString += ", reimbursement_items(*)";
+  // }
   let paginationSize = 100;
   if (params.paginationSize) {
     paginationSize = params.paginationSize;
@@ -95,9 +95,9 @@ export const GET = async (req: NextRequest) => {
       params.paginationPage * paginationSize
     );
 
-  if (params.id) {
-    query.eq("inReimbursementNoteID", params.id);
-  }
+  // if (params.id) {
+  //   query.eq("inReimbursementNoteID", params.id);
+  // }
 
   if (params.status) {
     switch (params.status) {
@@ -151,7 +151,6 @@ export const GET = async (req: NextRequest) => {
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  // TODO : pagination fields like isFirst, isLast, pageNum, and paginationSize
   return NextResponse.json(
     {
       data: data,

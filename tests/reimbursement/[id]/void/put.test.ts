@@ -2,7 +2,7 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 
 import { mockSupabase } from "../../__mocks__/supabase.mock";
 import { mockDrizzle } from "../../__mocks__/drizzle.mock";
-import { PUT } from "@/app/api/v1/reimbursements/void/route";
+import { PUT } from "@/app/api/v1/reimbursements/[id]/void/route";
 import { NextRequest } from "next/server";
 
 vitest.mock("@supabase-config", () => {
