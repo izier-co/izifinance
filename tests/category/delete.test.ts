@@ -16,8 +16,37 @@ beforeEach(() => {
 });
 
 const req = new NextRequest("localhost:3000");
+const reqWithParams = new NextRequest("localhost:3000");
 
-describe("DELETE /categories tests", () => {
+const mockPayload = {
+  txCategoryName: "Mock Category",
+  txCategoryDescription: "Mock Description",
+};
+
+describe("DELETE /categories successes", () => {
+  test("DELETE with ID parameter", async () => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
+      onFulfilled({ data: mockPayload, error: null });
+    });
+    const idParam = "1";
+    reqWithParams.nextUrl.searchParams.append("id", idParam);
+
+    const response = await DELETE(reqWithParams);
+    const body = await response.json();
+
+    expect(mockSupabase.eq).toHaveBeenCalledWith(
+      "inCategoryID",
+      Number.parseInt(idParam)
+    );
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      data: mockPayload,
+      message: "Data Successfully Deleted!",
+    });
+  });
+});
+
+describe("DELETE /categories failures", () => {
   test("DELETE without authorization", async () => {
     mockSupabase.auth.getSession.mockResolvedValueOnce({
       data: {
@@ -52,29 +81,6 @@ describe("DELETE /categories tests", () => {
     expect(response.status).toBe(400);
     expect(body).toEqual({
       error: "400 Bad Request : id parameter is required",
-    });
-  });
-
-  test("DELETE with ID parameter", async () => {
-    const deletedPayload = {
-      categoryName: "abc",
-      categoryDescription: "def",
-    };
-    mockSupabase.then.mockImplementation((onFulfilled) => {
-      onFulfilled({ data: deletedPayload, error: null });
-    });
-    const idParam = "1";
-    req.nextUrl.searchParams.append("id", idParam);
-    const response = await DELETE(req);
-    const body = await response.json();
-    expect(mockSupabase.eq).toHaveBeenCalledWith(
-      "inCategoryID",
-      Number.parseInt(idParam)
-    );
-    expect(response.status).toBe(200);
-    expect(body).toEqual({
-      data: deletedPayload,
-      message: "Data Successfully Deleted!",
     });
   });
 
