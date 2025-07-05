@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { supabase } from "@supabase-config";
-
 import { verifyAuthentication } from "@/lib/lib";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async (
+  req: NextRequest,
+  props: { params: Promise<{ id: number }> }
+) => {
   const unauthorizedResponse = await verifyAuthentication();
   if (unauthorizedResponse) return unauthorizedResponse;
 
   const searchParams = req.nextUrl.searchParams;
+  const params = await props.params;
   const fields = searchParams.get("fields");
   let tableFields = "*";
 
@@ -18,7 +20,8 @@ export const GET = async (req: NextRequest) => {
 
   const { data, error } = await supabase
     .from("m_category")
-    .select(tableFields, { count: "exact" })
+    .select(tableFields)
+    .eq("inCategoryID", params.id)
     .eq("boActive", true)
     .eq("boStatus", true);
 

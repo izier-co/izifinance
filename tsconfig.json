@@ -22,7 +22,8 @@
       "@/*": ["./src/*"],
       "@supabase-config": ["./src/app/api/supabase.config.ts"],
       "@drizzle-db": ["./drizzle-db.ts"],
-      "@lib/*": ["./lib/*"]
+      "@lib/*": ["./lib/*"],
+      "@mocks/*": ["./tests/__mocks__/*"]
     }
   },
   "include": [
@@ -31,7 +32,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tests/category/get.test.ts",
-    "tests/category/delete.test.ts",
+    "tests/category/[id]/delete.test.ts",
     "tests/category/post.test.ts",
     "tests/reimbursement/get.test.ts",
     "tests/reimbursement/post.test.ts",

@@ -27,12 +27,11 @@ export const GET = async (
 
   tableQueryString = `${noteFieldString}, reimbursement_items(${itemFieldString})`;
 
-  const query = supabase
+   const { data, error }  = await supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
     .eq("inReimbursementNoteID", urlParams.id);
 
-  const { data, error } = await query;
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });

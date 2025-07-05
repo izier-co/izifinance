@@ -21,10 +21,6 @@ const TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 const DAY_BEFORE_YESTERDAY = new Date(NOW - MILISECONDS_IN_DAY).toISOString();
 const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 
-// const pageIDStr = "2";
-// const paginationSize = "50";
-// const fieldsStr = "txCategoryName,txCategoryDescription";
-
 const urlParams = {
   pageIDStr: "2",
   pageIDNum: 2,

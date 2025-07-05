@@ -70,14 +70,8 @@ const req = new NextRequest(url);
 // use toString for generating URL params dynamically
 const urlParamString = new URLSearchParams(mockParams).toString();
 const reqWithoutDetails = new NextRequest(url + urlParamString);
-const urlParamsWithDetails = new URLSearchParams({
-  id: urlParams.reimbursementIDStr,
-  withNotes: "true",
-}).toString();
-const reqWithDetails = new NextRequest(url + urlParamsWithDetails);
 
 const expectedEqCalls = [
-  ["inReimbursementNoteID", urlParams.reimbursementIDNum],
   ["txStatus", urlParams.status],
   ["inBankTypeCode", urlParams.bankIDNum],
   ["inRecipientCompanyCode", urlParams.recipientCodeNum],
@@ -158,18 +152,6 @@ describe("GET /reimbursements success cases", () => {
       );
       expect(found).toBe(true);
     }
-  });
-
-  test("GET a list with detail given", async () => {
-    const response = await GET(reqWithDetails);
-
-    expect(response.status).toBe(200);
-    expect(mockSupabase.select).toHaveBeenCalledWith(
-      "*, reimbursement_items(*)",
-      {
-        count: "exact",
-      }
-    );
   });
 });
 
