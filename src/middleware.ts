@@ -1,6 +1,6 @@
 // import { Ratelimit } from "@upstash/ratelimit";
 import { NextRequest, NextResponse } from "next/server";
-import { updateSession } from "./app/api/supabase_middleware.config";
+import { handleSession } from "./app/api/supabase_middleware.config";
 
 // const ratelimiter = new Ratelimit({
 //   redis: kv,
@@ -16,8 +16,28 @@ export async function middleware(req: NextRequest) {
   //   return NextResponse.json({ message: "Too many requests" }, { status: 429 });
   // }
 
-  updateSession(req);
+  const { supabase } = await handleSession(req);
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isApiRoute = req.nextUrl.pathname.startsWith("/api");
+  const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
+
+  if (!user && !isAuthRoute) {
+    if (isApiRoute) {
+      console.log("handled here");
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      const url = req.nextUrl.clone();
+      url.pathname = "/api/v1/auth/login";
+      return NextResponse.redirect(url);
+    }
+  }
   return NextResponse.next();
 }
 
