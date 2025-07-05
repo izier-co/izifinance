@@ -1,14 +1,10 @@
 import { supabase } from "@supabase-config";
-import { verifyAuthentication } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
 ) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const searchParams = req.nextUrl.searchParams;
   const noteFields = searchParams.get("noteFields");
   const itemFields = searchParams.get("itemFields");
@@ -27,11 +23,10 @@ export const GET = async (
 
   tableQueryString = `${noteFieldString}, reimbursement_items(${itemFieldString})`;
 
-   const { data, error }  = await supabase
+  const { data, error } = await supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
     .eq("inReimbursementNoteID", urlParams.id);
-
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });

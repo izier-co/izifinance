@@ -10,8 +10,6 @@ import {
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
 
-import { verifyAuthentication } from "@/lib/lib";
-
 const reimbursementSchema = z.object({
   txStatus: z.string(),
   txNotes: z.string().nullable(),
@@ -58,9 +56,6 @@ type ReimbursementItems = {
 type ReturnedData = Record<string, number | string>;
 
 export const GET = async (req: NextRequest) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
   const paramModel = getRequestParams.safeParse(urlParams);
@@ -79,10 +74,6 @@ export const GET = async (req: NextRequest) => {
     tableQueryString = params.fields;
   }
 
-  // if (params.withNotes && params.id) {
-  //   // if details are requested (only when ID is given)
-  //   tableQueryString += ", reimbursement_items(*)";
-  // }
   let paginationSize = 100;
   if (params.paginationSize) {
     paginationSize = params.paginationSize;
@@ -94,10 +85,6 @@ export const GET = async (req: NextRequest) => {
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
     );
-
-  // if (params.id) {
-  //   query.eq("inReimbursementNoteID", params.id);
-  // }
 
   if (params.status) {
     switch (params.status) {
@@ -173,9 +160,6 @@ export const POST = async (req: NextRequest) => {
   // Expects JSON payload for reimbursement_notes table
   // with reimbursement_items field that contains the payload
   // of reimbursement_items in an array
-
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
 
   let body: Record<string, string> = {};
   try {
@@ -256,7 +240,6 @@ export const POST = async (req: NextRequest) => {
       }
     });
   } catch (error) {
-    // console.log(error);
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }

@@ -1,4 +1,3 @@
-import { verifyAuthentication } from "@/lib/lib";
 import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,9 +5,6 @@ export const PUT = async (
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
 ) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const params = await props.params;
   const id = params.id;
   const { data, error } = await supabase

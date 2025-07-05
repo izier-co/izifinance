@@ -1,14 +1,10 @@
 import { supabase } from "@supabase-config";
-import { verifyAuthentication } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
 ) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const searchParams = req.nextUrl.searchParams;
   const fields = searchParams.get("fields");
   const urlParams = await props.params;

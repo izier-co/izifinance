@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config";
 
 import { z } from "zod";
-import { verifyAuthentication } from "@/lib/lib";
 
 const categorySchema = z.object({
   txCategoryName: z.string(),
@@ -23,9 +22,6 @@ const getRequestParams = z.object({
 });
 
 export const GET = async (req: NextRequest) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
   const paramModel = getRequestParams.safeParse(urlParams);
@@ -111,9 +107,6 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   let body: Record<string, string> = {};
   try {
     body = await req.json();
@@ -149,30 +142,3 @@ export const POST = async (req: NextRequest) => {
     { status: 201 }
   );
 };
-
-// export const DELETE = async (req: NextRequest) => {
-//   const unauthorizedResponse = await verifyAuthentication();
-//   if (unauthorizedResponse) return unauthorizedResponse;
-
-//   const params = req.nextUrl.searchParams;
-//   const idParam = params.get("id");
-//   if (idParam === null)
-//     return NextResponse.json(
-//       { error: "400 Bad Request : id parameter is required" },
-//       { status: 400 }
-//     );
-//   const id = Number.parseInt(idParam);
-//   const { data, error } = await supabase
-//     .from("m_category")
-//     .update({ boActive: false, boStatus: false })
-//     .eq("inCategoryID", id)
-//     .select();
-
-//   if (error)
-//     return NextResponse.json({ error: error.message }, { status: 500 });
-
-//   return NextResponse.json({
-//     message: "Data Successfully Deleted!",
-//     data: data,
-//   });
-// };

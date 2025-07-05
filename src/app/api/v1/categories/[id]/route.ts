@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config";
-import { verifyAuthentication } from "@/lib/lib";
 
 export const GET = async (
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
 ) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const searchParams = req.nextUrl.searchParams;
   const params = await props.params;
   const fields = searchParams.get("fields");
@@ -40,9 +36,6 @@ export const DELETE = async (
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
 ) => {
-  const unauthorizedResponse = await verifyAuthentication();
-  if (unauthorizedResponse) return unauthorizedResponse;
-
   const params = await props.params;
   const idParam = params.id;
 
