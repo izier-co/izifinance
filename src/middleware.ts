@@ -27,11 +27,7 @@ export async function middleware(req: NextRequest) {
 
   if (!user && !isAuthRoute) {
     if (isApiRoute) {
-      console.log("handled here");
-      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     } else {
       const url = req.nextUrl.clone();
       url.pathname = "/api/v1/auth/login";
