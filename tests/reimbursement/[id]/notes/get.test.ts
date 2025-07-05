@@ -20,6 +20,8 @@ const mockProps = {
   params: Promise.resolve({ id: 1 }),
 };
 
+const mockError = Error();
+
 const noteFieldsName = "txStatus,txNotes";
 const itemFieldsName = "txName,inQuantity";
 let tableQueryString = "*, reimbursement_items(*)";
@@ -29,6 +31,7 @@ describe("GET /reimbursements/id successes", () => {
     const response = await GET(req, mockProps);
     expect(response.status).toBe(200);
   });
+
   test("GET with fields", async () => {
     req.nextUrl.searchParams.append("noteFields", noteFieldsName);
     req.nextUrl.searchParams.append("itemFields", itemFieldsName);
@@ -43,8 +46,7 @@ describe("GET /reimbursements/id successes", () => {
 
 describe("GET /reimbursements/id failures", () => {
   test("GET normally but with error in database", async () => {
-    const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     const response = await GET(req, mockProps);

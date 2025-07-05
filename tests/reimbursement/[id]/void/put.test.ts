@@ -25,6 +25,8 @@ const mockProps = {
   params: Promise.resolve({ id: 1 }),
 };
 
+const mockError = Error();
+
 const req = new NextRequest("localhost:3000");
 
 const mockResponseObject = {
@@ -88,7 +90,6 @@ describe("PUT /reimbursements failure cases", () => {
   });
 
   test("PUT but there is an error in the database", async () => {
-    const mockError = Error();
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });

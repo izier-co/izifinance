@@ -20,6 +20,8 @@ const mockProps = {
   params: Promise.resolve({ id: 1 }),
 };
 
+const mockError = Error();
+
 const fieldsName = "txCategoryName,txCategoryDescription";
 
 describe("GET /categories/id successes", () => {
@@ -27,6 +29,7 @@ describe("GET /categories/id successes", () => {
     const response = await GET(req, mockProps);
     expect(response.status).toBe(200);
   });
+
   test("GET with fields", async () => {
     req.nextUrl.searchParams.append("fields", fieldsName);
     const response = await GET(req, mockProps);
@@ -37,8 +40,7 @@ describe("GET /categories/id successes", () => {
 
 describe("GET /categories/id failures", () => {
   test("GET normally but with error in database", async () => {
-    const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     const response = await GET(req, mockProps);

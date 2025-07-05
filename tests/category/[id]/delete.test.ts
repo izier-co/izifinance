@@ -22,6 +22,8 @@ const mockPayload = {
   txCategoryDescription: "Mock Description",
 };
 
+const mockError = Error();
+
 const mockProps = {
   params: Promise.resolve({ id: 1 }),
 };
@@ -61,8 +63,7 @@ describe("DELETE /categories failures", () => {
   });
 
   test("DELETE but there is an error", async () => {
-    const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     const response = await DELETE(req, mockProps);
