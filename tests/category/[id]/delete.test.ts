@@ -27,7 +27,7 @@ const mockProps = {
 };
 
 describe("DELETE /categories successes", () => {
-  test("DELETE with ID parameter", async () => {
+  test("DELETE normally", async () => {
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: mockPayload, error: null });
     });
