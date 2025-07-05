@@ -66,3 +66,7 @@ export const mockSupabase = {
     });
   }),
 };
+
+export const mockHandleSession = vitest
+  .fn()
+  .mockResolvedValue({ supabase: mockSupabase });
