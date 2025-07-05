@@ -36,8 +36,6 @@ const DAY_AFTER_TOMORROW = new Date(NOW + MILISECONDS_IN_DAY).toISOString();
 const urlParams = {
   pageIDStr: "2",
   pageIDNum: 2,
-  reimbursementIDStr: "1",
-  reimbursementIDNum: 1,
   paginationSizeStr: "50",
   paginationSizeNum: 50,
   status: "Pending",
@@ -46,13 +44,11 @@ const urlParams = {
   recipientCodeStr: "98765",
   recipientCodeNum: 98765,
   fieldsStr: "inReimbursementNoteID,inRecipientCompanyCode",
-  selectAllFieldsStr: "*",
 };
 
 const mockParams = {
   paginationPage: urlParams.pageIDStr,
   paginationSize: urlParams.paginationSizeStr,
-  id: urlParams.reimbursementIDStr,
   status: urlParams.status,
   bankTypeCode: urlParams.bankIDStr,
   recipientCompanyCode: urlParams.recipientCodeStr,
@@ -62,6 +58,8 @@ const mockParams = {
   updatedBefore: DAY_AFTER_TOMORROW,
   updatedAfter: DAY_BEFORE_YESTERDAY,
 };
+
+const mockError = Error();
 
 // question mark for easy concaternation
 const url = "localhost:3000?";
@@ -171,8 +169,7 @@ describe("GET /reimbursements failure cases", () => {
   });
 
   test("GET normally but with error in database", async () => {
-    const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     const response = await GET(req);

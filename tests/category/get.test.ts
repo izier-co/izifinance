@@ -50,7 +50,6 @@ const req = new NextRequest(url);
 const urlParamString = new URLSearchParams(mockParams).toString();
 const reqWithParams = new NextRequest(url + urlParamString);
 
-// expected to become ISO string in API
 const expectedGtCalls = [
   ["daCreatedAt", YESTERDAY],
   ["daUpdatedAt", DAY_BEFORE_YESTERDAY],
@@ -60,6 +59,8 @@ const expectedLtCalls = [
   ["daCreatedAt", TOMORROW],
   ["daUpdatedAt", DAY_AFTER_TOMORROW],
 ];
+
+const mockError = Error();
 
 describe("GET /categories successes", () => {
   test("GET without parameters", async () => {
@@ -152,8 +153,7 @@ describe("GET /categories failures", () => {
   });
 
   test("GET normally but with error in database", async () => {
-    const mockError = Error();
-    mockSupabase.then.mockImplementation((onFulfilled) => {
+    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
     const response = await GET(req);

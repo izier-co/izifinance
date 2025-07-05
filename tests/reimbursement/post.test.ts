@@ -27,7 +27,6 @@ const req = new NextRequest(url);
 
 // optional properties for deletion purposes
 type ReimbursementPayload = {
-  inReimbursementNoteID: number;
   txStatus?: string;
   txNotes: string;
   txRecipientAccount: string;
@@ -48,7 +47,6 @@ type ReimbursementItems = {
 };
 
 const reimbursementPayload: ReimbursementPayload = {
-  inReimbursementNoteID: 1,
   txStatus: "Pending",
   txNotes: "",
   txRecipientAccount: "0987654321",
@@ -107,9 +105,8 @@ describe("POST /reimbursements success cases", () => {
       txChangeReason: reimbursementPayload.txChangeReason,
     });
 
-    const returnedObject =
-      await mockNestedDrizzle.returning.mock.results[0].value;
-    const returnedValue = returnedObject[0].inReimbursementNoteID;
+    const returnedResults = mockNestedDrizzle.returning.mock.results[0];
+    const returnedValue = await returnedResults.value[0].inReimbursementNoteID;
 
     for (let i = 0; i < reimbursementItemsArray.length; i++) {
       // + 2 because the 1st one is for the reimbursement note
@@ -155,6 +152,7 @@ describe("POST /reimbursements failure cases", () => {
       error: "400 Bad Request : Invalid JSON Payload",
     });
   });
+
   test("POST with random JSON body", async () => {
     const randomPayload = {
       random: 123,
@@ -178,24 +176,29 @@ describe("POST /reimbursements failure cases", () => {
       error: "400 Bad Request : Invalid JSON Payload",
     });
   });
+
   test("POST with malformed reimbursement data", async () => {
     const malformedPayload = structuredClone(reimbursementPayload);
     delete malformedPayload.txStatus;
+
     const mockRequest = createMockRequestWithBody("POST", malformedPayload);
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(400);
     expect(body.error).toContain("400 Bad Request :");
   });
+
   test("POST with malformed reimbursement items", async () => {
     const malformedPayload = structuredClone(reimbursementPayload);
     delete malformedPayload.reimbursement_items[1].txName;
+    
     const mockRequest = createMockRequestWithBody("POST", malformedPayload);
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(400);
     expect(body.error).toContain("400 Bad Request :");
   });
+
   test("POST with correct data but with error in database", async () => {
     mockDrizzle.transaction.mockImplementation(() => {
       throw new Error();

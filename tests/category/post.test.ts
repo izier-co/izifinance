@@ -17,29 +17,33 @@ beforeEach(() => {
 
 const url = "localhost:3000";
 const req = new NextRequest(url);
+const mockError = Error();
 
 const mockPayload = {
   txCategoryName: "Mock Category",
   txCategoryDescription: "Mock Description",
 };
+const payloadWithoutDesc = {
+  txCategoryName: mockPayload.txCategoryName,
+  txCategoryDescription: null,
+};
+const payloadWithoutName = {
+  txCategoryDescription: mockPayload.txCategoryDescription,
+};
 
 describe("POST /categories successes", () => {
   test("POST without txCategoryDesciption", async () => {
-    const payload = {
-      txCategoryName: mockPayload.txCategoryName,
-      txCategoryDescription: null,
-    };
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
-      onFulfilled({ data: payload, error: null });
+      onFulfilled({ data: payloadWithoutDesc, error: null });
     });
 
-    const mockRequest = createMockRequestWithBody("POST", payload);
+    const mockRequest = createMockRequestWithBody("POST", payloadWithoutDesc);
     const response = await POST(mockRequest);
     const body = await response.json();
 
     expect(response.status).toBe(201);
     expect(body).toEqual({
-      data: payload,
+      data: payloadWithoutDesc,
       message: "Data Successfully Inserted!",
     });
   });
@@ -86,10 +90,7 @@ describe("POST /categories failures", () => {
   });
 
   test("POST without txCategoryName", async () => {
-    const payload = {
-      txCategoryDescription: mockPayload.txCategoryDescription,
-    };
-    const mockRequest = createMockRequestWithBody("POST", payload);
+    const mockRequest = createMockRequestWithBody("POST", payloadWithoutName);
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(400);
@@ -97,7 +98,6 @@ describe("POST /categories failures", () => {
   });
 
   test("POST normally but with error in database", async () => {
-    const mockError = Error();
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });
     });
