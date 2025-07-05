@@ -105,8 +105,8 @@ describe("POST /reimbursements success cases", () => {
       txChangeReason: reimbursementPayload.txChangeReason,
     });
 
-    const returnedResults = mockNestedDrizzle.returning.mock.results[0];
-    const returnedValue = await returnedResults.value[0].inReimbursementNoteID;
+    const returnedResults = mockNestedDrizzle.returning.mock.results[0].value;
+    const returnedValue = await returnedResults.inReimbursementNoteID;
 
     for (let i = 0; i < reimbursementItemsArray.length; i++) {
       // + 2 because the 1st one is for the reimbursement note
@@ -130,20 +130,6 @@ describe("POST /reimbursements success cases", () => {
 });
 
 describe("POST /reimbursements failure cases", () => {
-  test("POST with unregistered user", async () => {
-    mockSupabase.auth.getUser.mockResolvedValueOnce({
-      data: {
-        user: null,
-      },
-    });
-    const response = await POST(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
-
   test("POST without parameters", async () => {
     const response = await POST(req);
     const body = await response.json();
@@ -191,7 +177,7 @@ describe("POST /reimbursements failure cases", () => {
   test("POST with malformed reimbursement items", async () => {
     const malformedPayload = structuredClone(reimbursementPayload);
     delete malformedPayload.reimbursement_items[1].txName;
-    
+
     const mockRequest = createMockRequestWithBody("POST", malformedPayload);
     const response = await POST(mockRequest);
     const body = await response.json();

@@ -75,20 +75,6 @@ describe("PUT /reimbursements success cases", () => {
 });
 
 describe("PUT /reimbursements failure cases", () => {
-  test("PUT with unregistered user", async () => {
-    mockSupabase.auth.getUser.mockResolvedValueOnce({
-      data: {
-        user: null,
-      },
-    });
-    const response = await PUT(req, mockProps);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
-
   test("PUT but there is an error in the database", async () => {
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });

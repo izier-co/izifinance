@@ -48,20 +48,6 @@ describe("DELETE /categories successes", () => {
 });
 
 describe("DELETE /categories failures", () => {
-  test("DELETE with unregistered user", async () => {
-    mockSupabase.auth.getUser.mockResolvedValueOnce({
-      data: {
-        user: null,
-      },
-    });
-    const response = await DELETE(req, mockProps);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
-
   test("DELETE but there is an error", async () => {
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });

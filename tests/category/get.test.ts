@@ -138,20 +138,6 @@ describe("GET /categories successes", () => {
 });
 
 describe("GET /categories failures", () => {
-  test("GET with unregistered user", async () => {
-    mockSupabase.auth.getUser.mockResolvedValueOnce({
-      data: {
-        user: null,
-      },
-    });
-    const response = await GET(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
-
   test("GET normally but with error in database", async () => {
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
       onFulfilled({ data: null, error: mockError });

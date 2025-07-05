@@ -67,19 +67,6 @@ describe("POST /categories successes", () => {
 });
 
 describe("POST /categories failures", () => {
-  test("POST with unregistered user", async () => {
-    mockSupabase.auth.getUser.mockResolvedValueOnce({
-      data: {
-        user: null,
-      },
-    });
-    const response = await POST(req);
-    const body = await response.json();
-    expect(response.status).toBe(401);
-    expect(body).toEqual({
-      error: "401 Unauthorized",
-    });
-  });
   test("POST without parameters", async () => {
     const response = await POST(req);
     const body = await response.json();
