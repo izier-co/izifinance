@@ -27,8 +27,10 @@ const urlParams = {
   paginationSizeStr: "50",
   paginationSizeNum: 50,
   nameStr: "abc",
-  fieldsStr: "inReimbursementNoteID,inRecipientCompanyCode",
+  fieldsStr: "txCategoryName,txDescription",
   isAlphabeticalStr: "true",
+  includeDeletedStr: "true",
+  includeDeletedBool: true,
   selectAllStr: "*",
 };
 
@@ -38,6 +40,7 @@ const mockParams = {
   fields: urlParams.fieldsStr,
   name: urlParams.nameStr,
   isAlphabetical: urlParams.isAlphabeticalStr,
+  includeDeleted: urlParams.includeDeletedStr,
   createdBefore: TOMORROW,
   createdAfter: YESTERDAY,
   updatedBefore: DAY_AFTER_TOMORROW,
@@ -49,6 +52,11 @@ const url = "localhost:3000?";
 const req = new NextRequest(url);
 const urlParamString = new URLSearchParams(mockParams).toString();
 const reqWithParams = new NextRequest(url + urlParamString);
+
+const expectedEqCalls = [
+  ["boActive", urlParams.includeDeletedBool],
+  ["boStatus", urlParams.includeDeletedBool],
+];
 
 const expectedGtCalls = [
   ["daCreatedAt", YESTERDAY],
@@ -111,6 +119,7 @@ describe("GET /categories successes", () => {
     // contains the desired parameters (order doesn't matter)
 
     const ilikeCalls = mockSupabase.ilike.mock.calls;
+    const eqCalls = mockSupabase.eq.mock.calls;
     const gtCalls = mockSupabase.gt.mock.calls;
     const ltCalls = mockSupabase.lt.mock.calls;
 
@@ -118,6 +127,14 @@ describe("GET /categories successes", () => {
       ([key, value]) => key === "txCategoryName" && value === "abc"
     );
     expect(hasExpectedCall).toBe(true);
+
+    for (const [expectedKey, expectedValue] of expectedEqCalls) {
+      const found = eqCalls.some(
+        ([actualKey, actualValue]) =>
+          actualKey === expectedKey && actualValue === expectedValue
+      );
+      expect(found).toBe(true);
+    }
 
     for (const [expectedKey, expectedValue] of expectedGtCalls) {
       const found = gtCalls.some(

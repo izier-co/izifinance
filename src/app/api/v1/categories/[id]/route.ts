@@ -17,9 +17,7 @@ export const GET = async (
   const { data, error } = await supabase
     .from("m_category")
     .select(tableFields)
-    .eq("inCategoryID", params.id)
-    .eq("boActive", true)
-    .eq("boStatus", true);
+    .eq("inCategoryID", params.id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
