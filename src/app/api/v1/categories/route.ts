@@ -3,15 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config";
 
 import { z } from "zod";
+import constValues from "@/lib/constants";
 
 const categorySchema = z.object({
-  txCategoryName: z.string(),
-  txCategoryDescription: z.string().nullable(),
+  txCategoryName: z.string().max(constValues.maxShortTextLength),
+  txCategoryDescription: z.string().max(constValues.maxTextLength).nullable(),
 });
 
 const getRequestParams = z.object({
-  paginationPage: z.coerce.number().default(1),
-  paginationSize: z.coerce.number().optional(),
+  paginationPage: z.coerce.number().positive().default(1),
+  paginationSize: z.coerce.number().positive().min(1).optional(),
   name: z.string().optional(),
   isAlphabetical: z.coerce.boolean().optional(),
   fields: z.string().optional(),

@@ -9,33 +9,40 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
+import { isValidInt } from "@/lib/lib";
+import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
-  txStatus: z.string(),
-  txNotes: z.string().nullable(),
-  txRecipientAccount: z.string(),
-  inBankTypeCode: z.number().int(),
-  inRecipientCompanyCode: z.number().int(),
-  txBankAccountCode: z.string(),
-  txChangeReason: z.string(),
+  txNotes: z.string().max(constValues.maxTextLength).nullable(),
+  txRecipientAccount: z
+    .string()
+    .max(constValues.maxBankCodeLength)
+    .refine((val) => !isValidInt(val)),
+  inBankTypeCode: z.number().positive().int(),
+  inRecipientCompanyCode: z.number().positive().int(),
+  txBankAccountCode: z
+    .string()
+    .max(constValues.maxBankCodeLength)
+    .refine((val) => !isValidInt(val)),
+  txChangeReason: z.string().max(constValues.maxTextLength).nullable(),
 });
 
 const reimbursementItemSchema = z.object({
-  txName: z.string(),
-  inQuantity: z.number().int(),
-  deIndividualPrice: z.number(),
-  deTotalPrice: z.number(),
-  txCurrency: z.string(),
-  inCategoryID: z.number().int(),
+  txName: z.string().max(constValues.maxTextLength),
+  inQuantity: z.number().positive().int(),
+  deIndividualPrice: z.number().positive().int(),
+  deTotalPrice: z.number().positive().int(),
+  txCurrency: z.string().max(constValues.maxTextLength),
+  inCategoryID: z.number().positive().int(),
 });
 
 const getRequestParams = z.object({
-  paginationPage: z.coerce.number().default(1),
-  paginationSize: z.coerce.number().optional(),
-  id: z.coerce.number().optional(),
+  paginationPage: z.coerce.number().positive().default(1),
+  paginationSize: z.coerce.number().positive().min(1).optional(),
+  id: z.coerce.number().positive().optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
-  bankTypeCode: z.coerce.number().optional(),
-  recipientCompanyCode: z.coerce.number().optional(),
+  bankTypeCode: z.coerce.number().positive().optional(),
+  recipientCompanyCode: z.coerce.number().positive().optional(),
   withNotes: z.coerce.boolean().default(false),
   fields: z.string().optional(),
   createdBefore: z.string().datetime().optional(),

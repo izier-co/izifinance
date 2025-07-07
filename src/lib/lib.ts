@@ -10,3 +10,7 @@ export async function verifyAuthentication(): Promise<NextResponse<unknown> | nu
   }
   return null;
 }
+
+export function isValidInt(str: string): boolean {
+  return !isNaN(Number.parseInt(str));
+}
