@@ -44,14 +44,20 @@ const reimbursementItemSchema = z.object({
     .string()
     .max(constValues.maxTextLength)
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
   inQuantity: z.number().positive().int(),
   deIndividualPrice: z.number().positive().int(),
   deTotalPrice: z.number().positive().int(),
   txCurrency: z
     .string()
-    .length(3, "Must be Valid ISO 4217 string")
+    .length(
+      constValues.currencyCodeStringLength,
+      "Must be Valid ISO 4217 string"
+    )
     .transform((str) => str.toUpperCase()),
   inCategoryID: z.number().positive().int(),
 });
@@ -243,7 +249,7 @@ export const POST = async (req: NextRequest) => {
       const insertedParentData = await trx
         .insert(reimbursementNotesInDtDwh)
         .values({
-          txStatus: noteItem.txStatus,
+          txStatus: null,
           txNotes: noteItem.txNotes,
           txRecipientAccount: noteItem.txRecipientAccount,
           inBankTypeCode: noteItem.inBankTypeCode,
@@ -252,6 +258,7 @@ export const POST = async (req: NextRequest) => {
           txChangeReason: noteItem.txChangeReason,
         })
         .returning();
+      // type NoteInsert = InferModel<typeof reimbursementNotesInDtDwh, "insert">;
       const idForKey = insertedParentData[0].inReimbursementNoteID;
       returnedParentData = insertedParentData[0];
 
