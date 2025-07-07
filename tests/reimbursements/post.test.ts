@@ -74,6 +74,10 @@ const reimbursementPayload: ReimbursementPayload = {
   ],
 };
 
+const randomInvalidPayload = {
+  random: 123,
+};
+
 describe("POST /reimbursements success cases", () => {
   test("POST with correct data", async () => {
     const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
@@ -140,10 +144,7 @@ describe("POST /reimbursements failure cases", () => {
   });
 
   test("POST with random JSON body", async () => {
-    const randomPayload = {
-      random: 123,
-    };
-    const mockRequest = createMockRequestWithBody("POST", randomPayload);
+    const mockRequest = createMockRequestWithBody("POST", randomInvalidPayload);
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(400);
@@ -152,7 +153,6 @@ describe("POST /reimbursements failure cases", () => {
 
   test("POST without reimbursement items", async () => {
     const standardPayload = structuredClone(reimbursementPayload);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { reimbursement_items, ...payloadWithoutItems } = standardPayload;
     const mockRequest = createMockRequestWithBody("POST", payloadWithoutItems);
     const response = await POST(mockRequest);

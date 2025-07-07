@@ -240,6 +240,7 @@ export const POST = async (req: NextRequest) => {
       }
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }
