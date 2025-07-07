@@ -27,8 +27,8 @@ const req = new NextRequest(url);
 
 // optional properties for deletion purposes
 type ReimbursementPayload = {
-  txStatus?: string;
-  txNotes: string;
+  txStatus: string;
+  txNotes?: string;
   txRecipientAccount: string;
   inBankTypeCode: number;
   inRecipientCompanyCode: number;
@@ -165,7 +165,7 @@ describe("POST /reimbursements failure cases", () => {
 
   test("POST with malformed reimbursement data", async () => {
     const malformedPayload = structuredClone(reimbursementPayload);
-    delete malformedPayload.txStatus;
+    delete malformedPayload.txNotes;
 
     const mockRequest = createMockRequestWithBody("POST", malformedPayload);
     const response = await POST(mockRequest);
