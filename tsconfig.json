@@ -31,12 +31,12 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "tests/category/get.test.ts",
-    "tests/category/[id]/delete.test.ts",
-    "tests/category/post.test.ts",
-    "tests/reimbursement/get.test.ts",
-    "tests/reimbursement/post.test.ts",
-    "tests/reimbursement/void/put.test.ts"
+    "tests/categories/get.test.ts",
+    "tests/categories/[id]/delete.test.ts",
+    "tests/categories/post.test.ts",
+    "tests/reimbursements/get.test.ts",
+    "tests/reimbursements/post.test.ts",
+    "tests/reimbursements/void/put.test.ts"
   ],
   "exclude": ["node_modules"]
 }
