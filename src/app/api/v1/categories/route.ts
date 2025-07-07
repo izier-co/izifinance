@@ -6,8 +6,19 @@ import { z } from "zod";
 import constValues from "@/lib/constants";
 
 const categorySchema = z.object({
-  txCategoryName: z.string().max(constValues.maxShortTextLength),
-  txCategoryDescription: z.string().max(constValues.maxTextLength).nullable(),
+  txCategoryName: z
+    .string()
+    .max(constValues.maxShortTextLength)
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
+  txCategoryDescription: z
+    .string()
+    .max(constValues.maxTextLength)
+    .nullable()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
 });
 
 const getRequestParams = z.object({

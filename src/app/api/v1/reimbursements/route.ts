@@ -13,7 +13,13 @@ import { isValidInt } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
-  txNotes: z.string().max(constValues.maxTextLength).nullable(),
+  txNotes: z
+    .string()
+    .max(constValues.maxTextLength)
+    .nullable()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
   txRecipientAccount: z
     .string()
     .max(constValues.maxBankCodeLength)
@@ -24,15 +30,29 @@ const reimbursementSchema = z.object({
     .string()
     .max(constValues.maxBankCodeLength)
     .refine((val) => !isValidInt(val)),
-  txChangeReason: z.string().max(constValues.maxTextLength).nullable(),
+  txChangeReason: z
+    .string()
+    .max(constValues.maxTextLength)
+    .nullable()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
 });
 
 const reimbursementItemSchema = z.object({
-  txName: z.string().max(constValues.maxTextLength),
+  txName: z
+    .string()
+    .max(constValues.maxTextLength)
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
   inQuantity: z.number().positive().int(),
   deIndividualPrice: z.number().positive().int(),
   deTotalPrice: z.number().positive().int(),
-  txCurrency: z.string().max(constValues.maxTextLength),
+  txCurrency: z
+    .string()
+    .length(3, "Must be Valid ISO 4217 string")
+    .transform((str) => str.toUpperCase()),
   inCategoryID: z.number().positive().int(),
 });
 
@@ -44,7 +64,12 @@ const getRequestParams = z.object({
   bankTypeCode: z.coerce.number().positive().optional(),
   recipientCompanyCode: z.coerce.number().positive().optional(),
   withNotes: z.coerce.boolean().default(false),
-  fields: z.string().optional(),
+  fields: z
+    .string()
+    .optional()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
   updatedBefore: z.string().datetime().optional(),
