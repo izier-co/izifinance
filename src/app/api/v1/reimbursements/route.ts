@@ -18,24 +18,30 @@ const reimbursementSchema = z.object({
     .max(constValues.maxTextLength)
     .nullable()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
   txRecipientAccount: z
     .string()
     .max(constValues.maxBankCodeLength)
-    .refine((val) => !isValidInt(val)),
+    .refine((val) => isValidInt(val)),
   inBankTypeCode: z.number().positive().int(),
   inRecipientCompanyCode: z.number().positive().int(),
   txBankAccountCode: z
     .string()
     .max(constValues.maxBankCodeLength)
-    .refine((val) => !isValidInt(val)),
+    .refine((val) => isValidInt(val)),
   txChangeReason: z
     .string()
     .max(constValues.maxTextLength)
     .nullable()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
 });
 
@@ -74,7 +80,7 @@ const getRequestParams = z.object({
     .string()
     .optional()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
@@ -249,7 +255,7 @@ export const POST = async (req: NextRequest) => {
       const insertedParentData = await trx
         .insert(reimbursementNotesInDtDwh)
         .values({
-          txStatus: null,
+          txStatus: noteItem.txStatus,
           txNotes: noteItem.txNotes,
           txRecipientAccount: noteItem.txRecipientAccount,
           inBankTypeCode: noteItem.inBankTypeCode,
@@ -258,7 +264,6 @@ export const POST = async (req: NextRequest) => {
           txChangeReason: noteItem.txChangeReason,
         })
         .returning();
-      // type NoteInsert = InferModel<typeof reimbursementNotesInDtDwh, "insert">;
       const idForKey = insertedParentData[0].inReimbursementNoteID;
       returnedParentData = insertedParentData[0];
 

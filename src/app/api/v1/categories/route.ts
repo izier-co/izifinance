@@ -28,14 +28,18 @@ const getRequestParams = z.object({
     .string()
     .optional()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
   isAlphabetical: z.coerce.boolean().optional(),
+  includeDeleted: z.coerce.boolean().default(false),
   fields: z
     .string()
     .optional()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
+      return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
@@ -73,8 +77,8 @@ export const GET = async (req: NextRequest) => {
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
     )
-    .eq("boActive", true)
-    .eq("boStatus", true);
+    .eq("boActive", params.includeDeleted)
+    .eq("boStatus", params.includeDeleted);
   if (params.name) {
     // case insensitive matching
     query.ilike("txCategoryName", params.name);
