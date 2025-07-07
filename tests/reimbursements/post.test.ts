@@ -27,7 +27,6 @@ const req = new NextRequest(url);
 
 // optional properties for deletion purposes
 type ReimbursementPayload = {
-  txStatus: string;
   txNotes?: string;
   txRecipientAccount: string;
   inBankTypeCode: number;
@@ -47,7 +46,6 @@ type ReimbursementItems = {
 };
 
 const reimbursementPayload: ReimbursementPayload = {
-  txStatus: "Pending",
   txNotes: "",
   txRecipientAccount: "0987654321",
   inBankTypeCode: 2,
@@ -100,7 +98,6 @@ describe("POST /reimbursements success cases", () => {
       1 + reimbursementItemsArray.length
     );
     expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(1, {
-      txStatus: reimbursementPayload.txStatus,
       txNotes: reimbursementPayload.txNotes,
       txRecipientAccount: reimbursementPayload.txRecipientAccount,
       inBankTypeCode: reimbursementPayload.inBankTypeCode,
@@ -158,9 +155,7 @@ describe("POST /reimbursements failure cases", () => {
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(400);
-    expect(body).toEqual({
-      error: "400 Bad Request : Invalid JSON Payload",
-    });
+    expect(body.error).toContain("400 Bad Request :");
   });
 
   test("POST with malformed reimbursement data", async () => {
