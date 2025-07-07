@@ -24,9 +24,19 @@ const categorySchema = z.object({
 const getRequestParams = z.object({
   paginationPage: z.coerce.number().positive().default(1),
   paginationSize: z.coerce.number().positive().min(1).optional(),
-  name: z.string().optional(),
+  name: z
+    .string()
+    .optional()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+    }),
   isAlphabetical: z.coerce.boolean().optional(),
-  fields: z.string().optional(),
+  fields: z
+    .string()
+    .optional()
+    .transform((str) => {
+      str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
+    }),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
   updatedBefore: z.string().datetime().optional(),
