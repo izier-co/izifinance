@@ -15,7 +15,9 @@ beforeEach(() => {
   vitest.clearAllMocks();
 });
 
-const req = new NextRequest("localhost:3000/api");
+// no port here to avoid breaking with .startsWith()
+const req = new NextRequest("https://localhost/api");
+
 const reqBlogs = new NextRequest("localhost:3000/blogs");
 const reqNormal = new NextRequest("localhost:3000");
 
@@ -29,8 +31,9 @@ describe("middleware tests", () => {
   test("middleware for API should return unauthorized message", async () => {
     mockSupabase.auth.getUser.mockResolvedValueOnce(noLoggedInUserObject);
     const response = await middleware(req);
+    const body = await response.json();
     expect(response.status).toBe(401);
-    expect(response.body).toBe({ error: "Unauthorized" });
+    expect(body).toStrictEqual({ error: "Unauthorized" });
   });
   test("middleware without logged in user for non API should redirect", async () => {
     mockSupabase.auth.getUser.mockResolvedValueOnce(noLoggedInUserObject);
