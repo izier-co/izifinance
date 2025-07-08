@@ -13,7 +13,7 @@ import { isValidInt } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
-  txNotes: z
+  txDescriptionDetails: z
     .string()
     .max(constValues.maxTextLength)
     .nullable()
@@ -43,6 +43,17 @@ const reimbursementSchema = z.object({
         ""
       );
     }),
+  txEmployeeCode: z
+    .string()
+    .length(9)
+    .regex(/^[a-zA-Z0-9]+$/),
+  txApprovedBy: z
+    .string()
+    .length(9)
+    .regex(/^[a-zA-Z0-9]+$/)
+    .nullable(),
+  inCategoryID: z.number().positive().int(),
+  deNominalReimbursement: z.number().positive().int(),
 });
 
 const reimbursementItemSchema = z.object({
@@ -65,7 +76,6 @@ const reimbursementItemSchema = z.object({
       "Must be Valid ISO 4217 string"
     )
     .transform((str) => str.toUpperCase()),
-  inCategoryID: z.number().positive().int(),
 });
 
 const getRequestParams = z.object({
@@ -82,6 +92,7 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
+  approvedBy: z.coerce.number().positive().optional(),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
   updatedBefore: z.string().datetime().optional(),
@@ -94,7 +105,6 @@ type ReimbursementItems = {
   deIndividualPrice: number;
   deTotalPrice: number;
   txCurrency: string;
-  inCategoryID: number;
 };
 
 type ReturnedData = Record<string, number | string>;
@@ -152,6 +162,9 @@ export const GET = async (req: NextRequest) => {
         break;
       }
     }
+  }
+  if (params.approvedBy) {
+    query.eq("txApprovedBy", params.approvedBy);
   }
   if (params.bankTypeCode) {
     query.eq("inBankTypeCode", params.bankTypeCode);
@@ -255,29 +268,35 @@ export const POST = async (req: NextRequest) => {
       const insertedParentData = await trx
         .insert(reimbursementNotesInDtDwh)
         .values({
-          txStatus: noteItem.txStatus,
-          txNotes: noteItem.txNotes,
+          txDescriptionDetails: noteItem.txDescriptionDetails,
+          inCategoryID: noteItem.inCategoryID,
           txRecipientAccount: noteItem.txRecipientAccount,
           inBankTypeCode: noteItem.inBankTypeCode,
           inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
           txBankAccountCode: noteItem.txBankAccountCode,
           txChangeReason: noteItem.txChangeReason,
+          txEmployeeCode: noteItem.txEmployeeCode,
+          txApprovedBy: noteItem.txApprovedBy,
+          deNominalReimbursement: noteItem.deNominalReimbursement.toFixed(2),
         })
         .returning();
-      const idForKey = insertedParentData[0].inReimbursementNoteID;
-      returnedParentData = insertedParentData[0];
+
+      const idForKey = insertedParentData[0].txReimbursementNoteID;
+
+      if (idForKey === null) {
+        return new Error("Insertion Failed to return in transaction");
+      }
 
       for (const item of items) {
         const insertedChildData = await trx
           .insert(reimbursementItemsInDtDwh)
           .values({
-            inReimbursementNoteID: idForKey,
+            txReimbursementNoteID: idForKey,
             txName: item.txName,
             inQuantity: item.inQuantity,
             deIndividualPrice: item.deIndividualPrice.toFixed(2),
             deTotalPrice: item.deTotalPrice.toFixed(2),
             txCurrency: item.txCurrency,
-            inCategoryID: item.inCategoryID,
           })
           .returning();
         returnedChildData.push(insertedChildData[0]);

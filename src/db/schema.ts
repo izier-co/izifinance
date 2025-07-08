@@ -226,7 +226,7 @@ export const reimbursementItemsInDtDwh = dtDwh.table(
     })
       .notNull()
       .defaultNow(),
-    inReimbursementNoteID: integer().notNull(),
+    txReimbursementNoteID: text().notNull(),
     txName: text().notNull(),
     inQuantity: integer().notNull(),
     deIndividualPrice: numeric({
@@ -238,18 +238,12 @@ export const reimbursementItemsInDtDwh = dtDwh.table(
       scale: 2,
     }).notNull(),
     txCurrency: text().notNull(),
-    inCategoryID: smallint().notNull(),
   },
   (table) => [
     foreignKey({
-      columns: [table.inReimbursementNoteID],
-      foreignColumns: [reimbursementNotesInDtDwh.inReimbursementNoteID],
+      columns: [table.txReimbursementNoteID],
+      foreignColumns: [reimbursementNotesInDtDwh.txReimbursementNoteID],
       name: "reimbursement_items_inReimbursementNoteID_fkey",
-    }),
-    foreignKey({
-      columns: [table.inCategoryID],
-      foreignColumns: [mCategoryInDtDwh.inCategoryID],
-      name: "reinbursement_items_inCategoryID_fkey",
     }),
     pgPolicy("Enable read access for all users", {
       as: "permissive",
@@ -396,20 +390,21 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     daUpdatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    inReimbursementNoteID: integer().generatedByDefaultAsIdentity({
-      name: "dt_dwh.reimbursement_notes.inReimbursementNoteID_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 32767,
-    }),
-    txStatus: text().notNull(),
-    txNotes: text(),
+    txReimbursementNoteID: text().default(""),
+    txStatus: text(),
+    txDescriptionDetails: text(),
+    inCategoryID: smallint().notNull(),
     txRecipientAccount: text().notNull(),
     inBankTypeCode: smallint().notNull(),
     inRecipientCompanyCode: integer().notNull(),
     txBankAccountCode: text().notNull(),
     txChangeReason: text(),
+    txEmployeeCode: text().notNull(),
+    txApprovedBy: text(),
+    deNominalReimbursement: numeric({
+      precision: 100,
+      scale: 2,
+    }).notNull(),
   },
   (table) => [
     foreignKey({
@@ -418,12 +413,17 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
       name: "reinbursement_notes_inBankTypeCode_fkey",
     }),
     foreignKey({
+      columns: [table.inCategoryID],
+      foreignColumns: [mCategoryInDtDwh.inCategoryID],
+      name: "reinbursement_items_inCategoryID_fkey",
+    }),
+    foreignKey({
       columns: [table.inRecipientCompanyCode],
       foreignColumns: [mCompanyInDtDwh.inCompanyCode],
       name: "reinbursement_notes_inRecipientCompanyCode_fkey",
     }),
     unique("reinbursement_notes_inReinbursementNoteID_key").on(
-      table.inReimbursementNoteID
+      table.txReimbursementNoteID
     ),
     pgPolicy("Enable update for authenticated users", {
       as: "permissive",

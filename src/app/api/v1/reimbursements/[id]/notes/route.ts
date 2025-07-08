@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
-  props: { params: Promise<{ id: number }> }
+  props: { params: Promise<{ id: string }> }
 ) => {
   const searchParams = req.nextUrl.searchParams;
   const noteFields = searchParams.get("noteFields");
@@ -26,7 +26,7 @@ export const GET = async (
   const { data, error } = await supabase
     .from("reimbursement_notes")
     .select(tableQueryString)
-    .eq("inReimbursementNoteID", urlParams.id);
+    .eq("txReimbursementNoteID", urlParams.id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
