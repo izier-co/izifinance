@@ -27,12 +27,16 @@ const req = new NextRequest(url);
 
 // optional properties for deletion purposes
 type ReimbursementPayload = {
-  txNotes?: string;
+  txDescriptionDetails?: string;
   txRecipientAccount: string;
   inBankTypeCode: number;
   inRecipientCompanyCode: number;
   txBankAccountCode: string;
   txChangeReason: string;
+  txEmployeeCode: string;
+  txApprovedBy?: string;
+  inCategoryID: number;
+  deNominalReimbursement: number;
   reimbursement_items: Array<ReimbursementItems>;
 };
 
@@ -42,16 +46,19 @@ type ReimbursementItems = {
   deIndividualPrice: number;
   deTotalPrice: number;
   txCurrency: string;
-  inCategoryID: number;
 };
 
 const reimbursementPayload: ReimbursementPayload = {
-  txNotes: "",
+  txDescriptionDetails: "",
   txRecipientAccount: "0987654321",
   inBankTypeCode: 2,
   inRecipientCompanyCode: 1,
   txBankAccountCode: "09876543210987654321",
   txChangeReason: "",
+  txEmployeeCode: "P00012000",
+  txApprovedBy: "F00023000",
+  inCategoryID: 1,
+  deNominalReimbursement: 120000,
   reimbursement_items: [
     {
       txName: "Big Mac",
@@ -59,7 +66,6 @@ const reimbursementPayload: ReimbursementPayload = {
       deIndividualPrice: 20000,
       deTotalPrice: 20000,
       txCurrency: "IDR",
-      inCategoryID: 5,
     },
     {
       txName: "Coca Cola",
@@ -67,7 +73,6 @@ const reimbursementPayload: ReimbursementPayload = {
       deIndividualPrice: 10000,
       deTotalPrice: 100000,
       txCurrency: "IDR",
-      inCategoryID: 5,
     },
   ],
 };
@@ -98,12 +103,17 @@ describe("POST /reimbursements success cases", () => {
       1 + reimbursementItemsArray.length
     );
     expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(1, {
-      txNotes: reimbursementPayload.txNotes,
+      txDescriptionDetails: reimbursementPayload.txDescriptionDetails,
+      inCategoryID: reimbursementPayload.inCategoryID,
       txRecipientAccount: reimbursementPayload.txRecipientAccount,
       inBankTypeCode: reimbursementPayload.inBankTypeCode,
       inRecipientCompanyCode: reimbursementPayload.inRecipientCompanyCode,
       txBankAccountCode: reimbursementPayload.txBankAccountCode,
       txChangeReason: reimbursementPayload.txChangeReason,
+      txEmployeeCode: reimbursementPayload.txEmployeeCode,
+      txApprovedBy: reimbursementPayload.txApprovedBy,
+      deNominalReimbursement:
+        reimbursementPayload.deNominalReimbursement.toFixed(2),
     });
 
     const returnedResults = mockNestedDrizzle.returning.mock.results[0].value;
@@ -112,16 +122,18 @@ describe("POST /reimbursements success cases", () => {
     for (let i = 0; i < reimbursementItemsArray.length; i++) {
       // + 2 because the 1st one is for the reimbursement note
       expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(i + 2, {
-        inReimbursementNoteID: returnedValue,
+        txReimbursementNoteID: returnedValue,
         txName: reimbursementItemsArray[i].txName,
         inQuantity: reimbursementItemsArray[i].inQuantity,
         deIndividualPrice:
           reimbursementItemsArray[i].deIndividualPrice.toFixed(2),
         deTotalPrice: reimbursementItemsArray[i].deTotalPrice.toFixed(2),
         txCurrency: reimbursementItemsArray[i].txCurrency,
-        inCategoryID: reimbursementItemsArray[i].inCategoryID,
       });
     }
+    console.log(reimbursementPayload);
+    console.log("reality");
+    console.log(body.data);
     expect(response.status).toBe(201);
     expect(body).toEqual({
       data: reimbursementPayload,
@@ -160,7 +172,7 @@ describe("POST /reimbursements failure cases", () => {
 
   test("POST with malformed reimbursement data", async () => {
     const malformedPayload = structuredClone(reimbursementPayload);
-    delete malformedPayload.txNotes;
+    delete malformedPayload.txDescriptionDetails;
 
     const mockRequest = createMockRequestWithBody("POST", malformedPayload);
     const response = await POST(mockRequest);
