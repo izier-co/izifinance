@@ -21,8 +21,10 @@ beforeEach(() => {
   vitest.clearAllMocks();
 });
 
+const idParam = "1";
+
 const mockProps = {
-  params: Promise.resolve({ id: "1" }),
+  params: Promise.resolve({ id: idParam }),
 };
 
 const mockError = Error();

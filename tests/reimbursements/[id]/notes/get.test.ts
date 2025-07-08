@@ -16,8 +16,10 @@ beforeEach(() => {
 
 const req = new NextRequest("localhost:3000");
 
+const idParam = "1";
+
 const mockProps = {
-  params: Promise.resolve({ id: "1" }),
+  params: Promise.resolve({ id: idParam }),
 };
 
 const mockError = Error();
@@ -40,6 +42,10 @@ describe("GET /reimbursements/id successes", () => {
     tableQueryString = `${noteFieldsName}, reimbursement_items(${itemFieldsName})`;
 
     expect(mockSupabase.select).toHaveBeenCalledWith(tableQueryString);
+    expect(mockSupabase.eq).toHaveBeenCalledWith(
+      "txReimbursementNoteID",
+      idParam
+    );
     expect(response.status).toBe(200);
   });
 });
