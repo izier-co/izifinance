@@ -53,7 +53,7 @@ const reimbursementSchema = z.object({
     .regex(/^[a-zA-Z0-9]+$/)
     .nullable(),
   inCategoryID: z.number().positive().int(),
-  deNominalReimbursement: z.number().positive().int(),
+  deNominalReimbursement: z.number().positive(),
 });
 
 const reimbursementItemSchema = z.object({
@@ -280,7 +280,7 @@ export const POST = async (req: NextRequest) => {
           deNominalReimbursement: noteItem.deNominalReimbursement.toFixed(2),
         })
         .returning();
-
+      returnedParentData = insertedParentData[0];
       const idForKey = insertedParentData[0].txReimbursementNoteID;
 
       if (idForKey === null) {
@@ -303,7 +303,6 @@ export const POST = async (req: NextRequest) => {
       }
     });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },
       { status: 500 }
