@@ -131,9 +131,6 @@ describe("POST /reimbursements success cases", () => {
         txCurrency: reimbursementItemsArray[i].txCurrency,
       });
     }
-    console.log(reimbursementPayload);
-    console.log("reality");
-    console.log(body.data);
     expect(response.status).toBe(201);
     expect(body).toEqual({
       data: reimbursementPayload,
