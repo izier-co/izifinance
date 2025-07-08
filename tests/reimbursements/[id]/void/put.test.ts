@@ -22,7 +22,7 @@ beforeEach(() => {
 });
 
 const mockProps = {
-  params: Promise.resolve({ id: 1 }),
+  params: Promise.resolve({ id: "1" }),
 };
 
 const mockError = Error();
@@ -61,7 +61,7 @@ describe("PUT /reimbursements success cases", () => {
       daUpdatedAt: new Date().toISOString(),
     });
     expect(mockSupabase.eq).toHaveBeenCalledWith(
-      "inReimbursementNoteID",
+      "txReimbursementNoteID",
       params.id
     );
     expect(response.status).toBe(200);

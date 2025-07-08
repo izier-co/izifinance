@@ -17,7 +17,7 @@ beforeEach(() => {
 const req = new NextRequest("localhost:3000");
 
 const mockProps = {
-  params: Promise.resolve({ id: 1 }),
+  params: Promise.resolve({ id: "1" }),
 };
 
 const mockError = Error();
