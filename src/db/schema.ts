@@ -384,6 +384,7 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
   "reimbursement_notes",
   {
     uiReimbursementID: uuid().defaultRandom().primaryKey().notNull(),
+    uiIdempotencyKey: uuid().notNull(),
     daCreatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),

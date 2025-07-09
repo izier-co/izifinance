@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 import { supabase } from "@supabase-config";
 
 import { z } from "zod";
 
 import { db } from "@drizzle-db";
+import { eq } from "drizzle-orm";
+
 import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
@@ -219,6 +222,7 @@ export const POST = async (req: NextRequest) => {
   // of reimbursement_items in an array
 
   let body: Record<string, string> = {};
+  const idempotencyKey = req.headers.get("Idempotency-Key");
   try {
     body = await req.json();
   } catch {
@@ -229,6 +233,14 @@ export const POST = async (req: NextRequest) => {
   } finally {
     // TODO : handle something regarding logging
   }
+
+  if (idempotencyKey === null) {
+    return NextResponse.json(
+      { error: "400 Bad Request : Missing Idempotency Key" },
+      { status: 400 }
+    );
+  }
+
   const noteModel = reimbursementSchema.safeParse(body);
   if (!noteModel.success) {
     return NextResponse.json(
@@ -265,9 +277,20 @@ export const POST = async (req: NextRequest) => {
   const returnedChildData: Array<ReturnedData> = [];
   try {
     await db.transaction(async (trx) => {
+      const existingParent = await trx
+        .select()
+        .from(reimbursementNotesInDtDwh)
+        .where(eq(reimbursementNotesInDtDwh.uiIdempotencyKey, idempotencyKey))
+        .execute();
+
+      if (existingParent.length > 0) {
+        throw new Error("Data is idempotent. Skipping...");
+      }
+
       const insertedParentData = await trx
         .insert(reimbursementNotesInDtDwh)
         .values({
+          uiIdempotencyKey: idempotencyKey,
           txDescriptionDetails: noteItem.txDescriptionDetails,
           inCategoryID: noteItem.inCategoryID,
           txRecipientAccount: noteItem.txRecipientAccount,
