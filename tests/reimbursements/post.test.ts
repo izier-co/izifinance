@@ -48,6 +48,8 @@ type ReimbursementItems = {
   txCurrency: string;
 };
 
+const extraHeader = { "Idempotency-Key": "abcdef" };
+
 const reimbursementPayload: ReimbursementPayload = {
   txDescriptionDetails: "",
   txRecipientAccount: "0987654321",
@@ -83,9 +85,15 @@ const randomInvalidPayload = {
 
 describe("POST /reimbursements success cases", () => {
   test("POST with correct data", async () => {
-    const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
+    const mockRequest = createMockRequestWithBody(
+      "POST",
+      reimbursementPayload,
+      extraHeader
+    );
 
     // simulating the returned object as an array
+    mockNestedDrizzle.execute.mockResolvedValueOnce([]);
+
     mockNestedDrizzle.returning
       .mockResolvedValueOnce([reimbursementPayload])
       .mockResolvedValueOnce([reimbursementPayload.reimbursement_items[0]])
@@ -103,6 +111,7 @@ describe("POST /reimbursements success cases", () => {
       1 + reimbursementItemsArray.length
     );
     expect(mockNestedDrizzle.values).toHaveBeenNthCalledWith(1, {
+      uiIdempotencyKey: extraHeader["Idempotency-Key"],
       txDescriptionDetails: reimbursementPayload.txDescriptionDetails,
       inCategoryID: reimbursementPayload.inCategoryID,
       txRecipientAccount: reimbursementPayload.txRecipientAccount,
@@ -146,6 +155,16 @@ describe("POST /reimbursements failure cases", () => {
     expect(response.status).toBe(400);
     expect(body).toEqual({
       error: "400 Bad Request : Invalid JSON Payload",
+    });
+  });
+
+  test("POST without idempotency key", async () => {
+    const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
+    const response = await POST(mockRequest);
+    const body = await response.json();
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: "400 Bad Request : Missing Idempotency Key",
     });
   });
 
@@ -193,7 +212,11 @@ describe("POST /reimbursements failure cases", () => {
     mockDrizzle.transaction.mockImplementation(() => {
       throw new Error();
     });
-    const mockRequest = createMockRequestWithBody("POST", reimbursementPayload);
+    const mockRequest = createMockRequestWithBody(
+      "POST",
+      reimbursementPayload,
+      extraHeader
+    );
     const response = await POST(mockRequest);
     const body = await response.json();
     expect(response.status).toBe(500);

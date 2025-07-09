@@ -5,12 +5,17 @@ beforeEach(() => {
 });
 
 export const mockNestedDrizzle = {
+  select: vitest.fn().mockReturnThis(),
+  from: vitest.fn().mockReturnThis(),
+  where: vitest.fn().mockReturnThis(),
+  eq: vitest.fn(),
+  execute: vitest.fn(),
   insert: vitest.fn().mockReturnThis(),
   values: vitest.fn().mockReturnThis(),
   returning: vitest.fn(),
   then: vitest.fn().mockImplementation((onFulfilled) => {
-    onFulfilled(null);
-    return Promise.resolve(null);
+    onFulfilled([]);
+    return Promise.resolve([]);
   }),
 };
 
