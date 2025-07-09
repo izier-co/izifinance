@@ -20,6 +20,7 @@ export async function middleware(req: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
 
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
