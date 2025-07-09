@@ -14,3 +14,21 @@ export async function verifyAuthentication(): Promise<NextResponse<unknown> | nu
 export function isValidInt(str: string): boolean {
   return !isNaN(Number.parseInt(str));
 }
+
+export function sanitizeDatabaseOutputs(obj: object[]): object {
+  obj.map((v) => {
+    if ("uiReimbursementID" in v) {
+      delete v.uiReimbursementID;
+    }
+    if ("uiIdempotencyKey" in v) {
+      delete v.uiIdempotencyKey;
+    }
+    if ("uiReimbursementItemID" in v) {
+      delete v.uiReimbursementItemID;
+    }
+    if ("uiCategoryID" in v) {
+      delete v.uiCategoryID;
+    }
+  });
+  return obj;
+}

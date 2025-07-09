@@ -1,3 +1,4 @@
+import { sanitizeDatabaseOutputs } from "@/lib/lib";
 import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,8 +17,10 @@ export const PUT = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const sanitizedData = sanitizeDatabaseOutputs(data);
+
   return NextResponse.json({
     message: "Data Successfully Updated!",
-    data: data,
+    data: sanitizedData,
   });
 };

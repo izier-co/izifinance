@@ -12,7 +12,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
-import { isValidInt } from "@/lib/lib";
+import { isValidInt, sanitizeDatabaseOutputs } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
@@ -198,9 +198,11 @@ export const GET = async (req: NextRequest) => {
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const sanitizedData = sanitizeDatabaseOutputs(data);
   return NextResponse.json(
     {
-      data: data,
+      data: sanitizedData,
       meta: {
         isFirstPage: params.paginationPage === 1,
         isLastPage: data.length < paginationSize,
@@ -333,6 +335,7 @@ export const POST = async (req: NextRequest) => {
   } finally {
     // TODO : handle something regarding to logging
   }
+  // todo sanitize drizzle output
   return NextResponse.json(
     {
       message: "Data Successfully Inserted!",

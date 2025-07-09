@@ -1,4 +1,5 @@
 import constValues from "@/lib/constants";
+import { sanitizeDatabaseOutputs } from "@/lib/lib";
 import { supabase } from "@supabase-config";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -34,9 +35,12 @@ export const GET = async (
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const sanitizedData = sanitizeDatabaseOutputs(data);
+
   return NextResponse.json(
     {
-      data: data,
+      data: sanitizedData,
       meta: {},
     },
     { status: 200 }
@@ -78,10 +82,13 @@ export const PUT = async (
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const sanitizedData = sanitizeDatabaseOutputs(data);
+
   return NextResponse.json(
     {
       message: "Data Successfully Updated!",
-      data: data,
+      data: sanitizedData,
     },
     { status: 200 }
   );

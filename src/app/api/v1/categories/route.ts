@@ -4,6 +4,7 @@ import { supabase } from "@supabase-config";
 
 import { z } from "zod";
 import constValues from "@/lib/constants";
+import { sanitizeDatabaseOutputs } from "@/lib/lib";
 
 const categorySchema = z.object({
   txCategoryName: z
@@ -114,9 +115,12 @@ export const GET = async (req: NextRequest) => {
   }
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const sanitizedData = sanitizeDatabaseOutputs(data);
+
   return NextResponse.json(
     {
-      data: data,
+      data: sanitizedData,
       meta: {
         isFirstPage: params.paginationPage === 1,
         isLastPage: data.length < paginationSize,
@@ -160,10 +164,13 @@ export const POST = async (req: NextRequest) => {
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const sanitizedData = sanitizeDatabaseOutputs(data);
+
   return NextResponse.json(
     {
       message: "Data Successfully Inserted!",
-      data: data,
+      data: sanitizedData,
     },
     { status: 201 }
   );
