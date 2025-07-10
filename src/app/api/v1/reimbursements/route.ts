@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
 
 import { supabase } from "@supabase-config";
 
@@ -327,6 +326,15 @@ export const POST = async (req: NextRequest) => {
         returnedChildData.push(insertedChildData[0]);
       }
     });
+    if ("uiReimbursementID" in returnedParentData) {
+      delete returnedParentData.uiReimbursementID;
+    }
+    if ("uiIdempotencyKey" in returnedParentData) {
+      delete returnedParentData.uiIdempotencyKey;
+    }
+    if ("uiReimbursementItemID" in returnedChildData) {
+      delete returnedChildData.uiReimbursementItemID;
+    }
   } catch (error) {
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },
