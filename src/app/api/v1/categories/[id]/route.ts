@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@supabase-config";
-import { sanitizeDatabaseOutputs } from "@/lib/lib";
+import { authorizeAdmin, sanitizeDatabaseOutputs } from "@/lib/lib";
 
 export const GET = async (
   req: NextRequest,
@@ -36,8 +36,11 @@ export const GET = async (
 
 export const DELETE = async (
   req: NextRequest,
-  props: { params: Promise<{ id: number }> }
+  props: { params: Promise<{ id: string }> }
 ) => {
+  const unauthorizedResponse = await authorizeAdmin();
+  if (unauthorizedResponse) return unauthorizedResponse;
+
   const params = await props.params;
   const idParam = params.id;
 
