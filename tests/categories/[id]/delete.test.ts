@@ -27,12 +27,12 @@ const mockPayload = [
 const mockError = Error();
 
 const mockProps = {
-  params: Promise.resolve({ id: 1 }),
+  params: Promise.resolve({ id: "1" }),
 };
 
 describe("DELETE /categories successes", () => {
   test("DELETE normally", async () => {
-    mockSupabase.then.mockImplementationOnce((onFulfilled) => {
+    mockSupabase.then.mockImplementation((onFulfilled) => {
       onFulfilled({ data: mockPayload, error: null });
     });
 
