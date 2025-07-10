@@ -26,6 +26,10 @@ export async function middleware(req: NextRequest) {
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
 
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
   if (!user && !isAuthRoute) {
     if (isApiRoute) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
