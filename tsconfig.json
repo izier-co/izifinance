@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@supabase-config": ["./src/app/api/supabase.config.ts"],
+      "@supabase-server": ["./src/app/api/supabase_server.config.ts"],
       "@drizzle-db": ["./drizzle-db.ts"],
       "@lib/*": ["./lib/*"],
       "@mocks/*": ["./tests/__mocks__/*"]

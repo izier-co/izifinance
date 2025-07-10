@@ -11,6 +11,30 @@ export async function verifyAuthentication(): Promise<NextResponse<unknown> | nu
   return null;
 }
 
+export async function authorizeAdmin(): Promise<NextResponse<unknown> | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
+  }
+
+  const { data, error } = await supabase
+    .from("m_employees")
+    .select("*")
+    .eq("uiUserID", user.id)
+    .eq("boHasAdminAccess", true);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  if (data.length === 0) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+  return null;
+}
+
 export function isValidInt(str: string): boolean {
   return !isNaN(Number.parseInt(str));
 }

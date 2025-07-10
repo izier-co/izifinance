@@ -48,6 +48,7 @@ export const mockSupabase = {
       error: null,
     }),
     signOut: vitest.fn().mockResolvedValue(Promise.resolve({ error: null })),
+    setSession: vitest.fn(),
     then: vitest.fn().mockImplementation((onFulfilled) => {
       onFulfilled({ data: null, error: null });
       return Promise.resolve({ data: null, error: null });
@@ -68,5 +69,9 @@ export const mockSupabase = {
 };
 
 export const mockHandleSession = vitest
+  .fn()
+  .mockResolvedValue({ supabase: mockSupabase });
+
+export const mockCreateClient = vitest
   .fn()
   .mockResolvedValue({ supabase: mockSupabase });
