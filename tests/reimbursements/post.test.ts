@@ -121,12 +121,11 @@ describe("POST /reimbursements success cases", () => {
       txChangeReason: reimbursementPayload.txChangeReason,
       txEmployeeCode: reimbursementPayload.txEmployeeCode,
       txApprovedBy: reimbursementPayload.txApprovedBy,
-      deNominalReimbursement:
-        reimbursementPayload.deNominalReimbursement.toFixed(2),
     });
 
     const returnedResults = mockNestedDrizzle.returning.mock.results[0].value;
     const returnedValue = await returnedResults.inReimbursementNoteID;
+    let totalPrice = 0;
 
     for (let i = 0; i < reimbursementItemsArray.length; i++) {
       // + 2 because the 1st one is for the reimbursement note
@@ -139,7 +138,11 @@ describe("POST /reimbursements success cases", () => {
         deTotalPrice: reimbursementItemsArray[i].deTotalPrice.toFixed(2),
         txCurrency: reimbursementItemsArray[i].txCurrency,
       });
+      totalPrice += reimbursementItemsArray[i].deTotalPrice;
     }
+    expect(mockNestedDrizzle.set).toBeCalledWith({
+      deNominalReimbursement: totalPrice.toFixed(2),
+    });
     expect(response.status).toBe(201);
     expect(body).toEqual({
       data: reimbursementPayload,
