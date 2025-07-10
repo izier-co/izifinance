@@ -17,10 +17,12 @@ beforeEach(() => {
 const req = new NextRequest("localhost:3000");
 const reqWithParams = new NextRequest("localhost:3000");
 
-const mockPayload = {
-  txCategoryName: "Mock Category",
-  txCategoryDescription: "Mock Description",
-};
+const mockPayload = [
+  {
+    txCategoryName: "Mock Category",
+    txCategoryDescription: "Mock Description",
+  },
+];
 
 const mockError = Error();
 

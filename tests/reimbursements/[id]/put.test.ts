@@ -31,7 +31,7 @@ const mockError = Error();
 
 const req = new NextRequest("localhost:3000");
 
-const mockResponseObject = {};
+const mockResponseObject = [{}];
 
 describe("PUT /reimbursements success cases", () => {
   test("PUT with ID parameter", async () => {

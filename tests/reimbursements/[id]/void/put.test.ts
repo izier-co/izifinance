@@ -31,19 +31,21 @@ const mockError = Error();
 
 const req = new NextRequest("localhost:3000");
 
-const mockResponseObject = {
-  uiReimbursementID: "some-id",
-  daCreatedAt: new Date().toISOString(),
-  daUpdatedAt: new Date().toISOString(),
-  inReimbursementNoteID: 123,
-  txStatus: "Void",
-  txNotes: "Mock Reason",
-  txRecipientAccount: "1234567890",
-  inBankTypeCode: 1,
-  inRecipientCompanyCode: 1,
-  txBankAccountCode: "12345678901234567890",
-  txChangeReason: null,
-};
+const mockResponseObject = [
+  {
+    uiReimbursementID: "some-id",
+    daCreatedAt: new Date().toISOString(),
+    daUpdatedAt: new Date().toISOString(),
+    inReimbursementNoteID: 123,
+    txStatus: "Void",
+    txNotes: "Mock Reason",
+    txRecipientAccount: "1234567890",
+    inBankTypeCode: 1,
+    inRecipientCompanyCode: 1,
+    txBankAccountCode: "12345678901234567890",
+    txChangeReason: null,
+  },
+];
 
 describe("PUT /reimbursements success cases", () => {
   test("PUT with ID parameter", async () => {

@@ -23,10 +23,12 @@ const mockPayload = {
   txCategoryName: "Mock Category",
   txCategoryDescription: "Mock Description",
 };
+const mockPayloadArr = [mockPayload];
 const payloadWithoutDesc = {
   txCategoryName: mockPayload.txCategoryName,
   txCategoryDescription: null,
 };
+const payloadWithoutDescArr = [payloadWithoutDesc];
 const payloadWithoutName = {
   txCategoryDescription: mockPayload.txCategoryDescription,
 };
@@ -34,7 +36,7 @@ const payloadWithoutName = {
 describe("POST /categories successes", () => {
   test("POST without txCategoryDesciption", async () => {
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
-      onFulfilled({ data: payloadWithoutDesc, error: null });
+      onFulfilled({ data: payloadWithoutDescArr, error: null });
     });
 
     const mockRequest = createMockRequestWithBody("POST", payloadWithoutDesc);
@@ -43,7 +45,7 @@ describe("POST /categories successes", () => {
 
     expect(response.status).toBe(201);
     expect(body).toEqual({
-      data: payloadWithoutDesc,
+      data: payloadWithoutDescArr,
       message: "Data Successfully Inserted!",
     });
   });
@@ -51,7 +53,7 @@ describe("POST /categories successes", () => {
   test("POST normally", async () => {
     const mockRequest = createMockRequestWithBody("POST", mockPayload);
     mockSupabase.then.mockImplementationOnce((onFulfilled) => {
-      onFulfilled({ data: mockPayload, error: null });
+      onFulfilled({ data: mockPayloadArr, error: null });
     });
 
     const response = await POST(mockRequest);
@@ -60,7 +62,7 @@ describe("POST /categories successes", () => {
     expect(response.status).toBe(201);
     expect(mockSupabase.insert);
     expect(body).toEqual({
-      data: mockPayload,
+      data: mockPayloadArr,
       message: "Data Successfully Inserted!",
     });
   });
