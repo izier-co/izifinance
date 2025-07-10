@@ -12,6 +12,8 @@ export const mockNestedDrizzle = {
   execute: vitest.fn(),
   insert: vitest.fn().mockReturnThis(),
   values: vitest.fn().mockReturnThis(),
+  update: vitest.fn().mockReturnThis(),
+  set: vitest.fn(),
   returning: vitest.fn(),
   then: vitest.fn().mockImplementation((onFulfilled) => {
     onFulfilled([]);

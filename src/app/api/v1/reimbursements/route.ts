@@ -55,7 +55,6 @@ const reimbursementSchema = z.object({
     .regex(/^[a-zA-Z0-9]+$/)
     .nullable(),
   inCategoryID: z.number().positive().int(),
-  deNominalReimbursement: z.number().positive(),
 });
 
 const reimbursementItemSchema = z.object({
@@ -301,7 +300,6 @@ export const POST = async (req: NextRequest) => {
           txChangeReason: noteItem.txChangeReason,
           txEmployeeCode: noteItem.txEmployeeCode,
           txApprovedBy: noteItem.txApprovedBy,
-          deNominalReimbursement: noteItem.deNominalReimbursement.toFixed(2),
         })
         .returning();
       returnedParentData = insertedParentData[0];
@@ -310,6 +308,7 @@ export const POST = async (req: NextRequest) => {
       if (idForKey === null) {
         return new Error("Insertion Failed to return in transaction");
       }
+      let totalPrice = 0;
 
       for (const item of items) {
         const insertedChildData = await trx
@@ -323,8 +322,12 @@ export const POST = async (req: NextRequest) => {
             txCurrency: item.txCurrency,
           })
           .returning();
+        totalPrice += item.deTotalPrice;
         returnedChildData.push(insertedChildData[0]);
       }
+      await trx
+        .update(reimbursementNotesInDtDwh)
+        .set({ deNominalReimbursement: totalPrice.toFixed(2) });
     });
     if ("uiReimbursementID" in returnedParentData) {
       delete returnedParentData.uiReimbursementID;

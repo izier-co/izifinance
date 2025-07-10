@@ -405,7 +405,9 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     deNominalReimbursement: numeric({
       precision: 100,
       scale: 2,
-    }).notNull(),
+    })
+      .notNull()
+      .default((0).toFixed(2)),
   },
   (table) => [
     foreignKey({
