@@ -1,5 +1,6 @@
 import { supabase } from "@supabase-config";
 import { NextResponse } from "next/server";
+import { JSONValue } from "postgres";
 
 export async function verifyAuthentication(): Promise<NextResponse<unknown> | null> {
   const {
@@ -11,7 +12,7 @@ export async function verifyAuthentication(): Promise<NextResponse<unknown> | nu
   return null;
 }
 
-export async function authorizeAdmin(): Promise<NextResponse<unknown> | null> {
+export async function authorizeAdmin(): Promise<NextResponse<JSONValue> | null> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -30,7 +31,7 @@ export async function authorizeAdmin(): Promise<NextResponse<unknown> | null> {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   if (data.length === 0) {
-    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
   }
   return null;
 }
