@@ -34,7 +34,10 @@ const getRequestParams = z.object({
         ""
       );
     }),
-  isAlphabetical: z.coerce.boolean().optional(),
+  isAlphabetical: z
+    .string()
+    .transform((val) => val === "true")
+    .optional(),
   includeDeleted: z.coerce.boolean().default(false),
   fields: z
     .string()
@@ -77,18 +80,25 @@ export const GET = async (req: NextRequest) => {
     .range(
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
-    )
-    .eq("boActive", params.includeDeleted)
-    .eq("boStatus", params.includeDeleted);
+    );
+
+  if (params.includeDeleted === false) {
+    query.eq("boActive", true);
+    query.eq("boStatus", true);
+  }
+
   if (params.name) {
     // case insensitive matching
     query.ilike("txCategoryName", params.name);
   }
+  console.log(params.isAlphabetical);
   if (params.isAlphabetical === true) {
+    console.log("true");
     query.order("txCategoryName", {
       ascending: params.isAlphabetical,
     });
   } else if (params.isAlphabetical === false) {
+    console.log("false");
     query.order("txCategoryName", {
       ascending: params.isAlphabetical,
     });

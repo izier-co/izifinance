@@ -49,11 +49,6 @@ const reimbursementSchema = z.object({
     .string()
     .length(9)
     .regex(/^[a-zA-Z0-9]+$/),
-  txApprovedBy: z
-    .string()
-    .length(9)
-    .regex(/^[a-zA-Z0-9]+$/)
-    .nullable(),
   inCategoryID: z.number().positive().int(),
 });
 
@@ -278,7 +273,9 @@ export const POST = async (req: NextRequest) => {
   try {
     await db.transaction(async (trx) => {
       const existingParent = await trx
-        .select()
+        .select({
+          uiIdempotencyKey: reimbursementNotesInDtDwh.uiIdempotencyKey,
+        })
         .from(reimbursementNotesInDtDwh)
         .where(eq(reimbursementNotesInDtDwh.uiIdempotencyKey, idempotencyKey))
         .execute();
@@ -299,7 +296,6 @@ export const POST = async (req: NextRequest) => {
           txBankAccountCode: noteItem.txBankAccountCode,
           txChangeReason: noteItem.txChangeReason,
           txEmployeeCode: noteItem.txEmployeeCode,
-          txApprovedBy: noteItem.txApprovedBy,
         })
         .returning();
       returnedParentData = insertedParentData[0];
@@ -309,7 +305,6 @@ export const POST = async (req: NextRequest) => {
         return new Error("Insertion Failed to return in transaction");
       }
       let totalPrice = 0;
-
       for (const item of items) {
         const insertedChildData = await trx
           .insert(reimbursementItemsInDtDwh)
@@ -327,7 +322,7 @@ export const POST = async (req: NextRequest) => {
       }
       await trx
         .update(reimbursementNotesInDtDwh)
-        .set({ deNominalReimbursement: totalPrice.toFixed(2) });
+        .set({ dcNominalReimbursement: totalPrice.toFixed(2) });
     });
     if ("uiReimbursementID" in returnedParentData) {
       delete returnedParentData.uiReimbursementID;
@@ -335,9 +330,11 @@ export const POST = async (req: NextRequest) => {
     if ("uiIdempotencyKey" in returnedParentData) {
       delete returnedParentData.uiIdempotencyKey;
     }
-    if ("uiReimbursementItemID" in returnedChildData) {
-      delete returnedChildData.uiReimbursementItemID;
-    }
+    returnedChildData.forEach((val) => {
+      if ("uiReimbursementItemID" in val) {
+        delete val.uiReimbursementItemID;
+      }
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "500 Internal Server Error :" + (error as Error).toString() },

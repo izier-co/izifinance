@@ -384,7 +384,6 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
   "reimbursement_notes",
   {
     uiReimbursementID: uuid().defaultRandom().primaryKey().notNull(),
-    uiIdempotencyKey: uuid().notNull(),
     daCreatedAt: timestamp({ withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
@@ -394,7 +393,6 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     txReimbursementNoteID: text().default(""),
     txStatus: text(),
     txDescriptionDetails: text(),
-    inCategoryID: smallint().notNull(),
     txRecipientAccount: text().notNull(),
     inBankTypeCode: smallint().notNull(),
     inRecipientCompanyCode: integer().notNull(),
@@ -402,12 +400,14 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     txChangeReason: text(),
     txEmployeeCode: text().notNull(),
     txApprovedBy: text(),
-    deNominalReimbursement: numeric({
+    dcNominalReimbursement: numeric({
       precision: 100,
       scale: 2,
     })
       .notNull()
       .default((0).toFixed(2)),
+    inCategoryID: smallint().notNull(),
+    uiIdempotencyKey: uuid().notNull(),
   },
   (table) => [
     foreignKey({
@@ -424,6 +424,16 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
       columns: [table.inRecipientCompanyCode],
       foreignColumns: [mCompanyInDtDwh.inCompanyCode],
       name: "reinbursement_notes_inRecipientCompanyCode_fkey",
+    }),
+    foreignKey({
+      columns: [table.txApprovedBy],
+      foreignColumns: [mEmployeesInDtDwh.txEmployeeCode],
+      name: "reimbursement_notes_txApprovedBy_fkey",
+    }),
+    foreignKey({
+      columns: [table.txEmployeeCode],
+      foreignColumns: [mEmployeesInDtDwh.txEmployeeCode],
+      name: "reimbursement_notes_txEmployeeCode_fkey",
     }),
     unique("reinbursement_notes_inReinbursementNoteID_key").on(
       table.txReimbursementNoteID
