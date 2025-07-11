@@ -17,16 +17,12 @@ export async function POST(req: NextRequest) {
 
   if (session) {
     supabase.auth.setSession(session);
-    return NextResponse.json({ message: "Sign In successful!" });
+    return NextResponse.json({
+      message: "Sign In successful!",
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
   }
 
   return NextResponse.json({ error: "No Session" }, { status: 401 });
-
-  // return NextResponse.json({
-  //   message: "Sign In successful",
-  //   user: data.user,
-  //   accessToken: data.session?.access_token,
-  //   refreshToken: data.session?.refresh_token,
-  //   expiresAt: data.session?.expires_at,
-  // });
 }
