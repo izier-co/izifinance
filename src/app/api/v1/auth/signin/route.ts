@@ -17,10 +17,10 @@ export async function POST(req: NextRequest) {
 
   if (session) {
     supabase.auth.setSession(session);
-    return NextResponse.json({ message: "Sign Up Successful!" });
+    return NextResponse.json({ message: "Sign In successful!" });
   }
 
-  return NextResponse.json({ error: "No session" }, { status: 401 });
+  return NextResponse.json({ error: "No Session" }, { status: 401 });
 
   // return NextResponse.json({
   //   message: "Sign In successful",
