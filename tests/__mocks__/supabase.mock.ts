@@ -68,10 +68,22 @@ export const mockSupabase = {
   }),
 };
 
+export const mockServerSupabase = {
+  auth: {
+    signInWithPassword: vitest.fn().mockImplementation(() => {
+      return testingGlobalVars.authReturnObject;
+    }),
+    setSession: vitest.fn(),
+    then: vitest.fn().mockImplementation((onFulfilled) => {
+      onFulfilled({ data: null, error: null });
+      return Promise.resolve({ data: null, error: null });
+    }),
+  },
+};
 export const mockHandleSession = vitest
   .fn()
   .mockResolvedValue({ supabase: mockSupabase });
 
 export const mockCreateClient = vitest
   .fn()
-  .mockResolvedValue({ supabase: mockSupabase });
+  .mockResolvedValue(mockServerSupabase);
