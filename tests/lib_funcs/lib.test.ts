@@ -25,7 +25,7 @@ describe("Admin Authorization Tests", () => {
     expect(response).toBeNull();
   });
   test("Lack of User should give Unauthorized error", async () => {
-    mockSupabase.auth.getUser.mockImplementationOnce((onFullfilled) => {
+    mockSupabase.auth.getUser.mockImplementationOnce(() => {
       return Promise.resolve({ data: { user: null } });
     });
     const response = await authorizeAdmin();
