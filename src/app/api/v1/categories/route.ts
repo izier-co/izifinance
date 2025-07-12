@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { supabase } from "@supabase-config";
+import { createClient } from "../../supabase_server.config";
 
 import { z } from "zod";
 import constValues from "@/lib/constants";
@@ -11,14 +11,20 @@ const categorySchema = z.object({
     .string()
     .max(constValues.maxShortTextLength)
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
   txCategoryDescription: z
     .string()
     .max(constValues.maxTextLength)
     .nullable()
     .transform((str) => {
-      str?.replace(constValues.allowOnlyAlphanumericAndSpaceOnlyPattern, "");
+      return str?.replace(
+        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+        ""
+      );
     }),
 });
 
@@ -52,6 +58,7 @@ const getRequestParams = z.object({
 });
 
 export const GET = async (req: NextRequest) => {
+  const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
   const paramModel = getRequestParams.safeParse(urlParams);
@@ -147,6 +154,7 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
+  const supabase = await createClient();
   let body: Record<string, string> = {};
   try {
     body = await req.json();
@@ -166,6 +174,8 @@ export const POST = async (req: NextRequest) => {
       { status: 400 }
     );
   }
+
+  console.log(categoryModel.data);
 
   const { data, error } = await supabase
     .from("m_category")

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { supabase } from "@supabase-config";
+// import { supabase } from "@supabase-config";
+import { createClient } from "../../supabase_server.config";
 
 import { z } from "zod";
 
@@ -77,11 +78,9 @@ const reimbursementItemSchema = z.object({
 const getRequestParams = z.object({
   paginationPage: z.coerce.number().positive().default(1),
   paginationSize: z.coerce.number().positive().min(1).optional(),
-  id: z.coerce.number().positive().optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
   bankTypeCode: z.coerce.number().positive().optional(),
   recipientCompanyCode: z.coerce.number().positive().optional(),
-  withNotes: z.coerce.boolean().default(false),
   fields: z
     .string()
     .optional()
@@ -106,6 +105,7 @@ type ReimbursementItems = {
 type ReturnedData = Record<string, number | string>;
 
 export const GET = async (req: NextRequest) => {
+  const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
   const paramModel = getRequestParams.safeParse(urlParams);

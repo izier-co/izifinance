@@ -1,6 +1,6 @@
 import constValues from "@/lib/constants";
 import { sanitizeDatabaseOutputs } from "@/lib/lib";
-import { supabase } from "@supabase-config";
+import { createClient } from "@/app/api/supabase_server.config";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -18,6 +18,7 @@ export const GET = async (
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
 ) => {
+  const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const fields = searchParams.get("fields");
   const urlParams = await props.params;
@@ -51,6 +52,7 @@ export const PUT = async (
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
 ) => {
+  const supabase = await createClient();
   const urlParams = await props.params;
   let descriptionBody;
   try {
@@ -76,7 +78,10 @@ export const PUT = async (
 
   const { data, error } = await supabase
     .from("reimbursement_notes")
-    .update({ txDescriptionDetails: newDescription })
+    .update({
+      txDescriptionDetails: newDescription,
+      daUpdatedAt: new Date().toISOString(),
+    })
     .eq("txReimbursementNoteID", urlParams.id)
     .select();
 

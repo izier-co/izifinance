@@ -7,6 +7,9 @@ export async function createClient() {
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_KEY!,
     {
+      db: {
+        schema: "dt_dwh",
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();

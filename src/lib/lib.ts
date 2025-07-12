@@ -1,8 +1,10 @@
-import { supabase } from "@supabase-config";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { JSONValue } from "postgres";
 
-export async function verifyAuthentication(): Promise<NextResponse<unknown> | null> {
+export async function verifyAuthentication(
+  supabase: SupabaseClient<any, any, any>
+): Promise<NextResponse<unknown> | null> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -12,11 +14,13 @@ export async function verifyAuthentication(): Promise<NextResponse<unknown> | nu
   return null;
 }
 
-export async function authorizeAdmin(): Promise<NextResponse<JSONValue> | null> {
+export async function authorizeAdmin(
+  supabase: SupabaseClient<any, any, any>
+): Promise<NextResponse<JSONValue> | null> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
+  console.log(user);
   if (!user) {
     return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
   }
@@ -56,4 +60,23 @@ export function sanitizeDatabaseOutputs(obj: object[]): object {
     }
   });
   return obj;
+}
+
+export function removeByKey(data: object): object {
+  const jsonString = JSON.stringify(data, (key, value) => {
+    if (key === "uiReimbursementID") {
+      return undefined;
+    }
+    if (key === "uiIdempotencyKey") {
+      return undefined;
+    }
+    if (key === "uiReimbursementItemID") {
+      return undefined;
+    }
+    if (key === "uiCategoryID") {
+      return undefined;
+    }
+    return value;
+  });
+  return JSON.parse(jsonString);
 }
