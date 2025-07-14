@@ -24,17 +24,17 @@ export const testingGlobalVars = {
 };
 
 export const mockSupabase = {
-  from: vitest.fn().mockReturnThis(),
-  select: vitest.fn().mockReturnThis(),
-  insert: vitest.fn().mockReturnThis(),
-  update: vitest.fn().mockReturnThis(),
-  eq: vitest.fn().mockReturnThis(),
-  lt: vitest.fn().mockReturnThis(),
-  gt: vitest.fn().mockReturnThis(),
-  order: vitest.fn().mockReturnThis(),
-  range: vitest.fn().mockReturnThis(),
+  from: vitest.fn(),
+  select: vitest.fn(),
+  insert: vitest.fn(),
+  update: vitest.fn(),
+  eq: vitest.fn(),
+  lt: vitest.fn(),
+  gt: vitest.fn(),
+  order: vitest.fn(),
+  range: vitest.fn(),
   single: vitest.fn().mockResolvedValue(testingGlobalVars.emptyObject), // sample overrideable value
-  ilike: vitest.fn().mockReturnThis(),
+  ilike: vitest.fn(),
   auth: {
     signInWithPassword: vitest.fn().mockImplementation(() => {
       return testingGlobalVars.authReturnObject;
@@ -74,6 +74,7 @@ export const mockServerSupabase = {
       return testingGlobalVars.authReturnObject;
     }),
     setSession: vitest.fn(),
+    signOut: vitest.fn().mockResolvedValue(Promise.resolve({ error: null })),
     then: vitest.fn().mockImplementation((onFulfilled) => {
       onFulfilled({ data: null, error: null });
       return Promise.resolve({ data: null, error: null });
@@ -84,6 +85,4 @@ export const mockHandleSession = vitest
   .fn()
   .mockResolvedValue({ supabase: mockSupabase });
 
-export const mockCreateClient = vitest
-  .fn()
-  .mockResolvedValue(mockServerSupabase);
+export const mockCreateClient = vitest.fn().mockResolvedValue(mockSupabase);

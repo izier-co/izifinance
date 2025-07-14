@@ -3,7 +3,6 @@ import { describe, test, expect, vitest, beforeEach } from "vitest";
 import {
   mockCreateClient,
   mockServerSupabase,
-  mockSupabase,
 } from "../../__mocks__/supabase.mock";
 import { POST } from "@/app/api/v1/auth/signin/route";
 import { createMockRequestWithBody } from "../../__helpers__/lib";
@@ -26,6 +25,8 @@ const mockPayload = {
 
 const mockSuccessfulLoginBody = {
   message: "Sign In successful!",
+  access_token: "blablabla",
+  refresh_token: "blahblahblah",
 };
 
 const mockError = Error();

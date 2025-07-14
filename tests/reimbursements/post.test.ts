@@ -1,13 +1,14 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
-import { mockSupabase } from "../__mocks__/supabase.mock";
+import { mockCreateClient, mockSupabase } from "../__mocks__/supabase.mock";
 import { mockDrizzle, mockNestedDrizzle } from "../__mocks__/drizzle.mock";
 import { createMockRequestWithBody } from "../__helpers__/lib";
 import { POST } from "@/app/api/v1/reimbursements/route";
 import { NextRequest } from "next/server";
 
-vitest.mock("@supabase-config", () => {
+vitest.mock("@/app/api/supabase_server.config", () => {
   return {
+    createClient: mockCreateClient,
     supabase: mockSupabase,
   };
 });
@@ -36,7 +37,7 @@ type ReimbursementPayload = {
   txEmployeeCode: string;
   txApprovedBy?: string;
   inCategoryID: number;
-  deNominalReimbursement: number;
+  dcNominalReimbursement: number;
   reimbursement_items: Array<ReimbursementItems>;
 };
 
@@ -58,9 +59,8 @@ const reimbursementPayload: ReimbursementPayload = {
   txBankAccountCode: "09876543210987654321",
   txChangeReason: "",
   txEmployeeCode: "P00012000",
-  txApprovedBy: "F00023000",
   inCategoryID: 1,
-  deNominalReimbursement: 120000,
+  dcNominalReimbursement: 120000,
   reimbursement_items: [
     {
       txName: "Big Mac",
@@ -141,7 +141,7 @@ describe("POST /reimbursements success cases", () => {
       totalPrice += reimbursementItemsArray[i].deTotalPrice;
     }
     expect(mockNestedDrizzle.set).toBeCalledWith({
-      deNominalReimbursement: totalPrice.toFixed(2),
+      dcNominalReimbursement: totalPrice.toFixed(2),
     });
     expect(response.status).toBe(201);
     expect(body).toEqual({

@@ -1,12 +1,16 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
-import { mockSupabase } from "../../../__mocks__/supabase.mock";
+import {
+  mockCreateClient,
+  mockSupabase,
+} from "../../../__mocks__/supabase.mock";
 import { mockDrizzle } from "../../../__mocks__/drizzle.mock";
 import { PUT } from "@/app/api/v1/reimbursements/[id]/approve/route";
 import { NextRequest } from "next/server";
 
-vitest.mock("@supabase-config", () => {
+vitest.mock("@/app/api/supabase_server.config", () => {
   return {
+    createClient: mockCreateClient,
     supabase: mockSupabase,
   };
 });

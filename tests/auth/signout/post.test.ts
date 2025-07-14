@@ -1,10 +1,11 @@
 import { describe, test, expect, vitest, beforeEach } from "vitest";
 
-import { mockSupabase } from "../../__mocks__/supabase.mock";
+import { mockCreateClient, mockSupabase } from "../../__mocks__/supabase.mock";
 import { POST } from "@/app/api/v1/auth/logout/route";
 
-vitest.mock("@supabase-config", () => {
+vitest.mock("@/app/api/supabase_server.config", () => {
   return {
+    createClient: mockCreateClient,
     supabase: mockSupabase,
   };
 });
@@ -24,7 +25,8 @@ describe("Test Logout", () => {
   });
 
   test("Failed Logout Case (general issues)", async () => {
-    mockSupabase.auth.signOut.mockImplementation(() => {
+    mockSupabase.auth.then.mockImplementation((onFulfilled) => {
+      onFulfilled({ data: null, error: mockError });
       return Promise.resolve({ data: null, error: mockError });
     });
 
