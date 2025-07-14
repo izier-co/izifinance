@@ -1,4 +1,5 @@
 import { createClient } from "@/app/api/supabase_server.config";
+import constValues from "@/lib/constants";
 import { authorizeAdmin, sanitizeDatabaseOutputs } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,6 +13,24 @@ export const PUT = async (
 
   const params = await props.params;
   const id = params.id;
+
+  let changeReason = "";
+  try {
+    const body = await req.json();
+    // ensures type safety when body is null or undefined
+    changeReason = body["changeReason"] || "";
+    changeReason = changeReason.replace(
+      constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+      ""
+    );
+  } catch {
+    return NextResponse.json(
+      { error: "400 Bad Request : Invalid JSON Payload" },
+      { status: 400 }
+    );
+  } finally {
+    // TODO : handle something regarding logging
+  }
 
   const { data: preCheckData, error: preCheckError } = await supabase
     .from("reimbursement_notes")
@@ -30,7 +49,11 @@ export const PUT = async (
 
   const { data, error } = await supabase
     .from("reimbursement_notes")
-    .update({ txStatus: "Approved", daUpdatedAt: new Date().toISOString() })
+    .update({
+      txStatus: "Approved",
+      txChangeReason: changeReason,
+      daUpdatedAt: new Date().toISOString(),
+    })
     .eq("txReimbursementNoteID", id)
     .select();
 

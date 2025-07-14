@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // import { supabase } from "@supabase-config";
-import { createClient } from "../../supabase_server.config";
+import { createClient } from "@/app/api/supabase_server.config";
 
 import { z } from "zod";
 
@@ -36,16 +36,6 @@ const reimbursementSchema = z.object({
     .string()
     .max(constValues.maxBankCodeLength)
     .refine((val) => isValidInt(val)),
-  txChangeReason: z
-    .string()
-    .max(constValues.maxTextLength)
-    .nullable()
-    .transform((str) => {
-      return str?.replace(
-        constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
-        ""
-      );
-    }),
   txEmployeeCode: z
     .string()
     .length(9)
@@ -294,7 +284,6 @@ export const POST = async (req: NextRequest) => {
           inBankTypeCode: noteItem.inBankTypeCode,
           inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
           txBankAccountCode: noteItem.txBankAccountCode,
-          txChangeReason: noteItem.txChangeReason,
           txEmployeeCode: noteItem.txEmployeeCode,
         })
         .returning();

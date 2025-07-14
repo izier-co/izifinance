@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { createClient } from "../../supabase_server.config";
+import { createClient } from "@/app/api/supabase_server.config";
 
 import { z } from "zod";
 import constValues from "@/lib/constants";
