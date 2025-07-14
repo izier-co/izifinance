@@ -20,7 +20,6 @@ export async function authorizeAdmin(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(user);
   if (!user) {
     return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
   }

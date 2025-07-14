@@ -11,6 +11,10 @@ export const PUT = async (
   const unauthorizedResponse = await authorizeAdmin(supabase);
   if (unauthorizedResponse) return unauthorizedResponse;
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const params = await props.params;
   const id = params.id;
 
@@ -34,16 +38,31 @@ export const PUT = async (
 
   const { data: preCheckData, error: preCheckError } = await supabase
     .from("reimbursement_notes")
-    .select("*")
+    .select("txStatus, txApprovedBy")
     .eq("txReimbursementNoteID", id)
-    .eq("txStatus", "Void");
+    .single();
 
   if (preCheckError)
     return NextResponse.json({ error: preCheckError.message }, { status: 500 });
 
-  if (preCheckData.length)
+  if (preCheckData["txStatus"] === "Void")
     return NextResponse.json(
       { error: "Cannot approve voided notes" },
+      { status: 422 }
+    );
+
+  const { data: empData, error: empSelectErr } = await supabase
+    .from("m_employees")
+    .select("txEmployeeCode")
+    .eq("uiUserID", user?.id)
+    .single();
+
+  if (empSelectErr)
+    return NextResponse.json({ error: empSelectErr.message }, { status: 500 });
+
+  if (preCheckData["txApprovedBy"] !== empData["txEmployeeCode"])
+    return NextResponse.json(
+      { error: "You are not allowed to do that" },
       { status: 422 }
     );
 
@@ -51,6 +70,7 @@ export const PUT = async (
     .from("reimbursement_notes")
     .update({
       txStatus: "Approved",
+      txApprovedBy: empData["txEmployeeCode"],
       txChangeReason: changeReason,
       daUpdatedAt: new Date().toISOString(),
     })
