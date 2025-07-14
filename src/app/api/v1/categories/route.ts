@@ -175,8 +175,6 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  console.log(categoryModel.data);
-
   const { data, error } = await supabase
     .from("m_category")
     .insert(categoryModel.data)

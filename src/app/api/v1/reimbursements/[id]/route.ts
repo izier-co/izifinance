@@ -2,17 +2,6 @@ import constValues from "@/lib/constants";
 import { sanitizeDatabaseOutputs } from "@/lib/lib";
 import { createClient } from "@/app/api/supabase_server.config";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-
-const descriptionValidator = z
-  .string()
-  .max(constValues.maxTextLength)
-  .transform((str) => {
-    return str?.replace(
-      constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
-      ""
-    );
-  });
 
 export const GET = async (
   req: NextRequest,
@@ -54,10 +43,14 @@ export const PUT = async (
 ) => {
   const supabase = await createClient();
   const urlParams = await props.params;
-  let descriptionBody;
+  let description = "";
   try {
     const body = await req.json();
-    descriptionBody = body["description"];
+    description = body["description"] || "";
+    description = description.replace(
+      constValues.allowOnlyAlphanumericAndSpaceOnlyPattern,
+      ""
+    );
   } catch {
     return NextResponse.json(
       { error: "400 Bad Request : Invalid JSON Payload" },
@@ -66,20 +59,11 @@ export const PUT = async (
   } finally {
     // TODO : handle something regarding logging
   }
-  const descriptionResult = descriptionValidator.safeParse(descriptionBody);
-  if (!descriptionResult.success) {
-    return NextResponse.json(
-      { error: `400 Bad Request : ${descriptionResult.error}` },
-      { status: 400 }
-    );
-  }
-
-  const newDescription = descriptionResult.data;
 
   const { data, error } = await supabase
     .from("reimbursement_notes")
     .update({
-      txDescriptionDetails: newDescription,
+      txDescriptionDetails: description,
       daUpdatedAt: new Date().toISOString(),
     })
     .eq("txReimbursementNoteID", urlParams.id)

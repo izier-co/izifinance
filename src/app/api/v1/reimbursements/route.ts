@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// import { supabase } from "@supabase-config";
 import { createClient } from "@/app/api/supabase_server.config";
 
 import { z } from "zod";
@@ -271,7 +270,7 @@ export const POST = async (req: NextRequest) => {
         .execute();
 
       if (existingParent.length > 0) {
-        throw new Error("Data is idempotent. Skipping...");
+        trx.rollback();
       }
 
       const insertedParentData = await trx

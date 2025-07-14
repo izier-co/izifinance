@@ -63,7 +63,7 @@ export const PUT = async (
   const sanitizedData = sanitizeDatabaseOutputs(data);
 
   return NextResponse.json({
-    message: "Data Successfully Updated!",
+    message: "Note Approved!",
     data: sanitizedData,
   });
 };
