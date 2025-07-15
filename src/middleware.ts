@@ -15,7 +15,6 @@ export async function middleware(req: NextRequest) {
   // if (!success) {
   //   return NextResponse.json({ message: "Too many requests" }, { status: 429 });
   // }
-
   const { supabase } = await handleSession(req);
 
   const {
@@ -23,6 +22,7 @@ export async function middleware(req: NextRequest) {
     error,
   } = await supabase.auth.getUser();
 
+  const isRootRoute = req.nextUrl.pathname.startsWith("/");
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
 
@@ -30,12 +30,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isAuthRoute && !isRootRoute) {
     if (isApiRoute) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     } else {
       const url = req.nextUrl.clone();
-      url.pathname = "/api/v1/auth/login";
+      url.pathname = "/api/v1/auth/signin";
       return NextResponse.redirect(url);
     }
   }
