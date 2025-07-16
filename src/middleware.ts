@@ -25,7 +25,8 @@ export async function middleware(req: NextRequest) {
   const isRootRoute = req.nextUrl.pathname === "/";
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
-  if (error) {
+
+  if (error && error.status === 401) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -34,7 +35,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     } else {
       const url = req.nextUrl.clone();
-      url.pathname = "/api/v1/auth/signin";
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
   }
