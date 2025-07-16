@@ -22,10 +22,9 @@ export async function middleware(req: NextRequest) {
     error,
   } = await supabase.auth.getUser();
 
-  const isRootRoute = req.nextUrl.pathname.startsWith("/");
+  const isRootRoute = req.nextUrl.pathname === "/";
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
-
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -43,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/((?!v1/auth).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
