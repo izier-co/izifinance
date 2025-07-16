@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useRef, useState } from "react";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,7 @@ export default function Home() {
       });
 
       if (res.status === 200) {
+        redirect("/dashboard");
       } else {
         const body = await res.json();
         setServerError(body.error);
