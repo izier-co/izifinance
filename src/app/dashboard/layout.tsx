@@ -1,11 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { DynamicBreadcrumbs } from "@/components/dynamic-breadcrumbs";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 
 import {
@@ -24,13 +18,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
         />
-        {/* <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb> */}
         <DynamicBreadcrumbs />
       </header>
       <main>
