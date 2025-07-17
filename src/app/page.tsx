@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 
 import { useRef, useState } from "react";
 import { redirect } from "next/navigation";
+import { fetchJSONAPI } from "@/lib/lib";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,13 +48,11 @@ export default function Home() {
     if (validationErr.email || validationErr.password) {
       setErrors(validationErr);
     } else {
-      const res = await fetch("/api/v1/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginObject),
-      });
+      const res = await fetchJSONAPI(
+        "POST",
+        "/api/v1/auth/signin",
+        loginObject
+      );
 
       if (res.status === 200) {
         redirect("/dashboard");

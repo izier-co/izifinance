@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useRef } from "react";
+import { fetchJSONAPI } from "@/lib/lib";
 
 export function LoginForm({
   className,
@@ -34,13 +35,7 @@ export function LoginForm({
       email: emailValue,
       password: passwordValue,
     };
-    const res = await fetch("/api/v1/auth/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginBody),
-    });
+    const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginBody);
     if (res.status === 200) {
       console.log("Logged In");
     } else {

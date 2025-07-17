@@ -1,17 +1,13 @@
 "use client";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { fetchJSONAPI } from "@/lib/lib";
 
 export function LogoutButton({
   ...props
 }: React.ComponentProps<typeof Button>) {
   async function _logout() {
-    await fetch("/api/v1/auth/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    await fetchJSONAPI("POST", "/api/v1/auth/logout");
     redirect("/");
   }
   return (
