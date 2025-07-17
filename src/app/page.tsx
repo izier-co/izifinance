@@ -63,14 +63,6 @@ export default function Home() {
       }
     }
   }
-  async function _logout() {
-    await fetch("/api/v1/auth/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -120,9 +112,6 @@ export default function Home() {
                     {serverError && (
                       <p className="text-sm text-red-500">{serverError}</p>
                     )}
-                    <Button type="button" onClick={_logout} className="w-full">
-                      Logout
-                    </Button>
                   </div>
                 </div>
               </form>
