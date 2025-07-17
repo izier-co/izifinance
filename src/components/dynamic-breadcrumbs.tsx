@@ -21,8 +21,8 @@ export function DynamicBreadcrumbs({
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {breadCrumbPathList.map((name) => (
-          <BreadcrumbItem className="hidden md:block">
+        {breadCrumbPathList.map((name, index) => (
+          <BreadcrumbItem key={index} className="hidden md:block">
             <BreadcrumbLink href="#">
               {capitalizeFirstLetter(name)}
             </BreadcrumbLink>
