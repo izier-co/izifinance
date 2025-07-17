@@ -15,12 +15,17 @@ export function DynamicBreadcrumbs({
   const pathNameList = pathName.split("/");
   // ignores empty string before first /
   const breadCrumbPathList = pathNameList.slice(1);
+  function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
   return (
     <Breadcrumb>
       <BreadcrumbList>
         {breadCrumbPathList.map((name) => (
           <BreadcrumbItem className="hidden md:block">
-            <BreadcrumbLink href="#">{name}</BreadcrumbLink>
+            <BreadcrumbLink href="#">
+              {capitalizeFirstLetter(name)}
+            </BreadcrumbLink>
           </BreadcrumbItem>
         ))}
       </BreadcrumbList>
