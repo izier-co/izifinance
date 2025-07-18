@@ -93,3 +93,15 @@ export async function fetchJSONAPI(
     body: JSON.stringify(jsonBody),
   });
 }
+
+export function assemblePathName(pathNameList: Array<string>, index: number) {
+  if (Number.isInteger(index) && 0 <= index && index < pathNameList.length) {
+    let resultStr = "";
+    for (let i = 0; i <= index; i++) {
+      resultStr += pathNameList[i] + "/";
+    }
+    return resultStr;
+  } else {
+    return "#";
+  }
+}
