@@ -5,9 +5,11 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { assemblePathName } from "@/lib/lib";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export function DynamicBreadcrumbs({
@@ -24,25 +26,24 @@ export function DynamicBreadcrumbs({
     <Breadcrumb>
       <BreadcrumbList>
         {breadCrumbPathList.map((name, index) => {
-          const baseUrl = "localhost:3000/";
+          const baseUrl = "http://localhost:3000/";
           const pathUrl = baseUrl + assemblePathName(breadCrumbPathList, index);
+          const separatorID = Math.random().toString(36).substring(0, 6);
           if (index + 1 === breadCrumbPathList.length) {
             return (
               <BreadcrumbItem key={index} className="hidden md:block">
-                <BreadcrumbLink href={pathUrl}>
-                  {capitalizeFirstLetter(name)}
-                </BreadcrumbLink>
+                <BreadcrumbPage>{capitalizeFirstLetter(name)}</BreadcrumbPage>
               </BreadcrumbItem>
             );
           } else {
             return (
               <>
                 <BreadcrumbItem key={index} className="hidden md:block">
-                  <BreadcrumbLink href={pathUrl}>
-                    {capitalizeFirstLetter(name)}
+                  <BreadcrumbLink asChild>
+                    <Link href={pathUrl}> {capitalizeFirstLetter(name)}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator key={index + 1} />
+                <BreadcrumbSeparator key={separatorID} />
               </>
             );
           }
