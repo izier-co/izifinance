@@ -20,7 +20,6 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
 import { LogoutButton } from "./logout-button";
 
 const data = {
@@ -31,7 +30,7 @@ const data = {
       items: [
         {
           title: "View Reimbursements",
-          url: "#",
+          url: "/dashboard/reimbursements",
           isActive: true,
         },
         {
@@ -93,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title}{" "}
+                      {item.title}
                       <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
