@@ -26,8 +26,7 @@ export function DynamicBreadcrumbs({
     <Breadcrumb>
       <BreadcrumbList>
         {breadCrumbPathList.map((name, index) => {
-          const baseUrl = "http://localhost:3000/";
-          const pathUrl = baseUrl + assemblePathName(breadCrumbPathList, index);
+          const pathUrl = assemblePathName(breadCrumbPathList, index);
           const separatorID = Math.random().toString(36).substring(0, 6);
           if (index + 1 === breadCrumbPathList.length) {
             return (
