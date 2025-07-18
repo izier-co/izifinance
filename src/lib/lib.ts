@@ -96,7 +96,7 @@ export async function fetchJSONAPI(
 
 export function assemblePathName(pathNameList: Array<string>, index: number) {
   if (Number.isInteger(index) && 0 <= index && index < pathNameList.length) {
-    let resultStr = "";
+    let resultStr = "/";
     for (let i = 0; i <= index; i++) {
       resultStr += pathNameList[i] + "/";
     }
