@@ -87,6 +87,7 @@ export async function fetchJSONAPI(
 ) {
   return await fetch(url, {
     method: method,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
