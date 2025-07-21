@@ -56,21 +56,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search Employee Code"
-          value={
-            (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("txEmployeeCode")
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
