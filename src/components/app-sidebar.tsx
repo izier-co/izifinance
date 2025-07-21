@@ -49,7 +49,7 @@ const data = {
       items: [
         {
           title: "View Categories",
-          url: "#",
+          url: "/dashboard/categories",
         },
         {
           title: "Delete Categories",
