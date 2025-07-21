@@ -1,6 +1,6 @@
 "use client";
 
-import { Column, ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { z } from "zod";
 
@@ -31,21 +31,6 @@ export const payloadSchema = z.object({
 });
 
 export type Reimbursements = z.infer<typeof payloadSchema>;
-
-export type ReimbursementPayload = {
-  daCreatedAt: string;
-  daUpdatedAt: string;
-  txStatus: string;
-  txDescriptionDetails: string;
-  txRecipientAccount: string;
-  inBankTypeCode: number;
-  inRecipientCompanyCode: number;
-  txBankAccountCode: string;
-  txChangeReason: string;
-  txEmployeeCode: string;
-  inCategoryID: number;
-  dcNominalReimbursement: number;
-};
 
 export const columns: ColumnDef<Reimbursements>[] = [
   {

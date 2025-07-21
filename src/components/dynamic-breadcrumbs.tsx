@@ -27,7 +27,6 @@ export function DynamicBreadcrumbs({
       <BreadcrumbList>
         {breadCrumbPathList.map((name, index) => {
           const pathUrl = assemblePathName(breadCrumbPathList, index);
-          const separatorID = Math.random().toString(36).substring(0, 6);
           if (index + 1 === breadCrumbPathList.length) {
             return (
               <BreadcrumbItem key={index} className="hidden md:block">
@@ -42,7 +41,8 @@ export function DynamicBreadcrumbs({
                     <Link href={pathUrl}> {capitalizeFirstLetter(name)}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator key={separatorID} />
+                {/* magic number for now */}
+                <BreadcrumbSeparator key={index++ * 2 + 1} />
               </>
             );
           }

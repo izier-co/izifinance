@@ -23,25 +23,17 @@ export function LoginForm({
   const passwordRef = useRef<HTMLInputElement>(null);
 
   async function _handleClick() {
-    let emailValue = "";
-    let passwordValue = "";
-    if (inputRef.current) {
-      emailValue = inputRef.current.value;
-    }
-    if (passwordRef.current) {
-      passwordValue = passwordRef.current.value;
-    }
     const loginBody = {
-      email: emailValue,
-      password: passwordValue,
+      email: "",
+      password: "",
     };
-    const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginBody);
-    if (res.status === 200) {
-      console.log("Logged In");
-    } else {
-      const body = await res.json();
-      console.log(body);
+    
+    if (inputRef.current && passwordRef.current) {
+      loginBody.email = inputRef.current.value;
+      loginBody.password = passwordRef.current.value;
     }
+
+    await fetchJSONAPI("POST", "/api/v1/auth/signin", loginBody);
   }
 
   return (
