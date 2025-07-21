@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { Column, ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { z } from "zod";
 
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import { SortableHeader } from "@/components/sorting-datatable-header";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -50,15 +51,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     accessorKey: "daCreatedAt",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
       const dateFromISO = new Date(row.getValue("daCreatedAt"));
@@ -69,15 +62,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     accessorKey: "daUpdatedAt",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Updated At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
       const dateFromISO = new Date(row.getValue("daUpdatedAt"));
@@ -88,113 +73,49 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     accessorKey: "txStatus",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Status" />;
     },
   },
   {
     accessorKey: "txDescriptionDetails",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Description
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Description" />;
     },
   },
   {
     accessorKey: "txRecipientAccount",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Recipient Account
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Recipient Account" />;
     },
   },
   {
     accessorKey: "inBankTypeCode",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Bank Type
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Bank Type" />;
     },
   },
   {
     accessorKey: "inRecipientCompanyCode",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Recipient Company
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Description" />;
     },
   },
   {
     accessorKey: "txBankAccountCode",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Bank Account Code
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Bank Account Code" />;
     },
   },
   {
     accessorKey: "txChangeReason",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Change Reason
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Change Reason" />;
     },
   },
   {
     accessorKey: "txEmployeeCode",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Issuer
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Employee Code" />;
     },
   },
   {
@@ -214,15 +135,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     accessorKey: "dcNominalReimbursement",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Total Reimbursement
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <SortableHeader column={column} title="Total Reimbursement" />;
     },
   },
   {
