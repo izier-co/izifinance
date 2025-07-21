@@ -55,7 +55,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
     },
     cell: ({ row }) => {
       const dateFromISO = new Date(row.getValue("daCreatedAt"));
-      const localTime = dateFromISO.toLocaleTimeString();
+      const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
     },
   },
@@ -66,7 +66,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
     },
     cell: ({ row }) => {
       const dateFromISO = new Date(row.getValue("daUpdatedAt"));
-      const localTime = dateFromISO.toLocaleTimeString();
+      const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
     },
   },
