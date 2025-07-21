@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 
 import { useRef, useState } from "react";
 import { redirect } from "next/navigation";
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchJSONAPI } from "@/lib/server-lib";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);

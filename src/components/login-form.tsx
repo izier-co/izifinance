@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useRef } from "react";
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchJSONAPI } from "@/lib/server-lib";
 
 export function LoginForm({
   className,

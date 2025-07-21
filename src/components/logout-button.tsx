@@ -1,7 +1,7 @@
 "use client";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchJSONAPI } from "@/lib/server-lib";
 
 export function LogoutButton({
   ...props

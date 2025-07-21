@@ -1,9 +1,7 @@
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchJSONAPI } from "@/lib/server-lib";
 import { columns, ReimbursementPayload } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { cookies } from "next/headers";
 
 const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -20,31 +18,8 @@ const payloadSchema = z.object({
   dcNominalReimbursement: z.number(),
 });
 
-// async function getData(): Promise<ReimbursementPayload> {
-//   const data = await fetchJSONAPI("GET", "/api/v1/reimbursements");
-//   const json = await data.json();
-
-//   if (!Array.isArray(json["data"])) {
-//     throw new Error("Expected array response");
-//   }
-//   const dataArr = json["data"];
-//   const users = dataArr.map((item) => payloadSchema.parse(item));
-//   return users;
-// }
-
 async function getData(): Promise<Array<ReimbursementPayload>> {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-
-  const data = await fetch("http://localhost:3000/api/v1/reimbursements", {
-    credentials: "include",
-    cache: "no-store",
-    headers: {
-      Cookie: allCookies
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join("; "),
-    },
-  });
+  const data = await fetchJSONAPI("GET", "/api/v1/reimbursements");
   const json = await data.json();
   console.log(json);
   return [
@@ -112,7 +87,6 @@ export default async function Page() {
   return (
     <div className="">
       <DataTable columns={columns} data={data} />
-      {/* <Button onClick={getData}></Button> */}
     </div>
   );
 }

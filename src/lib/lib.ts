@@ -80,21 +80,6 @@ export function removeByKey(data: object): object {
   return JSON.parse(jsonString);
 }
 
-export async function fetchJSONAPI(
-  method: string,
-  url: string,
-  jsonBody?: object
-) {
-  return await fetch(url, {
-    method: method,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(jsonBody),
-  });
-}
-
 export function assemblePathName(pathNameList: Array<string>, index: number) {
   if (Number.isInteger(index) && 0 <= index && index < pathNameList.length) {
     let resultStr = "/";
