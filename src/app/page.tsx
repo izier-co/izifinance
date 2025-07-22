@@ -48,11 +48,13 @@ export default function Home() {
     if (validationErr.email || validationErr.password) {
       setErrors(validationErr);
     } else {
-      const res = await fetchJSONAPI(
-        "POST",
-        "/api/v1/auth/signin",
-        loginObject
-      );
+      const res = await fetch("http://localhost:3000/api/v1/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginObject),
+      });
 
       if (res.status === 200) {
         redirect("/dashboard");
