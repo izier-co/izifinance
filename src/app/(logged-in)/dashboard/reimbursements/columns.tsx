@@ -14,6 +14,18 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -145,8 +157,67 @@ export const columns: ColumnDef<Reimbursements>[] = [
             >
               View Details
             </DropdownMenuItem>
-            <DropdownMenuItem>Edit Description</DropdownMenuItem>
-            <DropdownMenuLabel>Approve/Void</DropdownMenuLabel>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem
+                  // prevents weirc closing bug when opening
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  Edit Description
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                <DialogHeader>
+                  <DialogTitle>Edit Description</DialogTitle>
+                </DialogHeader>
+                <div className="flex items-center gap-2">
+                  <div className="grid flex-1 gap-2">
+                    <Label htmlFor="link">Description : </Label>
+                    <Input
+                      id="link"
+                      defaultValue={row.getValue("txDescriptionDetails")}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button type="button">Confirm</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuLabel
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  Approve/Void
+                </DropdownMenuLabel>
+              </DialogTrigger>
+              <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                <DialogHeader>
+                  <DialogTitle>Confirmation</DialogTitle>
+                  <DialogDescription>
+                    Are you sure to Approve/Void this note?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose>
+                    <Button type="button">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose>
+                    <Button type="button">Confirm</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );
