@@ -183,7 +183,9 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="button">Cancel</Button>
+                    <Button variant="secondary" type="button">
+                      Cancel
+                    </Button>
                   </DialogClose>
                   <DialogClose asChild>
                     <Button type="button">Confirm</Button>
@@ -210,10 +212,12 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </DialogHeader>
                 <DialogFooter>
                   <DialogClose>
-                    <Button type="button">Cancel</Button>
+                    <Button variant="secondary" type="button">
+                      Cancel
+                    </Button>
                   </DialogClose>
                   <DialogClose>
-                    <Button type="button">Confirm</Button>
+                    <Button type="button">Approve/Void</Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>

@@ -14,6 +14,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "recharts";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -78,7 +90,36 @@ export const columns: ColumnDef<Categories>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Delete</DropdownMenuLabel>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem
+                  // prevents weirc closing bug when opening
+                  onSelect={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                <DialogHeader>
+                  <DialogTitle>Confirmation</DialogTitle>
+                  <DialogDescription>
+                    Are you sure that you wanted to delete this?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="secondary" type="button">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button type="button">Confirm</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );
