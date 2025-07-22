@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { z } from "zod";
 
 import {
@@ -14,10 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
+import { useRouter } from "next/navigation";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
   daUpdatedAt: z.string(),
+  txReimbursementNoteID: z.string(),
   txStatus: z.string(),
   txDescriptionDetails: z.string(),
   txRecipientAccount: z.string(),
@@ -53,6 +54,12 @@ export const columns: ColumnDef<Reimbursements>[] = [
       const dateFromISO = new Date(row.getValue("daUpdatedAt"));
       const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
+    },
+  },
+  {
+    accessorKey: "txReimbursementNoteID",
+    header: ({ column }) => {
+      return <SortableHeader column={column} title="Reimbursement ID" />;
     },
   },
   {
@@ -118,6 +125,8 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const router = useRouter();
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -127,8 +136,17 @@ export const columns: ColumnDef<Reimbursements>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(
+                  `/dashboard/reimbursements/${row.getValue("txReimbursementNoteID")}`
+                );
+              }}
+            >
+              View Details
+            </DropdownMenuItem>
+            <DropdownMenuItem>Edit Description</DropdownMenuItem>
             <DropdownMenuLabel>Approve/Void</DropdownMenuLabel>
-            <DropdownMenuItem>View Details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
