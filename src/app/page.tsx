@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 
 import { useRef, useState } from "react";
 import { redirect } from "next/navigation";
-import { fetchJSONAPI } from "@/lib/server-lib";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +28,7 @@ export default function Home() {
     if (inputRef.current?.value === "") {
       loginErrors.email = "Email must not be empty";
     } else if (!inputRef.current?.value.includes("@")) {
-      loginErrors.email = "Email must contain @ symbol";
+      loginErrors.email = "Invalid email format";
     }
 
     if (passwordRef.current?.value === "") {
@@ -81,7 +80,7 @@ export default function Home() {
                       ref={inputRef}
                       id="email"
                       type="email"
-                      placeholder="username@example.com"
+                      placeholder="john.doe@example.com"
                       required
                     />
                     {errors.email && (
