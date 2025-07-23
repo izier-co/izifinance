@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { fetchJSONAPI } from "@/lib/server-lib";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -175,11 +175,19 @@ export const columns: ColumnDef<Reimbursements>[] = [
       });
 
       const router = useRouter();
-      const [open, setOpen] = useState(false);
+      const [approvalModalOpen, setaAprovalModalOpen] = useState(false);
+      const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
+
       const [approvalError, setApprovalError] = useState("");
       const [descriptionEditError, setDescriptionEditError] = useState("");
 
-      const approvalForm = useForm();
+      function _approvalModalCleanup() {
+        setApprovalError("");
+      }
+
+      function _descriptionModalCleanup() {
+        setDescriptionEditError("");
+      }
 
       const _approve = async (data: ApprovalSchema) => {
         const res = await fetchJSONAPI(
@@ -189,7 +197,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         );
 
         if (res.status === 200) {
-          setOpen(false);
+          setaAprovalModalOpen(false);
         } else {
           const json = res.message;
           setApprovalError(json.error);
@@ -204,7 +212,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         );
 
         if (res.status === 200) {
-          setOpen(false);
+          setDescriptionModalOpen(false);
         } else {
           const json = res.message;
           setDescriptionEditError(json.message);
@@ -229,7 +237,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
             >
               View Details
             </DropdownMenuItem>
-            <Dialog>
+            <Dialog onOpenChange={_descriptionModalCleanup}>
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   // prevents weirc closing bug when opening
@@ -287,7 +295,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </div>
               </DialogContent>
             </Dialog>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog onOpenChange={_approvalModalCleanup}>
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   onSelect={(e) => {
