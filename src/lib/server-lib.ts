@@ -16,7 +16,7 @@ export async function fetchJSONAPI(
   const domain = `${protocol}://${host}`;
   const fullURL = domain + url;
 
-  return await fetch(fullURL, {
+  const res = await fetch(fullURL, {
     method: method,
     headers: {
       "Content-Type": "application/json",
@@ -24,4 +24,8 @@ export async function fetchJSONAPI(
     },
     body: JSON.stringify(jsonBody),
   });
+  return {
+    status: res.status,
+    message: await res.json(),
+  };
 }

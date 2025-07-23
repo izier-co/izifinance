@@ -4,7 +4,7 @@ import { DataTable } from "@/components/data-table";
 
 async function getData(): Promise<Array<Categories>> {
   const data = await fetchJSONAPI("GET", "/api/v1/categories");
-  const json = await data.json();
+  const json = data.message;
   return json["data"];
 }
 

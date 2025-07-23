@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { fetchJSONAPI } from "@/lib/server-lib";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -138,6 +140,23 @@ export const columns: ColumnDef<Reimbursements>[] = [
     id: "actions",
     cell: ({ row }) => {
       const router = useRouter();
+      const [open, setOpen] = useState(false);
+      const [approvalError, setApprovalError] = useState("");
+      const [descriptionEditError, setDescriptionEditError] = useState("");
+
+      async function _approve() {
+        const res = await fetchJSONAPI(
+          "PUT",
+          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`
+        );
+
+        if (res.status === 200) {
+          setOpen(false);
+        } else {
+          const json = res.message;
+          setApprovalError(json.message);
+        }
+      }
 
       return (
         <DropdownMenu>
@@ -193,32 +212,33 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <DropdownMenuLabel
+                <DropdownMenuItem
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
                 >
-                  Approve/Void
-                </DropdownMenuLabel>
+                  Approve
+                </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Confirmation</DialogTitle>
                   <DialogDescription>
-                    Are you sure to Approve/Void this note?
+                    Are you sure to Approve this note?
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
+                  {approvalError && <span>{approvalError}</span>}
                   <DialogClose>
                     <Button variant="secondary" type="button">
                       Cancel
                     </Button>
                   </DialogClose>
-                  <DialogClose>
-                    <Button type="button">Approve/Void</Button>
-                  </DialogClose>
+                  <Button type="button" onClick={() => setOpen(false)}>
+                    Approve
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
