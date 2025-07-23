@@ -4,65 +4,65 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { EyeOffIcon, EyeIcon, Loader2 } from "lucide-react";
 
-import { useRef, useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { redirect } from "next/navigation";
 
+const loginSchema = z.object({
+  email: z
+    .string()
+    .nonempty("Please provide an email")
+    .email("Invalid Email Format"),
+  password: z
+    .string()
+    .nonempty("Please provide a password")
+    .min(8, "Password must be at least 8 characters")
+    .max(200, "Password must be at most 200 characters"),
+});
+
+type LoginSchema = z.infer<typeof loginSchema>;
+
 export default function Home() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const [errors, setErrors] = useState({ email: "", password: "" });
-  const [serverError, setServerError] = useState("");
-
-  type LoginObject = {
-    email: string;
-    password: string;
-  };
-
-  function validateEmail() {
-    const loginErrors: LoginObject = {
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
       email: "",
       password: "",
-    };
-    if (inputRef.current?.value === "") {
-      loginErrors.email = "Email must not be empty";
-    } else if (!inputRef.current?.value.includes("@")) {
-      loginErrors.email = "Invalid email format";
-    }
+    },
+  });
 
-    if (passwordRef.current?.value === "") {
-      loginErrors.password = "Password must not be empty";
-    }
-    return loginErrors;
-  }
+  const [showPassword, setShowPassword] = useState(false);
 
-  async function _handleClick() {
-    const loginObject: LoginObject = {
-      email: inputRef.current?.value || "",
-      password: passwordRef.current?.value || "",
-    };
+  const onSubmit = async (data: LoginSchema) => {
+    console.log("form submitted");
 
-    const validationErr = validateEmail();
-    if (validationErr.email || validationErr.password) {
-      setErrors(validationErr);
+    const res = await fetch("/api/v1/auth/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.status === 200) {
+      redirect("/dashboard");
     } else {
-      const res = await fetch("http://localhost:3000/api/v1/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginObject),
-      });
-
-      if (res.status === 200) {
-        redirect("/dashboard");
-      } else {
-        const body = await res.json();
-        setServerError(body.error);
-      }
+      const body = await res.json();
     }
-  }
+  };
+
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -72,49 +72,73 @@ export default function Home() {
               <CardTitle>Login to your account</CardTitle>
             </CardHeader>
             <CardContent>
-              <form>
-                <div className="flex flex-col gap-6">
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      ref={inputRef}
-                      id="email"
-                      type="email"
-                      placeholder="john.doe@example.com"
-                      required
-                    />
-                    {errors.email && (
-                      <p className="text-sm text-red-500">{errors.email}</p>
+              <Form {...form}>
+                <form
+                  id="login-form"
+                  className="flex flex-col gap-4"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel className="capitalize">Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="john.doe@example.com"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
-                  <div className="grid gap-3">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
-                    </div>
-                    <Input
-                      ref={passwordRef}
-                      id="password"
-                      type="password"
-                      required
-                    />
-                    {errors.password && (
-                      <p className="text-sm text-red-500">{errors.password}</p>
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel className="capitalize">Password</FormLabel>
+                        <div className="flex flex-row gap-1 justify-center item-center">
+                          <FormControl>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Type your password here"
+                              {...field}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                          >
+                            {showPassword ? (
+                              <EyeIcon className="w-4 h-4" />
+                            ) : (
+                              <EyeOffIcon className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
-                  <div className="grid gap-3">
-                    <Button
-                      type="button"
-                      onClick={_handleClick}
-                      className="w-full"
-                    >
-                      Login
-                    </Button>
-                    {serverError && (
-                      <p className="text-sm text-red-500">{serverError}</p>
+                  />
+                  <Button
+                    form="login-form"
+                    type="submit"
+                    disabled={form.formState.isLoading}
+                  >
+                    {form.formState.isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Login"
                     )}
-                  </div>
-                </div>
-              </form>
+                  </Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>
