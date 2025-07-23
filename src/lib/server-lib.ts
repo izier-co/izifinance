@@ -1,4 +1,5 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 export async function fetchJSONAPI(
@@ -28,4 +29,8 @@ export async function fetchJSONAPI(
     status: res.status,
     message: await res.json(),
   };
+}
+
+export async function refreshPage(path: string) {
+  revalidatePath(path);
 }

@@ -27,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dispatch, SetStateAction, useState } from "react";
-import { fetchJSONAPI } from "@/lib/server-lib";
+import { fetchJSONAPI, refreshPage } from "@/lib/server-lib";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -198,6 +198,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
 
         if (res.status === 200) {
           setaAprovalModalOpen(false);
+          refreshPage("/dashboard/reimbursement");
         } else {
           const json = res.message;
           setApprovalError(json.error);
@@ -213,6 +214,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
 
         if (res.status === 200) {
           setDescriptionModalOpen(false);
+          refreshPage("/dashboard/reimbursement");
         } else {
           const json = res.message;
           setDescriptionEditError(json.message);
