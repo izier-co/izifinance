@@ -28,6 +28,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { fetchJSONAPI } from "@/lib/server-lib";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormField,
+} from "@/components/ui/form";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -44,6 +54,17 @@ export const payloadSchema = z.object({
   inCategoryID: z.number(),
   dcNominalReimbursement: z.number(),
 });
+
+const approvalSchema = z.object({
+  changeReason: z.string(),
+});
+
+const changeDescriptionSchema = z.object({
+  description: z.string(),
+});
+
+type ApprovalSchema = z.infer<typeof approvalSchema>;
+type ChangeDescriptionSchema = z.infer<typeof changeDescriptionSchema>;
 
 export type Reimbursements = z.infer<typeof payloadSchema>;
 
@@ -139,24 +160,56 @@ export const columns: ColumnDef<Reimbursements>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const changeDescriptionForm = useForm<ChangeDescriptionSchema>({
+        resolver: zodResolver(changeDescriptionSchema),
+        defaultValues: {
+          description: row.getValue("txDescriptionDetails"),
+        },
+      });
+
+      const approveForm = useForm<ApprovalSchema>({
+        resolver: zodResolver(approvalSchema),
+        defaultValues: {
+          changeReason: row.getValue("txChangeReason"),
+        },
+      });
+
       const router = useRouter();
       const [open, setOpen] = useState(false);
       const [approvalError, setApprovalError] = useState("");
       const [descriptionEditError, setDescriptionEditError] = useState("");
 
-      async function _approve() {
+      const approvalForm = useForm();
+
+      const _approve = async (data: ApprovalSchema) => {
         const res = await fetchJSONAPI(
           "PUT",
-          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`
+          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
+          data
         );
 
         if (res.status === 200) {
           setOpen(false);
         } else {
           const json = res.message;
-          setApprovalError(json.message);
+          setApprovalError(json.error);
         }
-      }
+      };
+
+      const _setDescription = async (data: ChangeDescriptionSchema) => {
+        const res = await fetchJSONAPI(
+          "PUT",
+          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`,
+          data
+        );
+
+        if (res.status === 200) {
+          setOpen(false);
+        } else {
+          const json = res.message;
+          setDescriptionEditError(json.message);
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -193,23 +246,45 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </DialogHeader>
                 <div className="flex items-center gap-2">
                   <div className="grid flex-1 gap-2">
-                    <Label htmlFor="link">Description : </Label>
-                    <Input
-                      id="link"
-                      defaultValue={row.getValue("txDescriptionDetails")}
-                    />
+                    <Form {...changeDescriptionForm}>
+                      <form
+                        id="change-description-form"
+                        onSubmit={changeDescriptionForm.handleSubmit(
+                          _setDescription
+                        )}
+                      >
+                        <FormField
+                          control={changeDescriptionForm.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="capitalize">
+                                Description :
+                              </FormLabel>
+                              <FormControl>
+                                <Input className="mb-5" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <DialogFooter>
+                          {descriptionEditError && (
+                            <span>{descriptionEditError}</span>
+                          )}
+                          <DialogClose asChild>
+                            <Button variant="secondary" type="button">
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <DialogClose asChild>
+                            <Button type="submit">Confirm</Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </form>
+                    </Form>
                   </div>
                 </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="secondary" type="button">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button type="button">Confirm</Button>
-                  </DialogClose>
-                </DialogFooter>
               </DialogContent>
             </Dialog>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -229,17 +304,45 @@ export const columns: ColumnDef<Reimbursements>[] = [
                     Are you sure to Approve this note?
                   </DialogDescription>
                 </DialogHeader>
-                <DialogFooter>
-                  {approvalError && <span>{approvalError}</span>}
-                  <DialogClose>
-                    <Button variant="secondary" type="button">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button type="button" onClick={() => setOpen(false)}>
-                    Approve
-                  </Button>
-                </DialogFooter>
+                <div className="flex items-center gap-2">
+                  <div className="grid flex-1 gap-2">
+                    <Form {...approveForm}>
+                      <form
+                        id="approval-form"
+                        onSubmit={approveForm.handleSubmit(_approve)}
+                      >
+                        <FormField
+                          control={approveForm.control}
+                          name="changeReason"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="capitalize">
+                                Change Reason :
+                              </FormLabel>
+                              <FormControl>
+                                <Input className="mb-5" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        {approvalError && (
+                          <span className="text-sm text-red-600">
+                            {approvalError}
+                          </span>
+                        )}
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="secondary" type="button">
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <Button type="submit">Approve</Button>
+                        </DialogFooter>
+                      </form>
+                    </Form>
+                  </div>
+                </div>
               </DialogContent>
             </Dialog>
           </DropdownMenuContent>
