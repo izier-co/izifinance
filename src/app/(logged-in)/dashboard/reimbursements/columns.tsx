@@ -202,7 +202,9 @@ export const columns: ColumnDef<Reimbursements>[] = [
           refreshAndRevalidatePage("/dashboard/reimbursement");
         } else {
           const json = await res.json();
-          setApprovalError(json.error);
+          approveForm.setError("changeReason", {
+            message: json.error,
+          });
         }
       };
 
@@ -218,7 +220,9 @@ export const columns: ColumnDef<Reimbursements>[] = [
           refreshAndRevalidatePage("/dashboard/reimbursement");
         } else {
           const json = await res.json();
-          setDescriptionEditError(json.message);
+          changeDescriptionForm.setError("description", {
+            message: json.error,
+          });
         }
       };
 
@@ -273,16 +277,13 @@ export const columns: ColumnDef<Reimbursements>[] = [
                                 Description :
                               </FormLabel>
                               <FormControl>
-                                <Input className="mb-5" {...field} />
+                                <Input {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <DialogFooter>
-                          {descriptionEditError && (
-                            <span>{descriptionEditError}</span>
-                          )}
+                        <DialogFooter className="my-2">
                           <DialogClose asChild>
                             <Button variant="secondary" type="button">
                               Cancel
@@ -331,18 +332,13 @@ export const columns: ColumnDef<Reimbursements>[] = [
                                 Change Reason :
                               </FormLabel>
                               <FormControl>
-                                <Input className="mb-5" {...field} />
+                                <Input {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        {approvalError && (
-                          <span className="text-sm text-red-600">
-                            {approvalError}
-                          </span>
-                        )}
-                        <DialogFooter>
+                        <DialogFooter className="my-2">
                           <DialogClose asChild>
                             <Button variant="secondary" type="button">
                               Cancel
