@@ -21,10 +21,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .nonempty("Please provide an email")
-    .email("Invalid Email Format"),
+  email: z.email("Invalid Email Format").nonempty("Please provide an email"),
   password: z
     .string()
     .nonempty("Please provide a password")
@@ -46,7 +43,6 @@ export default function Home() {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: LoginSchema) => {
-    console.log("form submitted");
 
     const res = await fetch("/api/v1/auth/signin", {
       method: "POST",
@@ -60,6 +56,9 @@ export default function Home() {
       redirect("/dashboard");
     } else {
       const body = await res.json();
+      form.setError("root", {
+        message: body.error,
+      });
     }
   };
 
@@ -137,6 +136,11 @@ export default function Home() {
                       "Login"
                     )}
                   </Button>
+                  {form.formState.errors.root?.message && (
+                    <p className="text-sm font-medium text-destructive">
+                      {form.formState.errors.root.message}
+                    </p>
+                  )}
                 </form>
               </Form>
             </CardContent>
