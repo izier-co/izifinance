@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <DynamicBreadcrumbs />
         </header>
         <main>
-          <SidebarInset>{children}</SidebarInset>
+          <SidebarInset className="p-6">{children}</SidebarInset>
         </main>
       </div>
     </SidebarProvider>
