@@ -18,6 +18,6 @@ export async function getDomain() {
   return `${protocol}://${host}`;
 }
 
-export async function refreshPage(path: string) {
+export async function refreshAndRevalidatePage(path: string) {
   revalidatePath(path);
 }
