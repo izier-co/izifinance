@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -25,8 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useForm } from "react-hook-form";
@@ -176,18 +174,15 @@ export const columns: ColumnDef<Reimbursements>[] = [
       });
 
       const router = useRouter();
-      const [approvalModalOpen, setaAprovalModalOpen] = useState(false);
+      const [approvalModalOpen, setApprovalModalOpen] = useState(false);
       const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
 
-      const [approvalError, setApprovalError] = useState("");
-      const [descriptionEditError, setDescriptionEditError] = useState("");
-
       function _approvalModalCleanup() {
-        setApprovalError("");
+        approveForm.clearErrors();
       }
 
       function _descriptionModalCleanup() {
-        setDescriptionEditError("");
+        changeDescriptionForm.clearErrors();
       }
 
       const _approve = async (data: ApprovalSchema) => {
@@ -198,7 +193,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         );
 
         if (res.status === 200) {
-          setaAprovalModalOpen(false);
+          setApprovalModalOpen(false);
           refreshAndRevalidatePage("/dashboard/reimbursement");
         } else {
           const json = await res.json();
@@ -247,7 +242,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
             <Dialog onOpenChange={_descriptionModalCleanup}>
               <DialogTrigger asChild>
                 <DropdownMenuItem
-                  // prevents weirc closing bug when opening
+                  // prevents weird closing bug when opening
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
@@ -289,9 +284,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                               Cancel
                             </Button>
                           </DialogClose>
-                          <DialogClose asChild>
-                            <Button type="submit">Confirm</Button>
-                          </DialogClose>
+                          <Button type="submit">Confirm</Button>
                         </DialogFooter>
                       </form>
                     </Form>
