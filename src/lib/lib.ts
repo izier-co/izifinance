@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { JSONValue } from "postgres";
+import { getCookies, getDomain } from "./server-lib";
 
 export async function verifyAuthentication(
   supabase: SupabaseClient<any, any, any>
@@ -78,6 +79,25 @@ export function removeByKey(data: object): object {
     return value;
   });
   return JSON.parse(jsonString);
+}
+
+export async function fetchJSONAPI(
+  method: string,
+  url: string,
+  jsonBody?: object
+) {
+  const domain = await getDomain();
+  const cookies = await getCookies();
+  const fullURL = domain + url;
+
+  return await fetch(fullURL, {
+    method: method,
+    headers: {
+      "Content-Type": "application/json",
+      cookie: cookies,
+    },
+    body: JSON.stringify(jsonBody),
+  });
 }
 
 export function assemblePathName(pathNameList: Array<string>, index: number) {

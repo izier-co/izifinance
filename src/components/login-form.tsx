@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { useRef } from "react";
-import { fetchJSONAPI } from "@/lib/server-lib";
+import { fetchJSONAPI } from "@/lib/lib";
 
 export function LoginForm({
   className,
@@ -27,7 +27,7 @@ export function LoginForm({
       email: "",
       password: "",
     };
-    
+
     if (inputRef.current && passwordRef.current) {
       loginBody.email = inputRef.current.value;
       loginBody.password = passwordRef.current.value;

@@ -1,10 +1,10 @@
-import { fetchJSONAPI } from "@/lib/server-lib";
+import { fetchJSONAPI } from "@/lib/lib";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 
 async function getData(id: string) {
   const data = await fetchJSONAPI("GET", `/api/v1/reimbursements/${id}/notes`);
-  const json = await data.message;
+  const json = await data.json();
   return json["data"][0];
 }
 

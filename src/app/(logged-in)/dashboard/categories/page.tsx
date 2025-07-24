@@ -1,10 +1,10 @@
-import { fetchJSONAPI } from "@/lib/server-lib";
+import { fetchJSONAPI } from "@/lib/lib";
 import { columns, Categories } from "./columns";
 import { DataTable } from "@/components/data-table";
 
 async function getData(): Promise<Array<Categories>> {
   const data = await fetchJSONAPI("GET", "/api/v1/categories");
-  const json = data.message;
+  const json = await data.json();
   return json["data"];
 }
 
