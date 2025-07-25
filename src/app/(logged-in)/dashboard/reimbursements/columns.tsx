@@ -195,6 +195,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         if (res.status === 200) {
           setApprovalModalOpen(false);
           refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard");
         } else {
           const json = await res.json();
           approveForm.setError("changeReason", {
