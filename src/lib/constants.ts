@@ -6,6 +6,7 @@ const constValues = {
   allowOnlyAlphabeticOnlyPattern: /[^a-zA-Z]/,
   allowOnlyAlphabeticAndCommaPattern: /[^a-zA-Z,]/,
   allowOnlyAlphanumericAndSpaceOnlyPattern: /[^a-zA-Z0-9 ]/,
+  allowOnlyAlphanumericOnlyPattern: /[^a-zA-Z0-9]/,
 };
 
 export default constValues;
