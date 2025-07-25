@@ -11,6 +11,7 @@ import {
 import { assemblePathName } from "@/lib/lib";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 export function DynamicBreadcrumbs({
   ...props
@@ -35,15 +36,14 @@ export function DynamicBreadcrumbs({
             );
           } else {
             return (
-              <>
-                <BreadcrumbItem key={index} className="hidden md:block">
+              <React.Fragment key={index}>
+                <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink asChild>
                     <Link href={pathUrl}> {capitalizeFirstLetter(name)}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                {/* magic number for now */}
-                <BreadcrumbSeparator key={index++ * 2 + 1} />
-              </>
+                <BreadcrumbSeparator />
+              </React.Fragment>
             );
           }
         })}
