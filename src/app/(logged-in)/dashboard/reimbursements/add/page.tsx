@@ -27,16 +27,19 @@ import {
 } from "@/components/ui/card";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { ChevronsUpDown, Command, CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import {
+  Command,
   CommandEmpty,
+  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -46,6 +49,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@radix-ui/react-popover";
+import React from "react";
 
 const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
@@ -78,22 +82,26 @@ const reimbursementSchema = z.object({
     .int("Integer values only"),
 });
 
-const reimbursementItemSchema = z.object({
-  txName: z.string().max(constValues.maxTextLength, "Name too Long!"),
-  inQuantity: z
-    .number()
-    .positive("Must use positive value")
-    .int("Integer values only"),
-  deIndividualPrice: z.number().positive("Must use positive value"),
-  deTotalPrice: z.number().positive("Must use positive value"),
-  txCurrency: z
-    .string()
-    .length(
-      constValues.currencyCodeStringLength,
-      "Must be Valid ISO 4217 string"
-    )
-    .transform((str) => str.toUpperCase()),
-});
+const reimbursementItemSchema = z
+  .object({
+    txName: z.string().max(constValues.maxTextLength, "Name too Long!"),
+    inQuantity: z
+      .number()
+      .positive("Must use positive value")
+      .int("Integer values only"),
+    deIndividualPrice: z.number().positive("Must use positive value"),
+    txCurrency: z
+      .string()
+      .length(
+        constValues.currencyCodeStringLength,
+        "Must be valid currency string"
+      )
+      .transform((str) => str.toUpperCase()),
+  })
+  .transform((data) => ({
+    ...data,
+    deTotalPrice: data.deIndividualPrice * data.inQuantity,
+  }));
 
 type ReimbursementSchema = z.infer<typeof reimbursementSchema>;
 type ReimbursementItemSchema = z.infer<typeof reimbursementItemSchema>;
@@ -118,12 +126,12 @@ export default function Page() {
       txName: "",
       inQuantity: 0,
       deIndividualPrice: 0,
-      deTotalPrice: 0,
       txCurrency: "",
     },
   });
 
   const [items, setItems] = useState<ReimbursementItemSchema[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
 
   async function addReimbursement(data: ReimbursementSchema) {
     const payload = { ...data, reimbursement_items: items };
@@ -138,8 +146,90 @@ export default function Page() {
       });
     }
   }
-  async function addReimbursementItem(data: ReimbursementItemSchema) {
+  function addReimbursementItem(data: ReimbursementItemSchema) {
     setItems([...items, data]);
+    setOpen(false);
+  }
+
+  const currencies = [
+    {
+      value: "IDR",
+      label: "IDR",
+    },
+    {
+      value: "USD",
+      label: "USD",
+    },
+    {
+      value: "CNY",
+      label: "CNY",
+    },
+  ];
+
+  function _reimbursementItemsCleanupForm() {
+    reimbursementItemForm.clearErrors();
+  }
+  function handleDialogChange(isOpen: boolean) {
+    setOpen(isOpen);
+    if (isOpen === false) {
+      _reimbursementItemsCleanupForm();
+    }
+  }
+
+  function ExampleCombobox({
+    value,
+    onChange,
+  }: {
+    value: string;
+    onChange: (val: string) => void;
+  }) {
+    const [open, setOpen] = React.useState(false);
+
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[200px] justify-between"
+          >
+            {value
+              ? currencies.find((currency) => currency.value === value)?.label
+              : "Select currency code..."}
+            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder="Search currency code..." />
+            <CommandList>
+              <CommandEmpty>No currency found.</CommandEmpty>
+              <CommandGroup>
+                {currencies.map((currency) => (
+                  <CommandItem
+                    key={currency.value}
+                    value={currency.value}
+                    onSelect={(currentValue) => {
+                      onChange(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <CheckIcon
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === currency.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {currency.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    );
   }
   return (
     <div className="flex flex-row">
@@ -290,16 +380,21 @@ export default function Page() {
         </Form>
       </div>
       <div className="w-1/2 px-6">
-        <Dialog>
+        <Dialog open={open} onOpenChange={handleDialogChange}>
           <DialogTrigger className="flex" asChild>
             <Button className="ml-auto mb-2">Add Items</Button>
           </DialogTrigger>
-          <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Items</DialogTitle>
             </DialogHeader>
             <Form {...reimbursementItemForm}>
-              <form id="reimbursement-item-form">
+              <form
+                id="reimbursement-item-form"
+                onSubmit={reimbursementItemForm.handleSubmit(
+                  addReimbursementItem
+                )}
+              >
                 <FormField
                   control={reimbursementItemForm.control}
                   name="txName"
@@ -307,7 +402,7 @@ export default function Page() {
                     <FormItem className="my-3">
                       <FormLabel className="capitalize">Name :</FormLabel>
                       <FormControl>
-                        <Input />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -360,76 +455,49 @@ export default function Page() {
                   control={reimbursementItemForm.control}
                   name="txCurrency"
                   render={({ field }) => {
-                    const selectedValue = field.value;
-                    const [open, setOpen] = useState(false);
-                    const nameOptions = ["Alice", "Bob", "Charlie", "Diana"]; // Example names
                     return (
                       <FormItem className="my-3">
                         <FormLabel className="capitalize">Currency :</FormLabel>
                         <FormControl>
-                          <FormLabel className="capitalize">Name :</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                role="combobox"
-                                className="w-full justify-between"
-                              >
-                                {selectedValue
-                                  ? nameOptions.find(
-                                      (name) => name === selectedValue
-                                    )
-                                  : "Select name"}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-full p-0">
-                              <Command>
-                                <CommandInput placeholder="Search name..." />
-                                <CommandEmpty>No name found.</CommandEmpty>
-                                <CommandList>
-                                  {nameOptions.map((name) => (
-                                    <CommandItem
-                                      key={name}
-                                      value={name}
-                                      onSelect={() => {
-                                        field.onChange(name);
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      <CheckIcon
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          name === selectedValue
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {name}
-                                    </CommandItem>
-                                  ))}
-                                </CommandList>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
+                          <ExampleCombobox
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     );
                   }}
                 />
-                <Button type="submit">Add Reimbursement</Button>
+                <DialogFooter className="my-2">
+                  <DialogClose asChild>
+                    <Button variant="secondary" type="button">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit">Add Items</Button>
+                </DialogFooter>
               </form>
             </Form>
           </DialogContent>
         </Dialog>
-        <Card>
-          <CardHeader>
-            <CardTitle>Big Mac</CardTitle>
-            <CardDescription>Rp. 12.000 / pcs</CardDescription>
-            <CardAction>Qty : 5</CardAction>
-          </CardHeader>
-          <CardContent className="text-xl text-bold">Rp. 60.000</CardContent>
-        </Card>
+        {items.map((item) => {
+          return (
+            // temp key
+            <Card key={item.txName}>
+              <CardHeader>
+                <CardTitle>{item.txName}</CardTitle>
+                <CardDescription>
+                  {item.txCurrency} {item.deIndividualPrice} / item
+                </CardDescription>
+                <CardAction>Qty : {item.inQuantity}</CardAction>
+              </CardHeader>
+              <CardContent className="text-xl text-bold">
+                {item.txCurrency} {item.deTotalPrice}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
