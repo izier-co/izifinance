@@ -24,6 +24,7 @@ import {
   CardContent,
   CardAction,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -149,6 +150,11 @@ export default function Page() {
   function addReimbursementItem(data: ReimbursementItemSchema) {
     setItems([...items, data]);
     setOpen(false);
+  }
+
+  function deleteItem(data: ReimbursementItemSchema) {
+    // todo use something other than data
+    setItems(items.filter((item) => item.txName !== data.txName));
   }
 
   const currencies = [
@@ -493,7 +499,20 @@ export default function Page() {
                 <CardAction>Qty : {item.inQuantity}</CardAction>
               </CardHeader>
               <CardContent className="text-xl text-bold">
-                {item.txCurrency} {item.deTotalPrice}
+                <div className="flex justify-between ">
+                  <div>
+                    {item.txCurrency} {item.deTotalPrice}
+                  </div>
+                  <div>
+                    <Button
+                      onClick={() => {
+                        deleteItem(item);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           );
