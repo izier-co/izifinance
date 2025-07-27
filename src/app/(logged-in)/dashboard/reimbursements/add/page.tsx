@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +24,6 @@ import {
   CardContent,
   CardAction,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -62,7 +61,7 @@ const reimbursementSchema = z.object({
     .number()
     .positive("Must use positive value")
     .int("Integer values only"),
-  inRecipientCompanyCode: z
+  inRecipientCompanyCode: z.coerce
     .number()
     .positive("Must use positive value")
     .int("Integer values only"),
@@ -77,7 +76,7 @@ const reimbursementSchema = z.object({
       constValues.allowOnlyAlphabeticOnlyPattern,
       "Only Alphabetical Characters"
     ),
-  inCategoryID: z
+  inCategoryID: z.coerce
     .number()
     .positive("Must use positive value")
     .int("Integer values only"),
@@ -102,10 +101,16 @@ const reimbursementItemSchema = z
   .transform((data) => ({
     ...data,
     deTotalPrice: data.deIndividualPrice * data.inQuantity,
+    uid: crypto.randomUUID(),
   }));
 
 type ReimbursementSchema = z.infer<typeof reimbursementSchema>;
 type ReimbursementItemSchema = z.infer<typeof reimbursementItemSchema>;
+
+type ComboboxItem = {
+  value: string | number;
+  label: string;
+};
 
 export default function Page() {
   const reimbursementForm = useForm({
@@ -117,7 +122,6 @@ export default function Page() {
       inRecipientCompanyCode: 0,
       txBankAccountCode: "",
       txEmployeeCode: "",
-      inCategoryID: 0,
     },
   });
 
@@ -133,6 +137,7 @@ export default function Page() {
 
   const [items, setItems] = useState<ReimbursementItemSchema[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Array<ComboboxItem>>([]);
 
   async function addReimbursement(data: ReimbursementSchema) {
     const payload = { ...data, reimbursement_items: items };
@@ -153,11 +158,10 @@ export default function Page() {
   }
 
   function deleteItem(data: ReimbursementItemSchema) {
-    // todo use something other than data
-    setItems(items.filter((item) => item.txName !== data.txName));
+    setItems(items.filter((item) => item.uid !== data.uid));
   }
 
-  const currencies = [
+  const currencies: Array<ComboboxItem> = [
     {
       value: "IDR",
       label: "IDR",
@@ -185,9 +189,11 @@ export default function Page() {
   function ExampleCombobox({
     value,
     onChange,
+    items,
   }: {
     value: string;
     onChange: (val: string) => void;
+    items: Array<ComboboxItem>;
   }) {
     const [open, setOpen] = React.useState(false);
 
@@ -201,8 +207,8 @@ export default function Page() {
             className="w-[200px] justify-between"
           >
             {value
-              ? currencies.find((currency) => currency.value === value)?.label
-              : "Select currency code..."}
+              ? items.find((item) => String(item.value) === value)?.label
+              : "Select value ..."}
             <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -210,12 +216,12 @@ export default function Page() {
           <Command>
             <CommandInput placeholder="Search currency code..." />
             <CommandList>
-              <CommandEmpty>No currency found.</CommandEmpty>
+              <CommandEmpty>No items found.</CommandEmpty>
               <CommandGroup>
-                {currencies.map((currency) => (
+                {items.map((item) => (
                   <CommandItem
-                    key={currency.value}
-                    value={currency.value}
+                    key={item.value}
+                    value={item.value.toString()}
                     onSelect={(currentValue) => {
                       onChange(currentValue === value ? "" : currentValue);
                       setOpen(false);
@@ -224,10 +230,10 @@ export default function Page() {
                     <CheckIcon
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === currency.value ? "opacity-100" : "opacity-0"
+                        value === String(item.value) ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    {currency.label}
+                    {item.label}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -237,6 +243,25 @@ export default function Page() {
       </Popover>
     );
   }
+  useEffect(() => {
+    async function fetchSelectData() {
+      const url = "/api/v1/categories?";
+      const searchParams = new URLSearchParams({
+        fields: "txCategoryName,inCategoryID",
+      }).toString();
+      const res = await fetchJSONAPI("GET", url + searchParams);
+      const json = await res.json();
+      const items = json.data.map(
+        (item: { txCategoryName: any; inCategoryID: any }) =>
+          ({
+            label: item.txCategoryName,
+            value: item.inCategoryID,
+          }) as ComboboxItem
+      );
+      setCategories(items);
+    }
+    fetchSelectData();
+  }, []);
   return (
     <div className="flex flex-row">
       <div className="w-1/2">
@@ -364,6 +389,26 @@ export default function Page() {
             <FormField
               control={reimbursementForm.control}
               name="inCategoryID"
+              render={({ field }) => {
+                return (
+                  <FormItem className="my-3">
+                    <FormLabel className="capitalize">Category :</FormLabel>
+                    <FormControl>
+                      <ExampleCombobox
+                        value={field.value as string}
+                        onChange={field.onChange}
+                        items={categories}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            {/* <FormField
+              control={reimbursementForm.control}
+              name="inCategoryID"
               render={({ field }) => (
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">Category :</FormLabel>
@@ -380,7 +425,7 @@ export default function Page() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <Button type="submit">Add Reimbursement</Button>
           </form>
         </Form>
@@ -456,7 +501,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-                {/* TODO : use select */}
                 <FormField
                   control={reimbursementItemForm.control}
                   name="txCurrency"
@@ -468,6 +512,7 @@ export default function Page() {
                           <ExampleCombobox
                             value={field.value}
                             onChange={field.onChange}
+                            items={currencies}
                           />
                         </FormControl>
                         <FormMessage />
@@ -489,8 +534,7 @@ export default function Page() {
         </Dialog>
         {items.map((item) => {
           return (
-            // temp key
-            <Card key={item.txName}>
+            <Card key={item.uid}>
               <CardHeader>
                 <CardTitle>{item.txName}</CardTitle>
                 <CardDescription>
