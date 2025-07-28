@@ -66,7 +66,13 @@ export function removeByKey(data: object): object {
     if (key === "uiReimbursementID") {
       return undefined;
     }
-    if (key === "uiIdempotencyKey") {
+    if (key === "uiBankId") {
+      return undefined;
+    }
+    if (key === "uiCompanyId") {
+      return undefined;
+    }
+    if (key === "uiEmployeeId") {
       return undefined;
     }
     if (key === "uiReimbursementItemID") {
