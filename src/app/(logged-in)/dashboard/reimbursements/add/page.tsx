@@ -35,22 +35,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
 import React from "react";
+import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 
 const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
@@ -101,10 +87,20 @@ const reimbursementItemSchema = z
 type ReimbursementSchema = z.infer<typeof reimbursementSchema>;
 type ReimbursementItemSchema = z.infer<typeof reimbursementItemSchema>;
 
-type ComboboxItem = {
-  value: string | number;
-  label: string;
-};
+const currencies: Array<ComboboxItem> = [
+  {
+    value: "IDR",
+    label: "IDR",
+  },
+  {
+    value: "USD",
+    label: "USD",
+  },
+  {
+    value: "CNY",
+    label: "CNY",
+  },
+];
 
 export default function Page() {
   const reimbursementForm = useForm({
@@ -134,36 +130,36 @@ export default function Page() {
   const [banks, setBanks] = useState<Array<ComboboxItem>>([]);
   const [companies, setCompanies] = useState<Array<ComboboxItem>>([]);
 
+  function _setReimbursementRootError(message: string) {
+    reimbursementForm.setError("root", {
+      message: message,
+    });
+  }
+
   async function addReimbursement(reimbursementData: ReimbursementSchema) {
     if (items.length === 0) {
-      reimbursementForm.setError("root", {
-        message: "Reimbursement Items can't be empty",
-      });
+      _setReimbursementRootError("Reimbursement Items can't be empty");
       return;
     }
+
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
-      reimbursementForm.setError("root", {
-        message: error.message,
-      });
+      _setReimbursementRootError(error.message);
       return;
     }
     if (data.user === null) {
-      reimbursementForm.setError("root", {
-        message: "Unregistered User",
-      });
+      _setReimbursementRootError("Unregistered User");
       return;
     }
+
     const empRes = await fetchJSONAPI(
       "GET",
       `/api/v1/employees/${data.user.id}`
     );
     const empData = await empRes.json();
     if (empData.data.length === 0) {
-      reimbursementForm.setError("root", {
-        message: "Unauthorized Action",
-      });
+      _setReimbursementRootError("Unauthorized Action");
       return;
     }
     const empID = empData.data[0].txEmployeeCode;
@@ -190,9 +186,7 @@ export default function Page() {
       // TODO : do something for better UX
     } else {
       const json = await res.json();
-      reimbursementForm.setError("root", {
-        message: json.error,
-      });
+      _setReimbursementRootError(json.error);
     }
   }
   function addReimbursementItem(data: ReimbursementItemSchema) {
@@ -203,21 +197,6 @@ export default function Page() {
   function deleteItem(data: ReimbursementItemSchema) {
     setItems(items.filter((item) => item.uid !== data.uid));
   }
-
-  const currencies: Array<ComboboxItem> = [
-    {
-      value: "IDR",
-      label: "IDR",
-    },
-    {
-      value: "USD",
-      label: "USD",
-    },
-    {
-      value: "CNY",
-      label: "CNY",
-    },
-  ];
 
   function _reimbursementItemsCleanupForm() {
     reimbursementItemForm.clearErrors();
@@ -230,119 +209,49 @@ export default function Page() {
     }
   }
 
+  async function fetchComboboxData(fetchParams: {
+    url: string;
+    labelProperty: string;
+    valueProperty: string;
+    stateSetter: React.Dispatch<React.SetStateAction<any>>;
+  }) {
+    const searchParams = new URLSearchParams({
+      fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
+    }).toString();
+    const urlWithParams = fetchParams.url + "?" + searchParams;
+    const res = await fetchJSONAPI("GET", urlWithParams);
+    const json = await res.json();
+    const comboboxItems = json.data.map(
+      (item: Record<string, any>) =>
+        ({
+          label: item[fetchParams.labelProperty],
+          value: item[fetchParams.valueProperty],
+        }) as ComboboxItem
+    );
+    fetchParams.stateSetter(comboboxItems);
+  }
+
   useEffect(() => {
-    async function fetchCategoryData() {
-      const url = "/api/v1/categories?";
-      const searchParams = new URLSearchParams({
-        fields: "txCategoryName,inCategoryID",
-      }).toString();
-      const res = await fetchJSONAPI("GET", url + searchParams);
-      const json = await res.json();
-      const items = json.data.map(
-        (item: Record<string, any>) =>
-          ({
-            label: item.txCategoryName,
-            value: item.inCategoryID,
-          }) as ComboboxItem
-      );
-      setCategories(items);
-    }
-    async function fetchBankData() {
-      const url = "/api/v1/banks?";
-      const searchParams = new URLSearchParams({
-        fields: "inBankTypeCode,txBankName",
-      }).toString();
-      const res = await fetchJSONAPI("GET", url + searchParams);
-      const json = await res.json();
-      const items = json.data.map(
-        (item: Record<string, any>) =>
-          ({
-            label: item.txBankName,
-            value: item.inBankTypeCode,
-          }) as ComboboxItem
-      );
-      setBanks(items);
-    }
-    async function fetchCompanyData() {
-      const url = "/api/v1/companies?";
-      const searchParams = new URLSearchParams({
-        fields: "txCompanyName,inCompanyCode",
-      }).toString();
-      const res = await fetchJSONAPI("GET", url + searchParams);
-      const json = await res.json();
-      const items = json.data.map(
-        (item: Record<string, any>) =>
-          ({
-            label: item.txCompanyName,
-            value: item.inCompanyCode,
-          }) as ComboboxItem
-      );
-      setCompanies(items);
-    }
-    fetchCategoryData();
-    fetchBankData();
-    fetchCompanyData();
+    fetchComboboxData({
+      url: "/api/v1/categories",
+      labelProperty: "txCategoryName",
+      valueProperty: "inCategoryID",
+      stateSetter: setCategories,
+    });
+    fetchComboboxData({
+      url: "/api/v1/banks",
+      labelProperty: "txBankName",
+      valueProperty: "inBankTypeCode",
+      stateSetter: setBanks,
+    });
+    fetchComboboxData({
+      url: "/api/v1/companies",
+      labelProperty: "txCompanyName",
+      valueProperty: "inCompanyCode",
+      stateSetter: setCompanies,
+    });
   }, []);
 
-  function ExampleCombobox({
-    value,
-    onChange,
-    items,
-  }: {
-    value: string;
-    onChange: (val: string) => void;
-    items: Array<ComboboxItem>;
-  }) {
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-[200px] justify-between"
-          >
-            {value
-              ? items.find((item) => String(item.value) === value)?.label
-              : "Select value ..."}
-            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          <Command>
-            <CommandInput placeholder="Search items..." />
-            <CommandList>
-              <CommandEmpty>No items found.</CommandEmpty>
-              <CommandGroup>
-                {items.map((item) => (
-                  <CommandItem
-                    key={item.value}
-                    value={item.value.toString()}
-                    onSelect={(currentValue) => {
-                      onChange(currentValue === value ? "" : currentValue);
-                      setOpen(false);
-                    }}
-                  >
-                    <CheckIcon
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === String(item.value)
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                    {item.label}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
-  }
   return (
     <div className="flex flex-row">
       <div className="w-1/2">
@@ -387,7 +296,7 @@ export default function Page() {
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">Bank Type :</FormLabel>
                   <FormControl>
-                    <ExampleCombobox
+                    <FormCombobox
                       value={field.value as string}
                       onChange={field.onChange}
                       items={banks}
@@ -406,7 +315,7 @@ export default function Page() {
                     Recipient Company :
                   </FormLabel>
                   <FormControl>
-                    <ExampleCombobox
+                    <FormCombobox
                       value={field.value as string}
                       onChange={field.onChange}
                       items={companies}
@@ -439,7 +348,7 @@ export default function Page() {
                   <FormItem className="my-3">
                     <FormLabel className="capitalize">Category :</FormLabel>
                     <FormControl>
-                      <ExampleCombobox
+                      <FormCombobox
                         value={field.value as string}
                         onChange={field.onChange}
                         items={categories}
@@ -538,7 +447,7 @@ export default function Page() {
                       <FormItem className="my-3">
                         <FormLabel className="capitalize">Currency :</FormLabel>
                         <FormControl>
-                          <ExampleCombobox
+                          <FormCombobox
                             value={field.value}
                             onChange={field.onChange}
                             items={currencies}
