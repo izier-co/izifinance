@@ -138,6 +138,8 @@ export default function Page() {
   const [items, setItems] = useState<ReimbursementItemSchema[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<Array<ComboboxItem>>([]);
+  const [banks, setBanks] = useState<Array<ComboboxItem>>([]);
+  const [companies, setCompanies] = useState<Array<ComboboxItem>>([]);
 
   async function addReimbursement(data: ReimbursementSchema) {
     const payload = { ...data, reimbursement_items: items };
@@ -185,6 +187,60 @@ export default function Page() {
       _reimbursementItemsCleanupForm();
     }
   }
+
+  useEffect(() => {
+    async function fetchCategoryData() {
+      const url = "/api/v1/categories?";
+      const searchParams = new URLSearchParams({
+        fields: "txCategoryName,inCategoryID",
+      }).toString();
+      const res = await fetchJSONAPI("GET", url + searchParams);
+      const json = await res.json();
+      const items = json.data.map(
+        (item: Record<string, any>) =>
+          ({
+            label: item.txCategoryName,
+            value: item.inCategoryID,
+          }) as ComboboxItem
+      );
+      setCategories(items);
+    }
+    async function fetchBankData() {
+      const url = "/api/v1/banks?";
+      const searchParams = new URLSearchParams({
+        fields: "inBankTypeCode,txBankName",
+      }).toString();
+      const res = await fetchJSONAPI("GET", url + searchParams);
+      const json = await res.json();
+      const items = json.data.map(
+        (item: Record<string, any>) =>
+          ({
+            label: item.txBankName,
+            value: item.inBankTypeCode,
+          }) as ComboboxItem
+      );
+      setBanks(items);
+    }
+    async function fetchCompanyData() {
+      const url = "/api/v1/companies?";
+      const searchParams = new URLSearchParams({
+        fields: "txCompanyName,inCompanyCode",
+      }).toString();
+      const res = await fetchJSONAPI("GET", url + searchParams);
+      const json = await res.json();
+      const items = json.data.map(
+        (item: Record<string, any>) =>
+          ({
+            label: item.txCompanyName,
+            value: item.inCompanyCode,
+          }) as ComboboxItem
+      );
+      setCompanies(items);
+    }
+    fetchCategoryData();
+    fetchBankData();
+    fetchCompanyData();
+  }, []);
 
   function ExampleCombobox({
     value,
@@ -245,25 +301,6 @@ export default function Page() {
       </Popover>
     );
   }
-  useEffect(() => {
-    async function fetchSelectData() {
-      const url = "/api/v1/categories?";
-      const searchParams = new URLSearchParams({
-        fields: "txCategoryName,inCategoryID",
-      }).toString();
-      const res = await fetchJSONAPI("GET", url + searchParams);
-      const json = await res.json();
-      const items = json.data.map(
-        (item: { txCategoryName: any; inCategoryID: any }) =>
-          ({
-            label: item.txCategoryName,
-            value: item.inCategoryID,
-          }) as ComboboxItem
-      );
-      setCategories(items);
-    }
-    fetchSelectData();
-  }, []);
   return (
     <div className="flex flex-row">
       <div className="w-1/2">
@@ -331,17 +368,10 @@ export default function Page() {
                     Recipient Company :
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      value={
-                        (field.value as number) === 0
-                          ? ""
-                          : (field.value as number)
-                      }
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? 0 : Number(value));
-                      }}
+                    <ExampleCombobox
+                      value={field.value as string}
+                      onChange={field.onChange}
+                      items={companies}
                     />
                   </FormControl>
                   <FormMessage />
@@ -372,7 +402,11 @@ export default function Page() {
                     Bank Account Code :
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <ExampleCombobox
+                      value={field.value as string}
+                      onChange={field.onChange}
+                      items={banks}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -411,27 +445,6 @@ export default function Page() {
                 );
               }}
             />
-
-            {/* <FormField
-              control={reimbursementForm.control}
-              name="inCategoryID"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">Category :</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      value={field.value === 0 ? "" : field.value}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? 0 : Number(value));
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
             <Button type="submit">Add Reimbursement</Button>
           </form>
         </Form>
