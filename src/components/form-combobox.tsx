@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import {
+  Command,
   CommandInput,
   CommandList,
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "cmdk";
-import { ChevronsUpDownIcon, Command, CheckIcon } from "lucide-react";
+} from "./ui/command";
+import { ChevronsUpDownIcon, CheckIcon } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
