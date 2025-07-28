@@ -310,9 +310,6 @@ export const POST = async (req: NextRequest) => {
       }
       await trx
         .update(reimbursementNotesInDtDwh)
-        .set({ dcNominalReimbursement: totalPrice.toFixed(2) });
-      await trx
-        .update(reimbursementNotesInDtDwh)
         .set({ dcNominalReimbursement: totalPrice.toFixed(2) })
         .where(
           eq(
