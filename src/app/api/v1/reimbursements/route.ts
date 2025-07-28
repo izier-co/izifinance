@@ -310,7 +310,8 @@ export const POST = async (req: NextRequest) => {
       }
       await trx
         .update(reimbursementNotesInDtDwh)
-        .set({ dcNominalReimbursement: totalPrice.toFixed(2) });
+        .set({ dcNominalReimbursement: totalPrice.toFixed(2) })
+        .where(eq(reimbursementNotesInDtDwh.txReimbursementNoteID, idForKey));
     });
     if ("uiReimbursementID" in returnedParentData) {
       delete returnedParentData.uiReimbursementID;
