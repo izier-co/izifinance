@@ -8,7 +8,7 @@ const options = {
 };
 
 export const supabase = createBrowserClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!,
   options
 );

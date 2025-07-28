@@ -2,6 +2,7 @@
 import constValues from "@/lib/constants";
 import { fetchJSONAPI, isValidInt } from "@/lib/lib";
 import z from "zod";
+import { supabase } from "@supabase-config";
 
 import {
   Form,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { refreshAndRevalidatePage } from "@/lib/server-lib";
+import { getCookies, refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,7 @@ const reimbursementSchema = z.object({
     .string()
     .max(constValues.maxBankCodeLength, "Code too long")
     .refine((val) => isValidInt(val), "Must be Valid integer"),
-  inBankTypeCode: z
+  inBankTypeCode: z.coerce
     .number()
     .positive("Must use positive value")
     .int("Integer values only"),
@@ -69,13 +70,6 @@ const reimbursementSchema = z.object({
     .string()
     .max(constValues.maxBankCodeLength, "Code too long")
     .refine((val) => isValidInt(val), "Must be Valid integer"),
-  txEmployeeCode: z
-    .string()
-    .length(9, "Employee Code is exactly 9 characters")
-    .regex(
-      constValues.allowOnlyAlphabeticOnlyPattern,
-      "Only Alphabetical Characters"
-    ),
   inCategoryID: z.coerce
     .number()
     .positive("Must use positive value")
@@ -121,7 +115,6 @@ export default function Page() {
       inBankTypeCode: 0,
       inRecipientCompanyCode: 0,
       txBankAccountCode: "",
-      txEmployeeCode: "",
     },
   });
 
@@ -141,9 +134,54 @@ export default function Page() {
   const [banks, setBanks] = useState<Array<ComboboxItem>>([]);
   const [companies, setCompanies] = useState<Array<ComboboxItem>>([]);
 
-  async function addReimbursement(data: ReimbursementSchema) {
-    const payload = { ...data, reimbursement_items: items };
-    const res = await fetchJSONAPI("POST", `/api/v1/reimbursements/`, payload);
+  async function addReimbursement(reimbursementData: ReimbursementSchema) {
+    if (items.length === 0) {
+      reimbursementForm.setError("root", {
+        message: "Reimbursement Items can't be empty",
+      });
+      return;
+    }
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) {
+      reimbursementForm.setError("root", {
+        message: error.message,
+      });
+      return;
+    }
+    if (data.user === null) {
+      reimbursementForm.setError("root", {
+        message: "Unregistered User",
+      });
+      return;
+    }
+    const empRes = await fetchJSONAPI(
+      "GET",
+      `/api/v1/employees/${data.user.id}`
+    );
+    const empData = await empRes.json();
+    if (empData.data.length === 0) {
+      reimbursementForm.setError("root", {
+        message: "Unauthorized Action",
+      });
+      return;
+    }
+    const empID = empData.data[0].txEmployeeCode;
+    const payload = {
+      ...reimbursementData,
+      txEmployeeCode: empID,
+      reimbursement_items: items,
+    };
+
+    const res = await fetch("/api/v1/reimbursements", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Idempotency-Key": crypto.randomUUID(),
+        cookie: await getCookies(),
+      },
+      body: JSON.stringify(payload),
+    });
     if (res.status === 200) {
       refreshAndRevalidatePage("/dashboard/reimbursement");
       refreshAndRevalidatePage("/");
@@ -338,7 +376,6 @@ export default function Page() {
                 </FormItem>
               )}
             />
-            {/* TODO use select instead */}
             <FormField
               control={reimbursementForm.control}
               name="inBankTypeCode"
@@ -346,13 +383,10 @@ export default function Page() {
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">Bank Type :</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      value={field.value === 0 ? "" : field.value}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? 0 : Number(value));
-                      }}
+                    <ExampleCombobox
+                      value={field.value as string}
+                      onChange={field.onChange}
+                      items={banks}
                     />
                   </FormControl>
                   <FormMessage />
@@ -380,45 +414,12 @@ export default function Page() {
             />
             <FormField
               control={reimbursementForm.control}
-              name="txRecipientAccount"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">
-                    Recipient Account :
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={reimbursementForm.control}
               name="txBankAccountCode"
               render={({ field }) => (
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">
                     Bank Account Code :
                   </FormLabel>
-                  <FormControl>
-                    <ExampleCombobox
-                      value={field.value as string}
-                      onChange={field.onChange}
-                      items={banks}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/*probably optional*/}
-            <FormField
-              control={reimbursementForm.control}
-              name="txEmployeeCode"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">Employee Code :</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -445,6 +446,11 @@ export default function Page() {
                 );
               }}
             />
+            {reimbursementForm.formState.errors.root?.message && (
+              <p className="text-sm font-medium text-destructive mb-2">
+                {reimbursementForm.formState.errors.root.message}
+              </p>
+            )}
             <Button type="submit">Add Reimbursement</Button>
           </form>
         </Form>
