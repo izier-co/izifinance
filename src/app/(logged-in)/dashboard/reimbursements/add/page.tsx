@@ -230,7 +230,9 @@ export default function Page() {
                     <CheckIcon
                       className={cn(
                         "mr-2 h-4 w-4",
-                        value === String(item.value) ? "opacity-100" : "opacity-0"
+                        value === String(item.value)
+                          ? "opacity-100"
+                          : "opacity-0"
                       )}
                     />
                     {item.label}
@@ -331,7 +333,11 @@ export default function Page() {
                   <FormControl>
                     <Input
                       type="number"
-                      value={field.value === 0 ? "" : field.value}
+                      value={
+                        (field.value as number) === 0
+                          ? ""
+                          : (field.value as number)
+                      }
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value === "" ? 0 : Number(value));
