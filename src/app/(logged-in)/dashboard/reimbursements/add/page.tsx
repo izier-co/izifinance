@@ -182,9 +182,12 @@ export default function Page() {
       },
       body: JSON.stringify(payload),
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       refreshAndRevalidatePage("/dashboard/reimbursement");
       refreshAndRevalidatePage("/");
+      reimbursementForm.reset();
+      setItems([]);
+      // TODO : do something for better UX
     } else {
       const json = await res.json();
       reimbursementForm.setError("root", {
@@ -220,6 +223,7 @@ export default function Page() {
     reimbursementItemForm.clearErrors();
   }
   function handleDialogChange(isOpen: boolean) {
+    reimbursementItemForm.reset();
     setOpen(isOpen);
     if (isOpen === false) {
       _reimbursementItemsCleanupForm();
@@ -308,7 +312,7 @@ export default function Page() {
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
           <Command>
-            <CommandInput placeholder="Search currency code..." />
+            <CommandInput placeholder="Search items..." />
             <CommandList>
               <CommandEmpty>No items found.</CommandEmpty>
               <CommandGroup>
