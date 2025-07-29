@@ -22,6 +22,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { fetchJSONAPI } from "@/lib/lib";
+import { useState } from "react";
+import { refreshAndRevalidatePage } from "@/lib/server-lib";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -77,6 +80,19 @@ export const columns: ColumnDef<Categories>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const [errorMessage, setErrorMessage] = useState();
+      async function _deleteCategory() {
+        const res = await fetchJSONAPI(
+          "DELETE",
+          `/api/v1/categories/${row.getValue("inCategoryID")}`
+        );
+        if (res.status === 200) {
+          refreshAndRevalidatePage("/categories");
+        } else {
+          const json = await res.json();
+          setErrorMessage(json.error);
+        }
+      }
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -104,15 +120,20 @@ export const columns: ColumnDef<Categories>[] = [
                     Are you sure that you wanted to delete this?
                   </DialogDescription>
                 </DialogHeader>
+                {errorMessage && (
+                  <p className="text-sm font-medium text-destructive mb-2">
+                    {errorMessage}
+                  </p>
+                )}
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant="secondary" type="button">
                       Cancel
                     </Button>
                   </DialogClose>
-                  <DialogClose asChild>
-                    <Button type="button">Confirm</Button>
-                  </DialogClose>
+                  <Button type="button" onClick={_deleteCategory}>
+                    Confirm
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
