@@ -1,4 +1,4 @@
-import { ChartLineDefault } from "@/components/chart-line-default";
+import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
 
@@ -13,7 +13,7 @@ async function getDashboardData() {
     status: "Pending",
   }).toString();
   const idrPendingParams = new URLSearchParams({
-    currency: "IDR",
+    // currency: "IDR",
     status: "Pending",
   }).toString();
   const oneDayReimbursements = await fetchJSONAPI("GET", url + oneDayParams);
@@ -29,7 +29,7 @@ async function getDashboardData() {
   const idrPendingJson = await idrPendingReimbursements.json();
   let totalPending = 0;
   for (let i = 0; i < idrPendingJson.data.length; i++) {
-    totalPending = idrPendingJson.data[i].deTotalReimbursement;
+    totalPending = idrPendingJson.data[i].dcNominalReimbursement;
   }
   return {
     oneDayCount: reimbursementInOneDayCount,
@@ -69,7 +69,14 @@ export default async function Page() {
           </CardContent>
         </Card>
       </div>
-      <ChartLineDefault />
+      <Card>
+        <CardHeader>
+          <CardTitle>Reimbursement Volume in this month</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReimbursementChart />
+        </CardContent>
+      </Card>
     </div>
   );
 }
