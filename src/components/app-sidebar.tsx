@@ -29,17 +29,12 @@ const data = {
       url: "#",
       items: [
         {
-          title: "View Reimbursements",
+          title: "Manage Reimbursements",
           url: "/dashboard/reimbursements",
-          isActive: true,
         },
         {
-          title: "Approve",
-          url: "#",
-        },
-        {
-          title: "Void",
-          url: "#",
+          title: "Add Reimbursements",
+          url: "/dashboard/reimbursements/add",
         },
       ],
     },
@@ -48,12 +43,12 @@ const data = {
       url: "#",
       items: [
         {
-          title: "View Categories",
+          title: "Manage Categories",
           url: "/dashboard/categories",
         },
         {
-          title: "Delete Categories",
-          url: "#",
+          title: "Add Categories",
+          url: "/dashboard/categories/add",
         },
       ],
     },
@@ -102,10 +97,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSub>
                         {item.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={item.isActive}
-                            >
+                            <SidebarMenuSubButton asChild>
                               <a href={item.url}>{item.title}</a>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
