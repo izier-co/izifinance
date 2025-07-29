@@ -76,6 +76,14 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
+  currency: z
+    .string()
+    .length(
+      constValues.currencyCodeStringLength,
+      "Must be Valid ISO 4217 string"
+    )
+    .optional()
+    .transform((str) => str?.toUpperCase()),
   approvedBy: z.coerce.number().positive().optional(),
   createdBefore: z.string().datetime().optional(),
   createdAfter: z.string().datetime().optional(),
@@ -124,7 +132,9 @@ export const GET = async (req: NextRequest) => {
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize
     );
-
+  if (params.currency) {
+    query.eq("txCurrency", params.currency);
+  }
   if (params.status) {
     switch (params.status) {
       case "Pending": {
