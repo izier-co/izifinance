@@ -1,3 +1,5 @@
+"use client";
+
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { Bar, BarChart, XAxis } from "recharts";
 
