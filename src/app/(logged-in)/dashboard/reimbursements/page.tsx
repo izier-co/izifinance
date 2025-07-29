@@ -1,8 +1,6 @@
 import { fetchJSONAPI } from "@/lib/lib";
 import { columns, Reimbursements } from "./columns";
 import { DataTable } from "@/components/data-table";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 async function getData(): Promise<Array<Reimbursements>> {
   const data = await fetchJSONAPI("GET", "/api/v1/reimbursements");
@@ -13,10 +11,8 @@ async function getData(): Promise<Array<Reimbursements>> {
 export default async function Page() {
   const data = await getData();
   return (
-    <div className="flex flex-col">
-      <Link className="ml-auto mb-2" href="/dashboard/reimbursements/add">
-        <Button className="">Add Reimbursement</Button>
-      </Link>
+    <div className="">
+      <h1 className="text-bold mb-4">Reimbursements</h1>
       <DataTable columns={columns} data={data} />
     </div>
   );
