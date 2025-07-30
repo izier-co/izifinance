@@ -2,44 +2,50 @@ import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
 
-async function getDashboardData() {
-  const url = "/api/v1/reimbursements?";
+const url = "/api/v1/reimbursements?";
+
+type FetchData = {
+  data: Array<any>;
+  error?: string;
+};
+
+async function getDailyReimbursementData(): Promise<number> {
   const MILISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
   const NOW = Date.now();
-  const oneDayParams = new URLSearchParams({
+  const searchParams = new URLSearchParams({
     createdAfter: new Date(NOW - MILISECONDS_IN_DAY).toISOString(),
   }).toString();
-  const pendingParams = new URLSearchParams({
+  const res = await fetchJSONAPI("GET", url + searchParams);
+  const json: FetchData = await res.json();
+  return json.data.length;
+}
+
+async function getPendingReimbursements(): Promise<number> {
+  const searchParams = new URLSearchParams({
     status: "Pending",
   }).toString();
-  const idrPendingParams = new URLSearchParams({
-    // currency: "IDR",
+  const res = await fetchJSONAPI("GET", url + searchParams);
+  const json: FetchData = await res.json();
+  return json.data.length;
+}
+
+async function getPendingReimbursementValue(): Promise<number> {
+  const searchParams = new URLSearchParams({
     status: "Pending",
   }).toString();
-  const oneDayReimbursements = await fetchJSONAPI("GET", url + oneDayParams);
-  const oneDayJson = await oneDayReimbursements.json();
-  const reimbursementInOneDayCount = oneDayJson.data.length;
-  const pendingReimbursements = await fetchJSONAPI("GET", url + pendingParams);
-  const pendingJson = await pendingReimbursements.json();
-  const pendingReimbursementsCount = pendingJson.data.length;
-  const idrPendingReimbursements = await fetchJSONAPI(
-    "GET",
-    url + idrPendingParams
-  );
-  const idrPendingJson = await idrPendingReimbursements.json();
+  const res = await fetchJSONAPI("GET", url + searchParams);
+  const json: FetchData = await res.json();
   let totalPending = 0;
-  for (let i = 0; i < idrPendingJson.data.length; i++) {
-    totalPending = idrPendingJson.data[i].dcNominalReimbursement;
+  for (let i = 0; i < json.data.length; i++) {
+    totalPending = json.data[i].dcNominalReimbursement;
   }
-  return {
-    oneDayCount: reimbursementInOneDayCount,
-    pendingCount: pendingReimbursementsCount,
-    pendingValue: totalPending,
-  };
+  return totalPending;
 }
 
 export default async function Page() {
-  const displayData = await getDashboardData();
+  const reimbursementCount = await getDailyReimbursementData();
+  const pendingCount = await getPendingReimbursements();
+  const pendingReimbursementValue = await getPendingReimbursementValue();
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -48,7 +54,7 @@ export default async function Page() {
             <CardTitle>New Reimbursements</CardTitle>
           </CardHeader>
           <CardContent>
-            +{displayData.oneDayCount} more notes since last 24 hours
+            +{reimbursementCount} more notes since last 24 hours
           </CardContent>
         </Card>
         <Card>
@@ -56,7 +62,7 @@ export default async function Page() {
             <CardTitle>Pending Approval Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            {displayData.pendingCount} notes are pending approval overall
+            {pendingCount} notes are pending approval overall
           </CardContent>
         </Card>
         <Card>
@@ -64,7 +70,7 @@ export default async function Page() {
             <CardTitle>Reimbursement Value</CardTitle>
           </CardHeader>
           <CardContent>
-            IDR {displayData.pendingValue} worth of reimbursements are still
+            IDR {pendingReimbursementValue} worth of reimbursements are still
             pending
           </CardContent>
         </Card>
