@@ -41,9 +41,10 @@ export default function Home() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (data: LoginSchema) => {
-
+  async function onSubmit(data: LoginSchema) {
+    setLoading(true);
     const res = await fetch("/api/v1/auth/signin", {
       method: "POST",
       headers: {
@@ -56,11 +57,12 @@ export default function Home() {
       redirect("/dashboard");
     } else {
       const body = await res.json();
+      setLoading(false);
       form.setError("root", {
         message: body.error,
       });
     }
-  };
+  }
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -125,12 +127,8 @@ export default function Home() {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    form="login-form"
-                    type="submit"
-                    disabled={form.formState.isLoading}
-                  >
-                    {form.formState.isLoading ? (
+                  <Button form="login-form" type="submit" disabled={loading}>
+                    {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       "Login"
