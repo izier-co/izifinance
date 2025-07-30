@@ -1,6 +1,7 @@
 import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
+import { Suspense } from "react";
 
 const url = "/api/v1/reimbursements?";
 
@@ -42,10 +43,44 @@ async function getPendingReimbursementValue(): Promise<number> {
   return totalPending;
 }
 
-export default async function Page() {
+function LoadingMessage() {
+  return <>Loading Data...</>;
+}
+
+function FetchErrorMessage({
+  message,
+  code,
+}: {
+  message: string;
+  code: number;
+}) {
+  return (
+    <>
+      Error : {message} ({code})
+    </>
+  );
+}
+
+async function DailyReimbursementMessage() {
   const reimbursementCount = await getDailyReimbursementData();
+  return <>+{reimbursementCount} more notes since last 24 hours</>;
+}
+
+async function PendingReimbursementMessage() {
   const pendingCount = await getPendingReimbursements();
+  return <>{pendingCount} notes are pending approval overall</>;
+}
+
+async function PendingReimbursementValue() {
   const pendingReimbursementValue = await getPendingReimbursementValue();
+  return (
+    <>
+      IDR {pendingReimbursementValue} worth of reimbursements are still pending
+    </>
+  );
+}
+
+export default async function Page() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -54,7 +89,9 @@ export default async function Page() {
             <CardTitle>New Reimbursements</CardTitle>
           </CardHeader>
           <CardContent>
-            +{reimbursementCount} more notes since last 24 hours
+            <Suspense fallback={<LoadingMessage />}>
+              <DailyReimbursementMessage />
+            </Suspense>
           </CardContent>
         </Card>
         <Card>
@@ -62,7 +99,9 @@ export default async function Page() {
             <CardTitle>Pending Approval Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            {pendingCount} notes are pending approval overall
+            <Suspense fallback={<LoadingMessage />}>
+              <PendingReimbursementMessage />
+            </Suspense>
           </CardContent>
         </Card>
         <Card>
@@ -70,8 +109,9 @@ export default async function Page() {
             <CardTitle>Reimbursement Value</CardTitle>
           </CardHeader>
           <CardContent>
-            IDR {pendingReimbursementValue} worth of reimbursements are still
-            pending
+            <Suspense fallback={<LoadingMessage />}>
+              <PendingReimbursementValue />
+            </Suspense>
           </CardContent>
         </Card>
       </div>
@@ -80,7 +120,9 @@ export default async function Page() {
           <CardTitle>Reimbursement Volume in this month</CardTitle>
         </CardHeader>
         <CardContent>
-          <ReimbursementChart />
+          <Suspense fallback={<LoadingMessage />}>
+            <ReimbursementChart />
+          </Suspense>
         </CardContent>
       </Card>
     </div>
