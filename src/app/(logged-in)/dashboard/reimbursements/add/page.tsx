@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
+import { Loader2 } from "lucide-react";
 
 const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
@@ -183,7 +184,6 @@ export default function Page() {
       refreshAndRevalidatePage("/");
       reimbursementForm.reset();
       setItems([]);
-      // TODO : do something for better UX
     } else {
       const json = await res.json();
       _setReimbursementRootError(json.error);
@@ -364,7 +364,16 @@ export default function Page() {
                 {reimbursementForm.formState.errors.root.message}
               </p>
             )}
-            <Button type="submit">Add Reimbursement</Button>
+            <Button
+              type="submit"
+              disabled={reimbursementForm.formState.isSubmitting}
+            >
+              {reimbursementForm.formState.isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Add Reimbursement"
+              )}
+            </Button>
           </form>
         </Form>
       </div>

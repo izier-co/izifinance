@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { Loader2, MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
 import { useRouter } from "next/navigation";
 import {
@@ -285,7 +285,13 @@ export const columns: ColumnDef<Reimbursements>[] = [
                               Cancel
                             </Button>
                           </DialogClose>
-                          <Button type="submit">Confirm</Button>
+                          <Button type="submit">
+                            {changeDescriptionForm.formState.isSubmitting ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Confirm"
+                            )}
+                          </Button>
                         </DialogFooter>
                       </form>
                     </Form>
@@ -338,7 +344,13 @@ export const columns: ColumnDef<Reimbursements>[] = [
                               Cancel
                             </Button>
                           </DialogClose>
-                          <Button type="submit">Approve</Button>
+                          <Button type="submit">
+                            {approveForm.formState.isSubmitting ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Approve"
+                            )}
+                          </Button>
                         </DialogFooter>
                       </form>
                     </Form>

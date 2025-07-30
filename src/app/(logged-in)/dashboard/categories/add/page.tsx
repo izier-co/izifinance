@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 
 import { supabase } from "@/app/api/supabase.config";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 
 const categorySchema = z.object({
   txCategoryName: z
@@ -68,7 +69,7 @@ export default function Page() {
     }
   }
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex  w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader>
@@ -79,6 +80,7 @@ export default function Page() {
               <form
                 id="category-form"
                 onSubmit={categoryForm.handleSubmit(addCategory)}
+                className="flex flex-col justify-center"
               >
                 <FormField
                   control={categoryForm.control}
@@ -115,7 +117,13 @@ export default function Page() {
                     {categoryForm.formState.errors.root.message}
                   </p>
                 )}
-                <Button type="submit">Add Category</Button>
+                <Button type="submit" className="my-2">
+                  {categoryForm.formState.isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Add Category"
+                  )}
+                </Button>
               </form>
             </Form>
           </CardContent>

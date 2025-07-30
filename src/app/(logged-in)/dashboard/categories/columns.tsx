@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { Loader2, MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
 import {
   Dialog,
@@ -81,11 +81,14 @@ export const columns: ColumnDef<Categories>[] = [
     id: "actions",
     cell: ({ row }) => {
       const [errorMessage, setErrorMessage] = useState();
+      const [loading, setLoading] = useState(false);
       async function _deleteCategory() {
+        setLoading(true);
         const res = await fetchJSONAPI(
           "DELETE",
           `/api/v1/categories/${row.getValue("inCategoryID")}`
         );
+        setLoading(false);
         if (res.status === 200) {
           refreshAndRevalidatePage("/categories");
         } else {
@@ -132,7 +135,11 @@ export const columns: ColumnDef<Categories>[] = [
                     </Button>
                   </DialogClose>
                   <Button type="button" onClick={_deleteCategory}>
-                    Confirm
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Confirm"
+                    )}
                   </Button>
                 </DialogFooter>
               </DialogContent>
