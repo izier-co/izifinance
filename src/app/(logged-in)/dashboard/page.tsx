@@ -38,7 +38,7 @@ async function getPendingReimbursementValue(): Promise<number> {
   const json: FetchData = await res.json();
   let totalPending = 0;
   for (let i = 0; i < json.data.length; i++) {
-    totalPending = json.data[i].dcNominalReimbursement;
+    totalPending += json.data[i].dcNominalReimbursement;
   }
   return totalPending;
 }
