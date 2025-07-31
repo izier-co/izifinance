@@ -60,7 +60,10 @@ export const PUT = async (
   if (empSelectErr)
     return NextResponse.json({ error: empSelectErr.message }, { status: 500 });
 
-  if (preCheckData["txApprovedBy"] !== empData["txEmployeeCode"])
+  if (
+    preCheckData["txApprovedBy"] !== null &&
+    preCheckData["txApprovedBy"] !== empData["txEmployeeCode"]
+  )
     return NextResponse.json(
       { error: "You are not allowed to do that" },
       { status: 422 }
