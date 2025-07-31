@@ -179,7 +179,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
 
       function _approvalModalCleanup(open: boolean) {
         if (!open) {
-          setDescriptionModalOpen(false);
+          setApprovalModalOpen(false);
         }
         approveForm.clearErrors();
       }
@@ -250,17 +250,15 @@ export const columns: ColumnDef<Reimbursements>[] = [
               open={descriptionModalOpen}
               onOpenChange={_descriptionModalCleanup}
             >
-              <DialogTrigger asChild>
-                <DropdownMenuItem
-                  // prevents weird closing bug when opening
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setDescriptionModalOpen(true);
-                  }}
-                >
-                  Edit Description
-                </DropdownMenuItem>
-              </DialogTrigger>
+              <DropdownMenuItem
+                // prevents weird closing bug when opening
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setDescriptionModalOpen(true);
+                }}
+              >
+                Edit Description
+              </DropdownMenuItem>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Edit Description</DialogTitle>
@@ -313,16 +311,14 @@ export const columns: ColumnDef<Reimbursements>[] = [
               open={approvalModalOpen}
               onOpenChange={_approvalModalCleanup}
             >
-              <DialogTrigger asChild>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setApprovalModalOpen(true);
-                  }}
-                >
-                  Approve
-                </DropdownMenuItem>
-              </DialogTrigger>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setApprovalModalOpen(true);
+                }}
+              >
+                Approve
+              </DropdownMenuItem>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Confirmation</DialogTitle>
