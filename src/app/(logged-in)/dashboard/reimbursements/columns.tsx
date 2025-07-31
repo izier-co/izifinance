@@ -177,11 +177,17 @@ export const columns: ColumnDef<Reimbursements>[] = [
       const [approvalModalOpen, setApprovalModalOpen] = useState(false);
       const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
 
-      function _approvalModalCleanup() {
+      function _approvalModalCleanup(open: boolean) {
+        if (!open) {
+          setDescriptionModalOpen(false);
+        }
         approveForm.clearErrors();
       }
 
-      function _descriptionModalCleanup() {
+      function _descriptionModalCleanup(open: boolean) {
+        if (!open) {
+          setDescriptionModalOpen(false);
+        }
         changeDescriptionForm.clearErrors();
       }
 
@@ -240,12 +246,16 @@ export const columns: ColumnDef<Reimbursements>[] = [
             >
               View Details
             </DropdownMenuItem>
-            <Dialog onOpenChange={_descriptionModalCleanup}>
+            <Dialog
+              open={descriptionModalOpen}
+              onOpenChange={_descriptionModalCleanup}
+            >
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   // prevents weird closing bug when opening
                   onSelect={(e) => {
                     e.preventDefault();
+                    setDescriptionModalOpen(true);
                   }}
                 >
                   Edit Description
@@ -299,11 +309,15 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </div>
               </DialogContent>
             </Dialog>
-            <Dialog onOpenChange={_approvalModalCleanup}>
+            <Dialog
+              open={approvalModalOpen}
+              onOpenChange={_approvalModalCleanup}
+            >
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   onSelect={(e) => {
                     e.preventDefault();
+                    setApprovalModalOpen(true);
                   }}
                 >
                   Approve
