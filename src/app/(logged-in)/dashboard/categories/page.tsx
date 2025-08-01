@@ -1,18 +1,21 @@
 import { fetchJSONAPI } from "@/lib/lib";
-import { columns, Categories } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
+import { Suspense } from "react";
 
-async function getData(): Promise<Array<Categories>> {
+async function CustomDataTable() {
   const data = await fetchJSONAPI("GET", "/api/v1/categories");
   const json = await data.json();
-  return json["data"];
+  return <DataTable columns={columns} data={json["data"]} />;
 }
 
 export default async function Page() {
-  const data = await getData();
   return (
     <div className="">
-      <DataTable columns={columns} data={data} />
+      <h1 className="text-bold mb-4">Categories</h1>
+      <Suspense fallback={<>Loading...</>}>
+        <CustomDataTable />
+      </Suspense>
     </div>
   );
 }
