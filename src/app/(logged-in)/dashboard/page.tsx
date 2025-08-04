@@ -1,6 +1,8 @@
+"use client";
 import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
+import { useQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 
 const url = "/api/v1/reimbursements?";
@@ -47,40 +49,61 @@ function LoadingMessage() {
   return <>Loading Data...</>;
 }
 
-function FetchErrorMessage({
-  message,
-  code,
-}: {
-  message: string;
-  code: number;
-}) {
-  return (
-    <>
-      Error : {message} ({code})
-    </>
-  );
+function FetchErrorMessage({ message }: { message: string }) {
+  return <>Error : {message}</>;
 }
 
-async function DailyReimbursementMessage() {
-  const reimbursementCount = await getDailyReimbursementData();
-  return <>+{reimbursementCount} more notes since last 24 hours</>;
-}
+export default function Page() {
+  function DailyReimbursementMessage() {
+    const dailyReimbursementQuery = useQuery({
+      queryKey: ["daily-reimbursement"],
+      queryFn: getDailyReimbursementData,
+    });
+    if (dailyReimbursementQuery.isLoading) {
+      return <LoadingMessage />;
+    }
+    if (dailyReimbursementQuery.isError) {
+      console.error(dailyReimbursementQuery.error.message);
+      return <FetchErrorMessage message={"Something went wrong"} />;
+    }
+    if (dailyReimbursementQuery.data === 0) {
+      return <>No more notes since last 24 hours</>;
+    }
+    return <>{dailyReimbursementQuery.data} more notes since last 24 hours</>;
+  }
+  function PendingReimbursementMessage() {
+    const pendingQuery = useQuery({
+      queryKey: ["pending-query"],
+      queryFn: getPendingReimbursements,
+    });
+    if (pendingQuery.isLoading) {
+      return <LoadingMessage />;
+    }
+    if (pendingQuery.isError) {
+      console.error(pendingQuery.error.message);
+      return <FetchErrorMessage message={"Something went wrong"} />;
+    }
+    return <>{pendingQuery.data} notes are pending approval overall</>;
+  }
 
-async function PendingReimbursementMessage() {
-  const pendingCount = await getPendingReimbursements();
-  return <>{pendingCount} notes are pending approval overall</>;
-}
-
-async function PendingReimbursementValue() {
-  const pendingReimbursementValue = await getPendingReimbursementValue();
-  return (
-    <>
-      IDR {pendingReimbursementValue} worth of reimbursements are still pending
-    </>
-  );
-}
-
-export default async function Page() {
+  function PendingReimbursementValue() {
+    const pendingValueQuery = useQuery({
+      queryKey: ["pending-value"],
+      queryFn: getPendingReimbursementValue,
+    });
+    if (pendingValueQuery.isLoading) {
+      return <LoadingMessage />;
+    }
+    if (pendingValueQuery.isError) {
+      console.error(pendingValueQuery.error.message);
+      return <FetchErrorMessage message={"Something went wrong"} />;
+    }
+    return (
+      <>
+        IDR {pendingValueQuery.data} worth of reimbursements are still pending
+      </>
+    );
+  }
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -89,9 +112,7 @@ export default async function Page() {
             <CardTitle>New Reimbursements</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<LoadingMessage />}>
-              <DailyReimbursementMessage />
-            </Suspense>
+            <DailyReimbursementMessage />
           </CardContent>
         </Card>
         <Card>
@@ -99,9 +120,7 @@ export default async function Page() {
             <CardTitle>Pending Approval Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<LoadingMessage />}>
-              <PendingReimbursementMessage />
-            </Suspense>
+            <PendingReimbursementMessage />
           </CardContent>
         </Card>
         <Card>
@@ -109,9 +128,7 @@ export default async function Page() {
             <CardTitle>Reimbursement Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<LoadingMessage />}>
-              <PendingReimbursementValue />
-            </Suspense>
+            <PendingReimbursementValue />
           </CardContent>
         </Card>
       </div>

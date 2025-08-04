@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { DynamicBreadcrumbs } from "@/components/dynamic-breadcrumbs";
+import { QueryProvider } from "@/components/query-client";
 import { Separator } from "@/components/ui/separator";
 
 import {
@@ -22,7 +23,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <DynamicBreadcrumbs />
         </header>
         <main>
-          <SidebarInset className="p-6">{children}</SidebarInset>
+          <SidebarInset className="p-6">
+            <QueryProvider>{children}</QueryProvider>
+          </SidebarInset>
         </main>
       </div>
     </SidebarProvider>
