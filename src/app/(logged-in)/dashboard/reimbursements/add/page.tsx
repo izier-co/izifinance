@@ -38,6 +38,7 @@ import {
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 import { Loader2 } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
@@ -137,12 +138,7 @@ export default function Page() {
     });
   }
 
-  async function addReimbursement(reimbursementData: ReimbursementSchema) {
-    if (items.length === 0) {
-      _setReimbursementRootError("Reimbursement Items can't be empty");
-      return;
-    }
-
+  async function _getEmpID() {
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
@@ -158,12 +154,17 @@ export default function Page() {
       "GET",
       `/api/v1/employees/${data.user.id}`
     );
-    const empData = await empRes.json();
-    if (empData.data.length === 0) {
-      _setReimbursementRootError("Unauthorized Action");
-      return;
-    }
-    const empID = empData.data[0].txEmployeeCode;
+    const json = await empRes.json();
+    return json.data[0].txEmployeeCode;
+  }
+
+  async function _addReimbursement({
+    reimbursementData,
+    empID,
+  }: {
+    reimbursementData: ReimbursementSchema;
+    empID: string;
+  }) {
     const payload = {
       ...reimbursementData,
       txEmployeeCode: empID,
@@ -179,16 +180,9 @@ export default function Page() {
       },
       body: JSON.stringify(payload),
     });
-    if (res.status === 201) {
-      refreshAndRevalidatePage("/dashboard/reimbursement");
-      refreshAndRevalidatePage("/");
-      reimbursementForm.reset();
-      setItems([]);
-    } else {
-      const json = await res.json();
-      _setReimbursementRootError(json.error);
-    }
+    return await res.json();
   }
+
   function addReimbursementItem(data: ReimbursementItemSchema) {
     setItems([...items, data]);
     setOpen(false);
@@ -252,6 +246,39 @@ export default function Page() {
     });
   }, []);
 
+  const getEmpIDQuery = useQuery({
+    queryKey: ["emp-id"],
+    queryFn: _getEmpID,
+  });
+
+  const submitQuery = useMutation({
+    mutationKey: ["reimbursement-send-mutation"],
+    mutationFn: _addReimbursement,
+    onSuccess: () => {
+      refreshAndRevalidatePage("/dashboard/reimbursement");
+      refreshAndRevalidatePage("/");
+      reimbursementForm.reset();
+      setItems([]);
+    },
+    onError: (error) => {
+      _setReimbursementRootError(error.message);
+    },
+  });
+
+  function submitReimbursement(reimbursementData: ReimbursementSchema) {
+    if (items.length === 0) {
+      _setReimbursementRootError("Reimbursement Items can't be empty");
+      return;
+    }
+
+    if (getEmpIDQuery.error) {
+      _setReimbursementRootError(getEmpIDQuery.error.message);
+      return;
+    }
+    const empID = getEmpIDQuery.data;
+    submitQuery.mutate({ reimbursementData: reimbursementData, empID: empID });
+  }
+
   return (
     <div className="flex flex-row">
       <div className="w-1/2">
@@ -259,7 +286,7 @@ export default function Page() {
         <Form {...reimbursementForm}>
           <form
             id="reimbursement-form"
-            onSubmit={reimbursementForm.handleSubmit(addReimbursement)}
+            onSubmit={reimbursementForm.handleSubmit(submitReimbursement)}
           >
             <FormField
               control={reimbursementForm.control}
@@ -364,11 +391,8 @@ export default function Page() {
                 {reimbursementForm.formState.errors.root.message}
               </p>
             )}
-            <Button
-              type="submit"
-              disabled={reimbursementForm.formState.isSubmitting}
-            >
-              {reimbursementForm.formState.isSubmitting ? (
+            <Button type="submit" disabled={submitQuery.isPending}>
+              {submitQuery.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 "Add Reimbursement"
