@@ -25,6 +25,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useState } from "react";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
+import { useMutation } from "@tanstack/react-query";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -80,21 +81,26 @@ export const columns: ColumnDef<Categories>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const [errorMessage, setErrorMessage] = useState();
-      const [loading, setLoading] = useState(false);
+      const [errorMessage, setErrorMessage] = useState("");
+
+      const deleteQuery = useMutation({
+        mutationKey: ["delete-category-mutation"],
+        mutationFn: _deleteCategory,
+        onSuccess: () => {
+          refreshAndRevalidatePage("/categories");
+        },
+        onError: (error) => {
+          setErrorMessage(error.message);
+        },
+      });
+      function deleteCategory() {
+        deleteQuery.mutate();
+      }
       async function _deleteCategory() {
-        setLoading(true);
-        const res = await fetchJSONAPI(
+        await fetchJSONAPI(
           "DELETE",
           `/api/v1/categories/${row.getValue("inCategoryID")}`
         );
-        setLoading(false);
-        if (res.status === 200) {
-          refreshAndRevalidatePage("/categories");
-        } else {
-          const json = await res.json();
-          setErrorMessage(json.error);
-        }
       }
       return (
         <DropdownMenu>
@@ -108,7 +114,7 @@ export const columns: ColumnDef<Categories>[] = [
             <Dialog>
               <DialogTrigger asChild>
                 <DropdownMenuItem
-                  // prevents weirc closing bug when opening
+                  // prevents weird closing bug when opening
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
@@ -134,8 +140,8 @@ export const columns: ColumnDef<Categories>[] = [
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="button" onClick={_deleteCategory}>
-                    {loading ? (
+                  <Button type="button" onClick={deleteCategory}>
+                    {deleteQuery.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       "Confirm"
