@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCookies, refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,7 +38,7 @@ import {
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 import { Loader2 } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
 
 const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
@@ -125,9 +125,6 @@ export default function Page() {
 
   const [items, setItems] = useState<ReimbursementItemSchema[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const [categories, setCategories] = useState<Array<ComboboxItem>>([]);
-  const [banks, setBanks] = useState<Array<ComboboxItem>>([]);
-  const [companies, setCompanies] = useState<Array<ComboboxItem>>([]);
 
   function _setReimbursementRootError(message: string) {
     reimbursementForm.setError("root", {
@@ -200,48 +197,58 @@ export default function Page() {
     }
   }
 
-  async function fetchComboboxData(fetchParams: {
+  async function fetchCombobox(fetchParams: {
     url: string;
     labelProperty: string;
     valueProperty: string;
-    stateSetter: React.Dispatch<React.SetStateAction<any>>;
-  }) {
+  }): Promise<Array<ComboboxItem>> {
     const searchParams = new URLSearchParams({
       fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
     }).toString();
     const urlWithParams = fetchParams.url + "?" + searchParams;
     const res = await fetchJSONAPI("GET", urlWithParams);
     const json = await res.json();
-    const comboboxItems = json.data.map(
+    return json.data.map(
       (item: Record<string, any>) =>
         ({
           label: item[fetchParams.labelProperty],
           value: item[fetchParams.valueProperty],
         }) as ComboboxItem
     );
-    fetchParams.stateSetter(comboboxItems);
   }
 
-  useEffect(() => {
-    fetchComboboxData({
-      url: "/api/v1/categories",
-      labelProperty: "txCategoryName",
-      valueProperty: "inCategoryID",
-      stateSetter: setCategories,
-    });
-    fetchComboboxData({
-      url: "/api/v1/banks",
-      labelProperty: "txBankName",
-      valueProperty: "inBankTypeCode",
-      stateSetter: setBanks,
-    });
-    fetchComboboxData({
-      url: "/api/v1/companies",
-      labelProperty: "txCompanyName",
-      valueProperty: "inCompanyCode",
-      stateSetter: setCompanies,
-    });
-  }, []);
+  const categoryComboboxQuery = useQuery({
+    queryKey: ["category-combobox"],
+    queryFn: () => {
+      return fetchCombobox({
+        url: "/api/v1/categories",
+        labelProperty: "txCategoryName",
+        valueProperty: "inCategoryID",
+      });
+    },
+  });
+
+  const bankComboboxQuery = useQuery({
+    queryKey: ["bank-combobox"],
+    queryFn: () => {
+      return fetchCombobox({
+        url: "/api/v1/banks",
+        labelProperty: "txBankName",
+        valueProperty: "inBankTypeCode",
+      });
+    },
+  });
+
+  const companyComboboxQuery = useQuery({
+    queryKey: ["company-combobox"],
+    queryFn: () => {
+      return fetchCombobox({
+        url: "/api/v1/companies",
+        labelProperty: "txCompanyName",
+        valueProperty: "inCompanyCode",
+      });
+    },
+  });
 
   const getEmpIDQuery = useQuery({
     queryKey: ["emp-id"],
@@ -261,6 +268,35 @@ export default function Page() {
       _setReimbursementRootError(error.message);
     },
   });
+
+  function QueryCombobox({
+    value,
+    onChange,
+    query,
+  }: {
+    value: string;
+    onChange: (val: string) => void;
+    query: UseQueryResult;
+  }) {
+    if (query.isLoading) {
+      return (
+        <FormCombobox value={value} onChange={onChange} items={[]} loading />
+      );
+    }
+    if (query.isError) {
+      console.error(query.error);
+      return (
+        <FormCombobox value={value} onChange={onChange} items={[]} error />
+      );
+    }
+    return (
+      <FormCombobox
+        value={value}
+        onChange={onChange}
+        items={query.data as Array<ComboboxItem>}
+      />
+    );
+  }
 
   function submitReimbursement(reimbursementData: ReimbursementSchema) {
     if (items.length === 0) {
@@ -320,10 +356,10 @@ export default function Page() {
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">Bank Type :</FormLabel>
                   <FormControl>
-                    <FormCombobox
+                    <QueryCombobox
                       value={field.value as string}
                       onChange={field.onChange}
-                      items={banks}
+                      query={bankComboboxQuery}
                     />
                   </FormControl>
                   <FormMessage />
@@ -339,10 +375,10 @@ export default function Page() {
                     Recipient Company :
                   </FormLabel>
                   <FormControl>
-                    <FormCombobox
+                    <QueryCombobox
                       value={field.value as string}
                       onChange={field.onChange}
-                      items={companies}
+                      query={companyComboboxQuery}
                     />
                   </FormControl>
                   <FormMessage />
@@ -372,10 +408,10 @@ export default function Page() {
                   <FormItem className="my-3">
                     <FormLabel className="capitalize">Category :</FormLabel>
                     <FormControl>
-                      <FormCombobox
+                      <QueryCombobox
                         value={field.value as string}
                         onChange={field.onChange}
-                        items={categories}
+                        query={categoryComboboxQuery}
                       />
                     </FormControl>
                     <FormMessage />

@@ -21,12 +21,23 @@ export function FormCombobox({
   value,
   onChange,
   items,
+  loading,
+  error,
 }: {
   value: string;
   onChange: (val: string) => void;
   items: Array<ComboboxItem>;
+  loading?: boolean;
+  error?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
+
+  function renderComboboxLabel() {
+    if (error) return "Something Went Wrong";
+    if (loading) return "Loading...";
+    if (value) return items.find((item) => String(item.value) === value)?.label;
+    return "Select Value...";
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,10 +47,14 @@ export function FormCombobox({
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between"
+          disabled={loading || error}
         >
-          {value
-            ? items.find((item) => String(item.value) === value)?.label
-            : "Select value ..."}
+          {/* {loading
+            ? "Loading..."
+            : value
+              ? items.find((item) => String(item.value) === value)?.label
+              : "Select value ..."} */}
+          {renderComboboxLabel()}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
