@@ -21,7 +21,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -37,6 +36,7 @@ import {
   FormMessage,
   FormField,
 } from "@/components/ui/form";
+import { useMutation } from "@tanstack/react-query";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -162,20 +162,57 @@ export const columns: ColumnDef<Reimbursements>[] = [
       const changeDescriptionForm = useForm<ChangeDescriptionSchema>({
         resolver: zodResolver(changeDescriptionSchema),
         defaultValues: {
-          description: row.getValue("txDescriptionDetails"),
+          description: row.getValue("txDescriptionDetails") || "",
         },
       });
 
       const approveForm = useForm<ApprovalSchema>({
         resolver: zodResolver(approvalSchema),
         defaultValues: {
-          changeReason: row.getValue("txChangeReason"),
+          changeReason: row.getValue("txChangeReason") || "",
         },
       });
 
       const router = useRouter();
       const [approvalModalOpen, setApprovalModalOpen] = useState(false);
       const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
+
+      const approvalQuery = useMutation({
+        mutationKey: ["approve-reimbursement-mutation"],
+        mutationFn: _approve,
+        onSuccess: () => {
+          setApprovalModalOpen(false);
+          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard");
+        },
+        onError: (error) => {
+          approveForm.setError("changeReason", {
+            message: error.message,
+          });
+        },
+      });
+
+      const changeDescriptionQuery = useMutation({
+        mutationKey: ["change-description-mutation"],
+        mutationFn: _setDescription,
+        onSuccess: () => {
+          setDescriptionModalOpen(false);
+          refreshAndRevalidatePage("/dashboard/reimbursement");
+        },
+        onError: (error) => {
+          changeDescriptionForm.setError("description", {
+            message: error.message,
+          });
+        },
+      });
+
+      function approve(data: ApprovalSchema) {
+        approvalQuery.mutate(data);
+      }
+
+      function changeDescription(data: ChangeDescriptionSchema) {
+        changeDescriptionQuery.mutate(data);
+      }
 
       function _approvalModalCleanup(open: boolean) {
         if (!open) {
@@ -191,42 +228,21 @@ export const columns: ColumnDef<Reimbursements>[] = [
         changeDescriptionForm.clearErrors();
       }
 
-      const _approve = async (data: ApprovalSchema) => {
-        const res = await fetchJSONAPI(
+      async function _approve(data: ApprovalSchema) {
+        await fetchJSONAPI(
           "PUT",
           `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
           data
         );
+      }
 
-        if (res.status === 200) {
-          setApprovalModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
-          refreshAndRevalidatePage("/dashboard");
-        } else {
-          const json = await res.json();
-          approveForm.setError("changeReason", {
-            message: json.error,
-          });
-        }
-      };
-
-      const _setDescription = async (data: ChangeDescriptionSchema) => {
-        const res = await fetchJSONAPI(
+      async function _setDescription(data: ChangeDescriptionSchema) {
+        await fetchJSONAPI(
           "PUT",
           `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`,
           data
         );
-
-        if (res.status === 200) {
-          setDescriptionModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
-        } else {
-          const json = await res.json();
-          changeDescriptionForm.setError("description", {
-            message: json.error,
-          });
-        }
-      };
+      }
 
       return (
         <DropdownMenu>
@@ -269,7 +285,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                       <form
                         id="change-description-form"
                         onSubmit={changeDescriptionForm.handleSubmit(
-                          _setDescription
+                          changeDescription
                         )}
                       >
                         <FormField
@@ -294,7 +310,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                             </Button>
                           </DialogClose>
                           <Button type="submit">
-                            {changeDescriptionForm.formState.isSubmitting ? (
+                            {changeDescriptionQuery.isPending ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
                               "Confirm"
@@ -331,7 +347,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                     <Form {...approveForm}>
                       <form
                         id="approval-form"
-                        onSubmit={approveForm.handleSubmit(_approve)}
+                        onSubmit={approveForm.handleSubmit(approve)}
                       >
                         <FormField
                           control={approveForm.control}
@@ -355,7 +371,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                             </Button>
                           </DialogClose>
                           <Button type="submit">
-                            {approveForm.formState.isSubmitting ? (
+                            {approvalQuery.isPending ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
                               "Approve"
