@@ -1,3 +1,5 @@
+"use client";
+
 import { fetchJSONAPI } from "@/lib/lib";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
@@ -10,21 +12,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Suspense, use } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { use } from "react";
 
 async function getData(id: string) {
   const data = await fetchJSONAPI("GET", `/api/v1/reimbursements/${id}/notes`);
   const json = await data.json();
-  console.log(json);
   return json["data"][0];
-}
-function CustomDataTable({ id }: { id: string }) {
-  const data = use(getData(id));
-  return <DataTable columns={columns} data={data["reimbursement_items"]} />;
 }
 
 function ReimbursementTable({ id }: { id: string }) {
-  const data = use(getData(id));
+  const dataQuery = useQuery({
+    queryKey: ["reimbursement-item-query", id],
+    queryFn: () => {
+      return getData(id);
+    },
+  });
+  if (dataQuery.isLoading) {
+    return <>Loading</>;
+  }
+  if (dataQuery.isError) {
+    console.error(dataQuery.error.message);
+    return <>Error : {dataQuery.error.message} </>;
+  }
+  const data = dataQuery.data;
   return (
     <Table className="mb-6 max-w-[80%] mx-auto">
       <TableHeader>
@@ -94,19 +105,28 @@ function ReimbursementTable({ id }: { id: string }) {
     </Table>
   );
 }
-export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  // const data = await getData(params.id);
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const dataQuery = useQuery({
+    queryKey: ["reimbursement-item-query", id],
+    queryFn: () => {
+      return getData(id);
+    },
+  });
+  if (dataQuery.isLoading) {
+    return <>Loading</>;
+  }
+  if (dataQuery.isError) {
+    console.error(dataQuery.error.message);
+    return <>Error : {dataQuery.error.message} </>;
+  }
   return (
-    <div className="">
-      <Suspense fallback={<>Loading Table...</>}>
-        <ReimbursementTable id={params.id} />
-      </Suspense>
-      <div className="">
-        <Suspense fallback={<>Loading Data Table...</>}>
-          <CustomDataTable id={params.id} />
-        </Suspense>
-      </div>
-    </div>
+    <>
+      <ReimbursementTable id={id} />
+      <DataTable
+        columns={columns}
+        data={dataQuery.data["reimbursement_items"]}
+      />
+    </>
   );
 }
