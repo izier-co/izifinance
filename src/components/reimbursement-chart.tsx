@@ -12,14 +12,13 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
   reimbursement: {
-    label: "Reimbursements   ",
+    label: "Reimbursements",
     color: "#2563eb",
   },
 } satisfies ChartConfig;
 
 async function generateChartData() {
   const chartData = [];
-
   const now = new Date();
   const firstDay = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
   const initDay = new Date(now.getFullYear(), now.getMonth(), 0);
@@ -51,6 +50,16 @@ export function ReimbursementChart() {
     queryKey: ["reimbursement-chart-data"],
     queryFn: generateChartData,
   });
+
+  if (chartDataQuery.isError) {
+    console.error(chartDataQuery.error);
+    return <>Error : {chartDataQuery.error.message}</>;
+  }
+
+  if (chartDataQuery.isLoading) {
+    return <>Loading</>;
+  }
+
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
       <BarChart data={chartDataQuery.data}>
