@@ -47,20 +47,20 @@ const reimbursementSchema = z.object({
     .max(constValues.maxBankCodeLength, "Code too long")
     .refine((val) => isValidInt(val), "Must be Valid integer"),
   inBankTypeCode: z.coerce
-    .number()
-    .positive("Must use positive value")
+    .number("Invalid Input")
+    .positive("Invalid Input")
     .int("Integer values only"),
   inRecipientCompanyCode: z.coerce
-    .number()
-    .positive("Must use positive value")
+    .number("Invalid Input")
+    .positive("Invalid Input")
     .int("Integer values only"),
   txBankAccountCode: z
     .string()
     .max(constValues.maxBankCodeLength, "Code too long")
     .refine((val) => isValidInt(val), "Must be Valid integer"),
   inCategoryID: z.coerce
-    .number()
-    .positive("Must use positive value")
+    .number("Invalid Input")
+    .positive("Invalid Input")
     .int("Integer values only"),
 });
 
@@ -74,10 +74,7 @@ const reimbursementItemSchema = z
     deIndividualPrice: z.number().positive("Must use positive value"),
     txCurrency: z
       .string()
-      .length(
-        constValues.currencyCodeStringLength,
-        "Must be valid currency string"
-      )
+      .length(constValues.currencyCodeStringLength, "Invalid Currency")
       .transform((str) => str.toUpperCase()),
   })
   .transform((data) => ({
