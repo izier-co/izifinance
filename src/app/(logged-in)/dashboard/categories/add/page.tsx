@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/app/api/supabase.config";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
 const categorySchema = z.object({
   txCategoryName: z
@@ -41,13 +42,29 @@ export default function Page() {
     },
   });
 
+  const submitQuery = useMutation({
+    mutationKey: ["category-send-mutation"],
+    mutationFn: _addCategory,
+    onSuccess: () => {
+      refreshAndRevalidatePage("/dashboard/categories");
+      categoryForm.reset();
+    },
+    onError: (error) => {
+      _setRootError(error.message);
+    },
+  });
+
   function _setRootError(msg: string) {
     categoryForm.setError("root", {
       message: msg,
     });
   }
 
-  async function addCategory(categoryData: CategorySchema) {
+  function addCategory(categoryData: CategorySchema) {
+    submitQuery.mutate(categoryData);
+  }
+
+  async function _addCategory(categoryData: CategorySchema) {
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
@@ -59,14 +76,7 @@ export default function Page() {
       return;
     }
 
-    const res = await fetchJSONAPI("POST", "/api/v1/categories", categoryData);
-    if (res.status === 201) {
-      refreshAndRevalidatePage("/dashboard/categories");
-      categoryForm.reset();
-    } else {
-      const json = await res.json();
-      _setRootError(json.error);
-    }
+    await fetchJSONAPI("POST", "/api/v1/categories", categoryData);
   }
   return (
     <div className="flex  w-full items-center justify-center p-6 md:p-10">
