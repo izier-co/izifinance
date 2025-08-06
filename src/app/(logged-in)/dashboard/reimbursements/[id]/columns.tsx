@@ -11,7 +11,6 @@ export const payloadSchema = z.object({
   inQuantity: z.number(),
   deIndividualPrice: z.number(),
   deTotalPrice: z.number(),
-  txCurrency: z.string(),
 });
 
 export type ReimbursementItems = z.infer<typeof payloadSchema>;
@@ -61,12 +60,6 @@ export const columns: ColumnDef<ReimbursementItems>[] = [
     accessorKey: "deTotalPrice",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Total Price" />;
-    },
-  },
-  {
-    accessorKey: "txCurrency",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Currency" />;
     },
   },
 ];

@@ -54,6 +54,10 @@ function ReimbursementTable({ id }: { id: string }) {
           <TableCell>{data["daUpdatedAt"]}</TableCell>
         </TableRow>
         <TableRow>
+          <TableCell>Currency</TableCell>
+          <TableCell>{data["txCurrency"]}</TableCell>
+        </TableRow>
+        <TableRow>
           <TableCell>Reimbursement ID</TableCell>
           <TableCell>{data["txReimbursementNoteID"]}</TableCell>
         </TableRow>

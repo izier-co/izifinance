@@ -58,6 +58,10 @@ const reimbursementSchema = z.object({
     .string()
     .max(constValues.maxBankCodeLength, "Code too long")
     .refine((val) => isValidInt(val), "Must be Valid integer"),
+  txCurrency: z
+    .string()
+    .length(constValues.currencyCodeStringLength, "Invalid Currency")
+    .transform((str) => str.toUpperCase()),
   inCategoryID: z.coerce
     .number("Invalid Input")
     .positive("Invalid Input")
@@ -72,10 +76,6 @@ const reimbursementItemSchema = z
       .positive("Must use positive value")
       .int("Integer values only"),
     deIndividualPrice: z.number().positive("Must use positive value"),
-    txCurrency: z
-      .string()
-      .length(constValues.currencyCodeStringLength, "Invalid Currency")
-      .transform((str) => str.toUpperCase()),
   })
   .transform((data) => ({
     ...data,
@@ -110,6 +110,7 @@ export default function Page() {
       inBankTypeCode: 0,
       inRecipientCompanyCode: 0,
       txBankAccountCode: "",
+      txCurrency: "",
     },
   });
 
@@ -119,7 +120,6 @@ export default function Page() {
       txName: "",
       inQuantity: 0,
       deIndividualPrice: 0,
-      txCurrency: "",
     },
   });
 
@@ -177,6 +177,7 @@ export default function Page() {
       },
       body: JSON.stringify(payload),
     });
+    // console.log(await res.json());
     return await res.json();
   }
 
@@ -337,6 +338,26 @@ export default function Page() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={reimbursementForm.control}
+              name="txCurrency"
+              render={({ field }) => {
+                return (
+                  <FormItem className="my-3">
+                    <FormLabel className="capitalize">Currency :</FormLabel>
+                    <FormControl>
+                      <FormCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        items={currencies}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
             <FormField
               control={reimbursementForm.control}
               name="txRecipientAccount"
@@ -508,25 +529,6 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={reimbursementItemForm.control}
-                  name="txCurrency"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="my-3">
-                        <FormLabel className="capitalize">Currency :</FormLabel>
-                        <FormControl>
-                          <FormCombobox
-                            value={field.value}
-                            onChange={field.onChange}
-                            items={currencies}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
                 <DialogFooter className="my-2">
                   <DialogClose asChild>
                     <Button variant="secondary" type="button">
@@ -545,15 +547,13 @@ export default function Page() {
               <CardHeader>
                 <CardTitle>{item.txName}</CardTitle>
                 <CardDescription>
-                  {item.txCurrency} {item.deIndividualPrice} / item
+                  {item.deIndividualPrice} / item
                 </CardDescription>
                 <CardAction>Qty : {item.inQuantity}</CardAction>
               </CardHeader>
               <CardContent className="text-xl text-bold">
                 <div className="flex justify-between ">
-                  <div>
-                    {item.txCurrency} {item.deTotalPrice}
-                  </div>
+                  <div>{item.deTotalPrice}</div>
                   <div>
                     <Button
                       onClick={() => {
