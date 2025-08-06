@@ -98,14 +98,11 @@ export const GET = async (req: NextRequest) => {
     // case insensitive matching
     query.ilike("txCategoryName", params.name);
   }
-  console.log(params.isAlphabetical);
   if (params.isAlphabetical === true) {
-    console.log("true");
     query.order("txCategoryName", {
       ascending: params.isAlphabetical,
     });
   } else if (params.isAlphabetical === false) {
-    console.log("false");
     query.order("txCategoryName", {
       ascending: params.isAlphabetical,
     });

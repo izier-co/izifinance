@@ -29,7 +29,7 @@ export const GET = async (
   return NextResponse.json(
     {
       data: sanitizedData,
-      meta: {},
+      pagination: {},
     },
     { status: 200 }
   );

@@ -195,7 +195,7 @@ export const GET = async (req: NextRequest) => {
   return NextResponse.json(
     {
       data: sanitizedData,
-      meta: {
+      pagination: {
         isFirstPage: params.paginationPage === 1,
         isLastPage: data.length < paginationSize,
         dataCount: data.length,
