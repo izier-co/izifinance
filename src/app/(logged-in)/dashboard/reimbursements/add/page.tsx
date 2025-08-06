@@ -149,6 +149,9 @@ export default function Page() {
       `/api/v1/employees/${data.user.id}`
     );
     const json = await empRes.json();
+    if (json.data.length === 0) {
+      return undefined;
+    }
     return json.data[0].txEmployeeCode;
   }
 

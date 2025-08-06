@@ -37,11 +37,13 @@ import {
   FormField,
 } from "@/components/ui/form";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { supabase } from "@/app/api/supabase.config";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
   daUpdatedAt: z.string(),
   txStatus: z.string(),
+  txReimbursementNoteID: z.string(),
   txDescriptionDetails: z.string(),
   txRecipientAccount: z.string(),
   inBankTypeCode: z.number(),
@@ -57,11 +59,21 @@ const approvalSchema = z.object({
   changeReason: z.string(),
 });
 
+const voidSchema = z.object({
+  changeReason: z.string(),
+});
+
+const rejectSchema = z.object({
+  changeReason: z.string(),
+});
+
 const changeDescriptionSchema = z.object({
   description: z.string(),
 });
 
 type ApprovalSchema = z.infer<typeof approvalSchema>;
+type VoidSchema = z.infer<typeof voidSchema>;
+type RejectSchema = z.infer<typeof rejectSchema>;
 type ChangeDescriptionSchema = z.infer<typeof changeDescriptionSchema>;
 
 export type Reimbursements = z.infer<typeof payloadSchema>;
@@ -93,6 +105,12 @@ export const columns: ColumnDef<Reimbursements>[] = [
     accessorKey: "txStatus",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Status" />;
+    },
+  },
+  {
+    accessorKey: "txReimbursementNoteID",
+    header: ({ column }) => {
+      return <SortableHeader column={column} title="Reimbursement ID" />;
     },
   },
   {
@@ -234,9 +252,58 @@ export const columns: ColumnDef<Reimbursements>[] = [
         },
       });
 
+      const voidForm = useForm<VoidSchema>({
+        resolver: zodResolver(voidSchema),
+        defaultValues: {
+          changeReason: row.getValue("txChangeReason") || "",
+        },
+      });
+
+      const rejectForm = useForm<RejectSchema>({
+        resolver: zodResolver(rejectSchema),
+        defaultValues: {
+          changeReason: row.getValue("txChangeReason") || "",
+        },
+      });
+
+      async function getEmpID() {
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error) {
+          return;
+        }
+        if (data.user === null) {
+          return;
+        }
+
+        const empRes = await fetchJSONAPI(
+          "GET",
+          `/api/v1/employees/${data.user.id}`
+        );
+        const json = await empRes.json();
+        if (json.data.length === 0) {
+          return undefined;
+        }
+        return json.data[0].txEmployeeCode;
+      }
+
       const router = useRouter();
       const [approvalModalOpen, setApprovalModalOpen] = useState(false);
+      const [rejectModalOpen, setRejectModalOpen] = useState(false);
+      const [voidModalOpen, setVoidModalOpen] = useState(false);
       const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
+
+      const checkAdminQuery = useQuery({
+        queryKey: ["check-admin"],
+        queryFn: getEmpID,
+      });
+
+      const isAdmin: boolean =
+        checkAdminQuery.isSuccess && checkAdminQuery.data;
+      const isApproved: boolean = row.getValue("txStatus") === "Approved";
+      const isRejected: boolean = row.getValue("txStatus") === "Rejected";
+      const isVoid: boolean = row.getValue("txStatus") === "Void";
+      const isChanged: boolean = isApproved || isRejected || isVoid;
 
       const approvalQuery = useMutation({
         mutationKey: ["approve-reimbursement-mutation"],
@@ -248,6 +315,36 @@ export const columns: ColumnDef<Reimbursements>[] = [
         },
         onError: (error) => {
           approveForm.setError("changeReason", {
+            message: error.message,
+          });
+        },
+      });
+
+      const rejectQuery = useMutation({
+        mutationKey: ["reject-reimbursement-mutation"],
+        mutationFn: _reject,
+        onSuccess: () => {
+          setRejectModalOpen(false);
+          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard");
+        },
+        onError: (error) => {
+          rejectForm.setError("changeReason", {
+            message: error.message,
+          });
+        },
+      });
+
+      const voidQuery = useMutation({
+        mutationKey: ["void-reimbursement-mutation"],
+        mutationFn: _void,
+        onSuccess: () => {
+          setVoidModalOpen(false);
+          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard");
+        },
+        onError: (error) => {
+          voidForm.setError("changeReason", {
             message: error.message,
           });
         },
@@ -271,6 +368,14 @@ export const columns: ColumnDef<Reimbursements>[] = [
         approvalQuery.mutate(data);
       }
 
+      function voidNote(data: VoidSchema) {
+        voidQuery.mutate(data);
+      }
+
+      function rejectNote(data: RejectSchema) {
+        rejectQuery.mutate(data);
+      }
+
       function changeDescription(data: ChangeDescriptionSchema) {
         changeDescriptionQuery.mutate(data);
       }
@@ -280,6 +385,19 @@ export const columns: ColumnDef<Reimbursements>[] = [
           setApprovalModalOpen(false);
         }
         approveForm.clearErrors();
+      }
+      function _voidModalCleanup(open: boolean) {
+        if (!open) {
+          setVoidModalOpen(false);
+        }
+        voidForm.clearErrors();
+      }
+
+      function _rejectModalCleanup(open: boolean) {
+        if (!open) {
+          setRejectModalOpen(false);
+        }
+        rejectForm.clearErrors();
       }
 
       function _descriptionModalCleanup(open: boolean) {
@@ -293,6 +411,22 @@ export const columns: ColumnDef<Reimbursements>[] = [
         await fetchJSONAPI(
           "PUT",
           `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
+          data
+        );
+      }
+
+      async function _reject(data: RejectSchema) {
+        await fetchJSONAPI(
+          "PUT",
+          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`,
+          data
+        );
+      }
+
+      async function _void(data: VoidSchema) {
+        await fetchJSONAPI(
+          "PUT",
+          `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`,
           data
         );
       }
@@ -384,34 +518,164 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </div>
               </DialogContent>
             </Dialog>
-            <Dialog
-              open={approvalModalOpen}
-              onOpenChange={_approvalModalCleanup}
-            >
+            {isAdmin && (
+              <>
+                <Dialog
+                  open={approvalModalOpen}
+                  onOpenChange={_approvalModalCleanup}
+                >
+                  <DropdownMenuItem
+                    className={
+                      isChanged ? "pointer-events-none opacity-50" : ""
+                    }
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setApprovalModalOpen(true);
+                    }}
+                  >
+                    Approve
+                  </DropdownMenuItem>
+                  <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                    <DialogHeader>
+                      <DialogTitle>Confirmation</DialogTitle>
+                      <DialogDescription>
+                        Are you sure to Approve this note?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center gap-2">
+                      <div className="grid flex-1 gap-2">
+                        <Form {...approveForm}>
+                          <form
+                            id="approval-form"
+                            onSubmit={approveForm.handleSubmit(approve)}
+                          >
+                            <FormField
+                              control={approveForm.control}
+                              name="changeReason"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="capitalize">
+                                    Change Reason :
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <DialogFooter className="my-2">
+                              <DialogClose asChild>
+                                <Button variant="secondary" type="button">
+                                  Cancel
+                                </Button>
+                              </DialogClose>
+                              <Button type="submit">
+                                {approvalQuery.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  "Approve"
+                                )}
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <Dialog
+                  open={rejectModalOpen}
+                  onOpenChange={_rejectModalCleanup}
+                >
+                  <DropdownMenuItem
+                    className={
+                      isChanged ? "pointer-events-none opacity-50" : ""
+                    }
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setRejectModalOpen(true);
+                    }}
+                  >
+                    Reject
+                  </DropdownMenuItem>
+                  <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                    <DialogHeader>
+                      <DialogTitle>Confirmation</DialogTitle>
+                      <DialogDescription>
+                        Are you sure to reject this note?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex items-center gap-2">
+                      <div className="grid flex-1 gap-2">
+                        <Form {...rejectForm}>
+                          <form
+                            id="reject-form"
+                            onSubmit={rejectForm.handleSubmit(rejectNote)}
+                          >
+                            <FormField
+                              control={rejectForm.control}
+                              name="changeReason"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="capitalize">
+                                    Change Reason :
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <DialogFooter className="my-2">
+                              <DialogClose asChild>
+                                <Button variant="secondary" type="button">
+                                  Cancel
+                                </Button>
+                              </DialogClose>
+                              <Button type="submit">
+                                {rejectQuery.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  "reject"
+                                )}
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+            <Dialog open={voidModalOpen} onOpenChange={_voidModalCleanup}>
               <DropdownMenuItem
+                className={isChanged ? "pointer-events-none opacity-50" : ""}
                 onSelect={(e) => {
                   e.preventDefault();
-                  setApprovalModalOpen(true);
+                  setVoidModalOpen(true);
                 }}
               >
-                Approve
+                Void
               </DropdownMenuItem>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Confirmation</DialogTitle>
                   <DialogDescription>
-                    Are you sure to Approve this note?
+                    Are you sure to Void this note?
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-2">
                   <div className="grid flex-1 gap-2">
-                    <Form {...approveForm}>
+                    <Form {...voidForm}>
                       <form
-                        id="approval-form"
-                        onSubmit={approveForm.handleSubmit(approve)}
+                        id="void-form"
+                        onSubmit={voidForm.handleSubmit(voidNote)}
                       >
                         <FormField
-                          control={approveForm.control}
+                          control={voidForm.control}
                           name="changeReason"
                           render={({ field }) => (
                             <FormItem>
@@ -432,10 +696,10 @@ export const columns: ColumnDef<Reimbursements>[] = [
                             </Button>
                           </DialogClose>
                           <Button type="submit">
-                            {approvalQuery.isPending ? (
+                            {voidQuery.isPending ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                              "Approve"
+                              "Void"
                             )}
                           </Button>
                         </DialogFooter>

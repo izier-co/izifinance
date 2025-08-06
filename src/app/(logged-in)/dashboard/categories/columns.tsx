@@ -25,7 +25,8 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useState } from "react";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { supabase } from "@/app/api/supabase.config";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
@@ -76,6 +77,27 @@ export const columns: ColumnDef<Categories>[] = [
     cell: ({ row }) => {
       const [errorMessage, setErrorMessage] = useState("");
 
+      async function getEmpID() {
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error) {
+          return;
+        }
+        if (data.user === null) {
+          return;
+        }
+
+        const empRes = await fetchJSONAPI(
+          "GET",
+          `/api/v1/employees/${data.user.id}`
+        );
+        const json = await empRes.json();
+        if (json.data.length === 0) {
+          return undefined;
+        }
+        return json.data[0].txEmployeeCode;
+      }
+
       const deleteQuery = useMutation({
         mutationKey: ["delete-category-mutation"],
         mutationFn: _deleteCategory,
@@ -86,6 +108,15 @@ export const columns: ColumnDef<Categories>[] = [
           setErrorMessage(error.message);
         },
       });
+
+      const checkAdminQuery = useQuery({
+        queryKey: ["check-admin"],
+        queryFn: getEmpID,
+      });
+
+      const isAdmin: boolean =
+        checkAdminQuery.isSuccess && checkAdminQuery.data;
+
       function deleteCategory() {
         deleteQuery.mutate();
       }
@@ -95,6 +126,10 @@ export const columns: ColumnDef<Categories>[] = [
           `/api/v1/categories/${row.getValue("inCategoryID")}`
         );
       }
+
+      // don't show the menu if not admin
+      if (!isAdmin) return;
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
