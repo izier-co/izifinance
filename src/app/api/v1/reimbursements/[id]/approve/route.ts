@@ -38,7 +38,7 @@ export const PUT = async (
 
   const { data: preCheckData, error: preCheckError } = await supabase
     .from("reimbursement_notes")
-    .select("txStatus, txApprovedBy")
+    .select("txStatus, txChangedBy")
     .eq("txReimbursementNoteID", id)
     .single();
 
@@ -61,8 +61,8 @@ export const PUT = async (
     return NextResponse.json({ error: empSelectErr.message }, { status: 500 });
 
   if (
-    preCheckData["txApprovedBy"] !== null &&
-    preCheckData["txApprovedBy"] !== empData["txEmployeeCode"]
+    preCheckData["txChangedBy"] !== null &&
+    preCheckData["txChangedBy"] !== empData["txEmployeeCode"]
   )
     return NextResponse.json(
       { error: "You are not allowed to do that" },
@@ -73,7 +73,7 @@ export const PUT = async (
     .from("reimbursement_notes")
     .update({
       txStatus: "Approved",
-      txApprovedBy: empData["txEmployeeCode"],
+      txChangedBy: empData["txEmployeeCode"],
       txChangeReason: changeReason,
       daUpdatedAt: new Date().toISOString(),
     })

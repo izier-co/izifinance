@@ -1,16 +1,23 @@
-import { sanitizeDatabaseOutputs } from "@/lib/lib";
 import { createClient } from "@/app/api/supabase_server.config";
-import { NextRequest, NextResponse } from "next/server";
-
 import constValues from "@/lib/constants";
+import { authorizeAdmin, sanitizeDatabaseOutputs } from "@/lib/lib";
+import { NextRequest, NextResponse } from "next/server";
 
 export const PUT = async (
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
 ) => {
   const supabase = await createClient();
+  const unauthorizedResponse = await authorizeAdmin(supabase);
+  if (unauthorizedResponse) return unauthorizedResponse;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const params = await props.params;
   const id = params.id;
+
   let changeReason = "";
   try {
     const body = await req.json();
@@ -28,43 +35,45 @@ export const PUT = async (
   } finally {
     // TODO : handle something regarding logging
   }
+
   const { data: preCheckData, error: preCheckError } = await supabase
     .from("reimbursement_notes")
-    .select("*")
+    .select("txStatus, txChangedBy")
     .eq("txReimbursementNoteID", id)
-    .eq("txStatus", "Approved");
+    .single();
 
   if (preCheckError)
     return NextResponse.json({ error: preCheckError.message }, { status: 500 });
 
-  if (preCheckData.length > 0)
+  if (preCheckData["txStatus"] === "Void")
     return NextResponse.json(
-      { error: "Cannot void approved notes" },
+      { error: "Cannot reject voided notes" },
       { status: 422 }
     );
 
-  const { data: originalData, error: originalRowError } = await supabase
-    .from("reimbursement_notes")
-    .select("*")
-    .eq("txReimbursementNoteID", id);
+  const { data: empData, error: empSelectErr } = await supabase
+    .from("m_employees")
+    .select("txEmployeeCode")
+    .eq("uiUserID", user?.id)
+    .single();
 
-  if (originalRowError)
-    return NextResponse.json(
-      { error: originalRowError.message },
-      { status: 500 }
-    );
+  if (empSelectErr)
+    return NextResponse.json({ error: empSelectErr.message }, { status: 500 });
 
-  if (preCheckData.length > 0)
+  if (
+    preCheckData["txChangedBy"] !== null &&
+    preCheckData["txChangedBy"] !== empData["txEmployeeCode"]
+  )
     return NextResponse.json(
-      { error: "Cannot void approved notes" },
+      { error: "You are not allowed to do that" },
       { status: 422 }
     );
 
   const { data, error } = await supabase
     .from("reimbursement_notes")
     .update({
-      txStatus: "Void",
-      txChangedBy: originalData[0].txEmployeeCode,
+      txStatus: "Rejected",
+      txChangedBy: empData["txEmployeeCode"],
       txChangeReason: changeReason,
       daUpdatedAt: new Date().toISOString(),
     })
@@ -77,7 +86,7 @@ export const PUT = async (
   const sanitizedData = sanitizeDatabaseOutputs(data);
 
   return NextResponse.json({
-    message: "Note Voided!",
+    message: "Note Rejected!",
     data: sanitizedData,
   });
 };

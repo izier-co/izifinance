@@ -399,7 +399,7 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     txBankAccountCode: text().notNull(),
     txChangeReason: text(),
     txEmployeeCode: text().notNull(),
-    txApprovedBy: text(),
+    txChangedBy: text(),
     dcNominalReimbursement: numeric({
       precision: 100,
       scale: 2,
