@@ -40,6 +40,13 @@ const reimbursementSchema = z.object({
     .length(9)
     .regex(/^[a-zA-Z0-9]+$/),
   inCategoryID: z.number().positive().int(),
+  txCurrency: z
+    .string()
+    .length(
+      constValues.currencyCodeStringLength,
+      "Must be Valid ISO 4217 string"
+    )
+    .transform((str) => str.toUpperCase()),
 });
 
 const reimbursementItemSchema = z.object({
@@ -55,13 +62,6 @@ const reimbursementItemSchema = z.object({
   inQuantity: z.number().positive().int(),
   deIndividualPrice: z.number().positive().int(),
   deTotalPrice: z.number().positive().int(),
-  txCurrency: z
-    .string()
-    .length(
-      constValues.currencyCodeStringLength,
-      "Must be Valid ISO 4217 string"
-    )
-    .transform((str) => str.toUpperCase()),
 });
 
 const getRequestParams = z.object({
@@ -96,7 +96,6 @@ type ReimbursementItems = {
   inQuantity: number;
   deIndividualPrice: number;
   deTotalPrice: number;
-  txCurrency: string;
 };
 
 type ReturnedData = Record<string, number | string>;
@@ -294,6 +293,7 @@ export const POST = async (req: NextRequest) => {
           inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
           txBankAccountCode: noteItem.txBankAccountCode,
           txEmployeeCode: noteItem.txEmployeeCode,
+          txCurrency: noteItem.txCurrency,
         })
         .returning();
       returnedParentData = insertedParentData[0];
@@ -312,7 +312,6 @@ export const POST = async (req: NextRequest) => {
             inQuantity: item.inQuantity,
             deIndividualPrice: item.deIndividualPrice.toFixed(2),
             deTotalPrice: item.deTotalPrice.toFixed(2),
-            txCurrency: item.txCurrency,
           })
           .returning();
         totalPrice += item.deTotalPrice;

@@ -237,7 +237,6 @@ export const reimbursementItemsInDtDwh = dtDwh.table(
       precision: 100,
       scale: 2,
     }).notNull(),
-    txCurrency: text().notNull(),
   },
   (table) => [
     foreignKey({
@@ -400,6 +399,7 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     txChangeReason: text(),
     txEmployeeCode: text().notNull(),
     txChangedBy: text(),
+    txCurrency: text().notNull(),
     dcNominalReimbursement: numeric({
       precision: 100,
       scale: 2,
@@ -426,7 +426,7 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
       name: "reinbursement_notes_inRecipientCompanyCode_fkey",
     }),
     foreignKey({
-      columns: [table.txApprovedBy],
+      columns: [table.txChangedBy],
       foreignColumns: [mEmployeesInDtDwh.txEmployeeCode],
       name: "reimbursement_notes_txApprovedBy_fkey",
     }),
