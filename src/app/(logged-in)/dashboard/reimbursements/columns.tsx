@@ -324,7 +324,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _approve,
         onSuccess: () => {
           setApprovalModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard/reimbursements");
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -339,7 +339,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _reject,
         onSuccess: () => {
           setRejectModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard/reimbursements");
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -354,7 +354,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _void,
         onSuccess: () => {
           setVoidModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard/reimbursements");
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -369,7 +369,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _setDescription,
         onSuccess: () => {
           setDescriptionModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursement");
+          refreshAndRevalidatePage("/dashboard/reimbursements");
         },
         onError: (error) => {
           changeDescriptionForm.setError("description", {
