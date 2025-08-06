@@ -51,10 +51,10 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
-  createdBefore: z.string().datetime().optional(),
-  createdAfter: z.string().datetime().optional(),
-  updatedBefore: z.string().datetime().optional(),
-  updatedAfter: z.string().datetime().optional(),
+  createdBefore: z.iso.datetime().optional(),
+  createdAfter: z.iso.datetime().optional(),
+  updatedBefore: z.iso.datetime().optional(),
+  updatedAfter: z.iso.datetime().optional(),
 });
 
 export const GET = async (req: NextRequest) => {
