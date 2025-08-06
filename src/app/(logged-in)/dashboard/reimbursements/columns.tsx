@@ -46,6 +46,7 @@ export const payloadSchema = z.object({
   txReimbursementNoteID: z.string(),
   txDescriptionDetails: z.string(),
   txRecipientAccount: z.string(),
+  txApprovedBy: z.string(),
   inBankTypeCode: z.number(),
   inRecipientCompanyCode: z.number(),
   txBankAccountCode: z.string(),
@@ -105,6 +106,12 @@ export const columns: ColumnDef<Reimbursements>[] = [
     accessorKey: "txStatus",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Status" />;
+    },
+  },
+  {
+    accessorKey: "txChangedBy",
+    header: ({ column }) => {
+      return <SortableHeader column={column} title="Changed By" />;
     },
   },
   {

@@ -90,8 +90,8 @@ function ReimbursementTable({ id }: { id: string }) {
           <TableCell>{data["txEmployeeCode"]}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Approved By</TableCell>
-          <TableCell>{data["txApprovedBy"]}</TableCell>
+          <TableCell>Changed By</TableCell>
+          <TableCell>{data["txChangedBy"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Total Reimbursement</TableCell>
