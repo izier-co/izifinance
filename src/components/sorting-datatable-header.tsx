@@ -14,9 +14,10 @@ export const SortableHeader = ({
   return (
     <Button
       variant="ghost"
+      className="bg-green"
       onClick={() => column.toggleSorting(isSorted === "asc")}
     >
-      {title}
+      <b>{title}</b>
       <ArrowUpDown className="ml-2 h-4 w-4" />
     </Button>
   );

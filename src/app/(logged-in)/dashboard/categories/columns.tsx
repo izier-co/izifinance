@@ -30,7 +30,6 @@ import { useMutation } from "@tanstack/react-query";
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
   daUpdatedAt: z.string(),
-  inCategoryID: z.number(),
   txCategoryName: z.string(),
   txCategoryDescription: z.string(),
 });
@@ -58,12 +57,6 @@ export const columns: ColumnDef<Categories>[] = [
       const dateFromISO = new Date(row.getValue("daUpdatedAt"));
       const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
-    },
-  },
-  {
-    accessorKey: "inCategoryID",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Category ID" />;
     },
   },
   {

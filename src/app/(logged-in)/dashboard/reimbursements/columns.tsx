@@ -36,12 +36,11 @@ import {
   FormMessage,
   FormField,
 } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const payloadSchema = z.object({
   daCreatedAt: z.string(),
   daUpdatedAt: z.string(),
-  txReimbursementNoteID: z.string(),
   txStatus: z.string(),
   txDescriptionDetails: z.string(),
   txRecipientAccount: z.string(),
@@ -91,12 +90,6 @@ export const columns: ColumnDef<Reimbursements>[] = [
     },
   },
   {
-    accessorKey: "txReimbursementNoteID",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Reimbursement ID" />;
-    },
-  },
-  {
     accessorKey: "txStatus",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Status" />;
@@ -119,11 +112,56 @@ export const columns: ColumnDef<Reimbursements>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Type" />;
     },
+    cell: ({ row }) => {
+      const bankTypeQuery = useQuery({
+        queryKey: ["get-banks"],
+        queryFn: async (): Promise<Array<any>> => {
+          const res = await fetchJSONAPI("GET", "/api/v1/banks");
+          const json = await res.json();
+          return json.data;
+        },
+      });
+      const rowValue = row.getValue("inBankTypeCode");
+
+      if (bankTypeQuery.isError || bankTypeQuery.isLoading) {
+        return rowValue;
+      }
+
+      const name = bankTypeQuery.data?.find(
+        (obj) => obj.inBankTypeCode === rowValue
+      );
+      if (name === undefined) {
+        return "Unavailable";
+      }
+      return name.txBankName || "Unavailable";
+    },
   },
   {
     accessorKey: "inRecipientCompanyCode",
     header: ({ column }) => {
-      return <SortableHeader column={column} title="Description" />;
+      return <SortableHeader column={column} title="Recipient Company Code" />;
+    },
+    cell: ({ row }) => {
+      const recipientCompanyQuery = useQuery({
+        queryKey: ["get-companies"],
+        queryFn: async (): Promise<Array<any>> => {
+          const res = await fetchJSONAPI("GET", "/api/v1/companies");
+          const json = await res.json();
+          return json.data;
+        },
+      });
+      const rowValue = row.getValue("inRecipientCompanyCode");
+
+      if (recipientCompanyQuery.isError || recipientCompanyQuery.isLoading) {
+        return rowValue;
+      }
+      const name = recipientCompanyQuery.data?.find(
+        (obj) => obj.inCompanyCode === rowValue
+      );
+      if (name === undefined) {
+        return "Unavailable";
+      }
+      return name.txCompanyName || "Unavailable";
     },
   },
   {
@@ -148,6 +186,29 @@ export const columns: ColumnDef<Reimbursements>[] = [
     accessorKey: "inCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category" />;
+    },
+    cell: ({ row }) => {
+      const categoryQuery = useQuery({
+        queryKey: ["get-categories"],
+        queryFn: async (): Promise<Array<any>> => {
+          const res = await fetchJSONAPI("GET", "/api/v1/categories");
+          const json = await res.json();
+          return json.data;
+        },
+      });
+      const rowValue = row.getValue("inCategoryID");
+
+      if (categoryQuery.isError || categoryQuery.isLoading) {
+        return rowValue;
+      }
+      const name = categoryQuery.data?.find(
+        (obj) => obj.inCategoryID === rowValue
+      );
+      if (name === undefined) {
+        return "Unavailable";
+      }
+
+      return name.txCategoryName || "Unavailable";
     },
   },
   {
