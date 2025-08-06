@@ -35,6 +35,7 @@ async function getPendingReimbursements(): Promise<number> {
 async function getPendingReimbursementValue(): Promise<number> {
   const searchParams = new URLSearchParams({
     status: "Pending",
+    currency: "IDR",
   }).toString();
   const res = await fetchJSONAPI("GET", url + searchParams);
   const json: FetchData = await res.json();
