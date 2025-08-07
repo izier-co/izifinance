@@ -310,6 +310,10 @@ export const columns: ColumnDef<Reimbursements>[] = [
       const checkAdminQuery = useQuery({
         queryKey: ["check-admin"],
         queryFn: getEmpID,
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
       });
 
       const isAdmin: boolean =

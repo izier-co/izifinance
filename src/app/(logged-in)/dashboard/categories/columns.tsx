@@ -81,10 +81,10 @@ export const columns: ColumnDef<Categories>[] = [
         const { data, error } = await supabase.auth.getUser();
 
         if (error) {
-          return;
+          throw new Error(error.message);
         }
         if (data.user === null) {
-          return;
+          throw new Error("Unauthorized User");
         }
 
         const empRes = await fetchJSONAPI(
@@ -93,7 +93,7 @@ export const columns: ColumnDef<Categories>[] = [
         );
         const json = await empRes.json();
         if (json.data.length === 0) {
-          return null;
+          throw new Error("Unauthorized User");
         }
         return json.data[0].txEmployeeCode;
       }
@@ -112,6 +112,10 @@ export const columns: ColumnDef<Categories>[] = [
       const checkAdminQuery = useQuery({
         queryKey: ["check-admin"],
         queryFn: getEmpID,
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
       });
 
       const isAdmin: boolean =
