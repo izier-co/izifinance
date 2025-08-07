@@ -18,7 +18,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { fetchJSONAPI } from "@/lib/lib";
+import { useMutation } from "@tanstack/react-query";
+import { supabase } from "./api/supabase.config";
+import router from "next/router";
 
 const loginSchema = z.object({
   email: z.email("Invalid Email Format").nonempty("Please provide an email"),
@@ -40,29 +44,61 @@ export default function Home() {
     },
   });
 
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(data: LoginSchema) {
+  async function onSubmit(loginData: LoginSchema) {
     setLoading(true);
-    const res = await fetch("/api/v1/auth/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+    loginQuery.mutate(loginData);
+  }
+
+  async function _onSubmit(loginData: LoginSchema) {
+    const { email, password } = loginData;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    if (res.status === 200) {
-      redirect("/dashboard");
-    } else {
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data.user === null) {
+      throw new Error("Unregistered Account");
+    }
+
+    const empRes = await fetchJSONAPI(
+      "GET",
+      `/api/v1/employees/${data.user.id}`
+    );
+    const json = await empRes.json();
+
+    if (!empRes.ok) {
+      throw new Error(json.error || "Something went wrong in our end");
+    }
+    if (json.data.length === 0) {
+      throw new Error("Unregistered account, please contact your adminstrator");
+    }
+    const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginData);
+
+    if (!res.ok) {
       const body = await res.json();
-      setLoading(false);
-      form.setError("root", {
-        message: body.error,
-      });
+      throw new Error(body.error || "Something went wrong in our end");
     }
   }
+  const loginQuery = useMutation({
+    mutationKey: ["login-query"],
+    mutationFn: _onSubmit,
+    onSuccess: () => {
+      router.push("/dashboard");
+    },
+    onError: (error) => {
+      setLoading(false);
+      form.setError("root", {
+        message: error.message,
+      });
+    },
+  });
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
