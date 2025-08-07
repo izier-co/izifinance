@@ -224,13 +224,50 @@ export default function Page() {
   const categoryComboboxQuery = useQuery({
     queryKey: ["category-combobox"],
     queryFn: () => {
-      return fetchCombobox({
+      return fetchComboboxTest({
         url: "/api/v1/categories",
         labelProperty: "txCategoryName",
         valueProperty: "inCategoryID",
       });
     },
   });
+
+  async function fetchComboboxTest(fetchParams: {
+    url: string;
+    labelProperty: string;
+    valueProperty: string;
+  }): Promise<Array<ComboboxItem>> {
+    let data: Array<any> = [];
+    let pageNum = 1;
+    while (true) {
+      const searchParams = new URLSearchParams({
+        fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
+        paginationSize: "2",
+        paginationPage: pageNum.toString(),
+      }).toString();
+      const urlWithParams = fetchParams.url + "?" + searchParams;
+      const res = await fetchJSONAPI("GET", urlWithParams);
+      if (res.ok) {
+        const json = await res.json();
+        data = data.concat(json.data);
+        pageNum++;
+        console.log(data);
+        if (json.meta.isLastPage) {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return data.map(
+      (item: Record<string, any>) =>
+        ({
+          label: item[fetchParams.labelProperty],
+          value: item[fetchParams.valueProperty],
+        }) as ComboboxItem
+    );
+  }
 
   const bankComboboxQuery = useQuery({
     queryKey: ["bank-combobox"],
