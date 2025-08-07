@@ -296,7 +296,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         );
         const json = await empRes.json();
         if (json.data.length === 0) {
-          return undefined;
+          return null;
         }
         return json.data[0].txEmployeeCode;
       }
