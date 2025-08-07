@@ -206,43 +206,11 @@ export default function Page() {
     labelProperty: string;
     valueProperty: string;
   }): Promise<Array<ComboboxItem>> {
-    const searchParams = new URLSearchParams({
-      fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
-    }).toString();
-    const urlWithParams = fetchParams.url + "?" + searchParams;
-    const res = await fetchJSONAPI("GET", urlWithParams);
-    const json = await res.json();
-    return json.data.map(
-      (item: Record<string, any>) =>
-        ({
-          label: item[fetchParams.labelProperty],
-          value: item[fetchParams.valueProperty],
-        }) as ComboboxItem
-    );
-  }
-
-  const categoryComboboxQuery = useQuery({
-    queryKey: ["category-combobox"],
-    queryFn: () => {
-      return fetchComboboxTest({
-        url: "/api/v1/categories",
-        labelProperty: "txCategoryName",
-        valueProperty: "inCategoryID",
-      });
-    },
-  });
-
-  async function fetchComboboxTest(fetchParams: {
-    url: string;
-    labelProperty: string;
-    valueProperty: string;
-  }): Promise<Array<ComboboxItem>> {
     let data: Array<any> = [];
     let pageNum = 1;
     while (true) {
       const searchParams = new URLSearchParams({
         fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
-        paginationSize: "2",
         paginationPage: pageNum.toString(),
       }).toString();
       const urlWithParams = fetchParams.url + "?" + searchParams;
@@ -251,8 +219,7 @@ export default function Page() {
         const json = await res.json();
         data = data.concat(json.data);
         pageNum++;
-        console.log(data);
-        if (json.meta.isLastPage) {
+        if (json.pagination.isLastPage) {
           break;
         }
       } else {
@@ -268,6 +235,17 @@ export default function Page() {
         }) as ComboboxItem
     );
   }
+
+  const categoryComboboxQuery = useQuery({
+    queryKey: ["category-combobox"],
+    queryFn: () => {
+      return fetchCombobox({
+        url: "/api/v1/categories",
+        labelProperty: "txCategoryName",
+        valueProperty: "inCategoryID",
+      });
+    },
+  });
 
   const bankComboboxQuery = useQuery({
     queryKey: ["bank-combobox"],
