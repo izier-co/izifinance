@@ -11,7 +11,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
-import { isValidInt, sanitizeDatabaseOutputs } from "@/lib/lib";
+import { isValidInt, sanitizeDatabaseOutputs, sortArray } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
@@ -76,6 +76,7 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
+  sortArray: z.string().optional().transform(sortArray),
   currency: z
     .string()
     .length(
@@ -131,6 +132,14 @@ export const GET = async (req: NextRequest) => {
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize - 1
     );
+
+  if (params.sortArray) {
+    for (let i = 0; i < params.sortArray.length; i++) {
+      query.order(params.sortArray[i].fieldName, {
+        ascending: params.sortArray[i].sortState,
+      });
+    }
+  }
   if (params.currency) {
     query.eq("txCurrency", params.currency);
   }

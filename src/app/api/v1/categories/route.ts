@@ -4,7 +4,7 @@ import { createClient } from "@/app/api/supabase_server.config";
 
 import { z } from "zod";
 import constValues from "@/lib/constants";
-import { sanitizeDatabaseOutputs } from "@/lib/lib";
+import { sanitizeDatabaseOutputs, sortArray } from "@/lib/lib";
 
 const categorySchema = z.object({
   txCategoryName: z
@@ -40,10 +40,6 @@ const getRequestParams = z.object({
         ""
       );
     }),
-  isAlphabetical: z
-    .string()
-    .transform((val) => val === "true")
-    .optional(),
   includeDeleted: z.coerce.boolean().default(false),
   fields: z
     .string()
@@ -51,6 +47,10 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
+  sortArray: z
+    .string()
+    .optional()
+    .transform(sortArray),
   createdBefore: z.iso.datetime().optional(),
   createdAfter: z.iso.datetime().optional(),
   updatedBefore: z.iso.datetime().optional(),
@@ -98,14 +98,12 @@ export const GET = async (req: NextRequest) => {
     // case insensitive matching
     query.ilike("txCategoryName", params.name);
   }
-  if (params.isAlphabetical === true) {
-    query.order("txCategoryName", {
-      ascending: params.isAlphabetical,
-    });
-  } else if (params.isAlphabetical === false) {
-    query.order("txCategoryName", {
-      ascending: params.isAlphabetical,
-    });
+  if (params.sortArray) {
+    for (let i = 0; i < params.sortArray.length; i++) {
+      query.order(params.sortArray[i].fieldName, {
+        ascending: params.sortArray[i].sortState,
+      });
+    }
   }
 
   if (params.createdBefore) {
