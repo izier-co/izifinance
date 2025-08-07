@@ -129,7 +129,7 @@ export const GET = async (req: NextRequest) => {
     .select(tableQueryString, { count: "exact" })
     .range(
       (params.paginationPage - 1) * paginationSize,
-      params.paginationPage * paginationSize
+      params.paginationPage * paginationSize - 1
     );
   if (params.currency) {
     query.eq("txCurrency", params.currency);
