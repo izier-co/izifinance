@@ -2,6 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { JSONValue } from "postgres";
 import { getCookies, getDomain } from "./server-lib";
+import constValues from "./constants";
 
 export async function verifyAuthentication(
   supabase: SupabaseClient<any, any, any>
@@ -42,6 +43,25 @@ export async function authorizeAdmin(
 
 export function isValidInt(str: string): boolean {
   return !isNaN(Number.parseInt(str));
+}
+
+export function sortArray(str?: string) {
+  if (str === undefined) {
+    return undefined;
+  }
+  const resultArray = [];
+  const filteredStr = str.replace(constValues.allowSortingPattern, "");
+  const strArray = filteredStr.split(",");
+  for (let i = 0; i < strArray.length; i++) {
+    let sortState = undefined;
+    if (strArray[i][0] === "+") sortState = true;
+    if (strArray[i][0] === "-") sortState = false;
+    resultArray.push({
+      fieldName: strArray[i].substring(1),
+      sortState: sortState,
+    });
+    return resultArray;
+  }
 }
 
 export function sanitizeDatabaseOutputs(obj: object[]): object {

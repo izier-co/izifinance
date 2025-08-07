@@ -1,4 +1,4 @@
-import { removeByKey } from "@/lib/lib";
+import { removeByKey, sortArray } from "@/lib/lib";
 import { createClient } from "@/app/api/supabase_server.config";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -13,6 +13,7 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
+  sortArray: z.string().optional().transform(sortArray),
   createdBefore: z.iso.datetime().optional(),
   createdAfter: z.iso.datetime().optional(),
   updatedBefore: z.iso.datetime().optional(),
@@ -50,6 +51,14 @@ export const GET = async (req: NextRequest) => {
       (params.paginationPage - 1) * paginationSize,
       params.paginationPage * paginationSize - 1
     );
+
+  if (params.sortArray) {
+    for (let i = 0; i < params.sortArray.length; i++) {
+      query.order(params.sortArray[i].fieldName, {
+        ascending: params.sortArray[i].sortState,
+      });
+    }
+  }
 
   if (params.createdBefore) {
     query.lt("daCreatedAt", params.createdBefore);
