@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { LayoutDashboard, Minus, Plus } from "lucide-react";
 
@@ -21,8 +22,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./logout-button";
+import { fetchJSONAPI } from "@/lib/lib";
+import { supabase } from "@/app/api/supabase.config";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
-const data = {
+const adminSidebarData = {
   navMain: [
     {
       title: "Reimbursements",
@@ -55,14 +60,78 @@ const data = {
   ],
 };
 
+const userSidebarData = {
+  navMain: [
+    {
+      title: "Reimbursements",
+      url: "#",
+      items: [
+        {
+          title: "Manage Reimbursements",
+          url: "/dashboard/reimbursements",
+        },
+        {
+          title: "Add Reimbursements",
+          url: "/dashboard/reimbursements/add",
+        },
+      ],
+    },
+    {
+      title: "Categories",
+      url: "#",
+      items: [
+        {
+          title: "Manage Categories",
+          url: "/dashboard/categories",
+        },
+      ],
+    },
+  ],
+};
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  async function getEmpID() {
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (data.user === null) {
+      throw new Error("Unauthorized User");
+    }
+
+    const empRes = await fetchJSONAPI(
+      "GET",
+      `/api/v1/employees/${data.user.id}`
+    );
+    const json = await empRes.json();
+    if (json.data.length === 0) {
+      throw new Error("Unauthorized User");
+    }
+    return json.data[0].txEmployeeCode;
+  }
+
+  const checkAdminQuery = useQuery({
+    queryKey: ["check-admin"],
+    queryFn: getEmpID,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  let sidebarData = userSidebarData;
+  if (isAdmin) {
+    sidebarData = adminSidebarData;
+  }
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <LayoutDashboard className="size-4" />
                 </div>
@@ -70,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="font-medium">Izifinance</span>
                   <span className="">v1.0.0</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -78,7 +147,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item, index) => (
+            {sidebarData.navMain.map((item, index) => (
               <Collapsible
                 key={item.title}
                 defaultOpen={index === 1}
@@ -98,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild>
-                              <a href={item.url}>{item.title}</a>
+                              <Link href={item.url}>{item.title}</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
