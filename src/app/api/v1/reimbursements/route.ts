@@ -65,7 +65,7 @@ const reimbursementItemSchema = z.object({
 });
 
 const getRequestParams = z.object({
-  paginationPage: z.coerce.number().positive().default(1),
+  paginationPage: z.coerce.number().positive().optional().default(1),
   paginationSize: z.coerce.number().positive().min(1).optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
   bankTypeCode: z.coerce.number().positive().optional(),
@@ -85,7 +85,7 @@ const getRequestParams = z.object({
     )
     .optional()
     .transform((str) => str?.toUpperCase()),
-  approvedBy: z.coerce.number().positive().optional(),
+  changedBy: z.coerce.string().optional(),
   createdBefore: z.iso.datetime().optional(),
   createdAfter: z.iso.datetime().optional(),
   updatedBefore: z.iso.datetime().optional(),
@@ -166,8 +166,8 @@ export const GET = async (req: NextRequest) => {
       }
     }
   }
-  if (params.approvedBy) {
-    query.eq("txApprovedBy", params.approvedBy);
+  if (params.changedBy) {
+    query.ilike("txChangedBy", `%${params.changedBy}%`);
   }
   if (params.bankTypeCode) {
     query.eq("inBankTypeCode", params.bankTypeCode);
