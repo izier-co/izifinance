@@ -46,7 +46,7 @@ export function isValidInt(str: string): boolean {
 }
 
 export function sortArray(str?: string) {
-  if (str === undefined) {
+  if (str === undefined || str === null || str === "") {
     return undefined;
   }
   const resultArray = [];
