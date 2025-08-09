@@ -27,5 +27,9 @@ export function useEmployeeIDQuery() {
   return useQuery({
     queryKey: ["emp-id"],
     queryFn: getEmpID,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 }
