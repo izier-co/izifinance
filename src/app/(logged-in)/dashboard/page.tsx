@@ -19,6 +19,10 @@ async function getDailyReimbursementData(): Promise<number> {
     createdAfter: new Date(NOW - MILISECONDS_IN_DAY).toISOString(),
   }).toString();
   const res = await fetchJSONAPI("GET", url + searchParams);
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json);
+  }
   const json: FetchData = await res.json();
   return json.data.length;
 }
@@ -28,6 +32,10 @@ async function getPendingReimbursements(): Promise<number> {
     status: "Pending",
   }).toString();
   const res = await fetchJSONAPI("GET", url + searchParams);
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json);
+  }
   const json: FetchData = await res.json();
   return json.data.length;
 }
@@ -38,6 +46,10 @@ async function getPendingReimbursementValue(): Promise<number> {
     currency: "IDR",
   }).toString();
   const res = await fetchJSONAPI("GET", url + searchParams);
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json);
+  }
   const json: FetchData = await res.json();
   let totalPending = 0;
   for (let i = 0; i < json.data.length; i++) {
@@ -138,9 +150,7 @@ export default function Page() {
           <CardTitle>Reimbursement Volume in this month</CardTitle>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<LoadingMessage />}>
-            <ReimbursementChart />
-          </Suspense>
+          <ReimbursementChart />
         </CardContent>
       </Card>
     </div>
