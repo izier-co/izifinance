@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { z } from "zod";
 
 import {
   DropdownMenu,
@@ -12,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { SortableHeader } from "@/components/sorting-datatable-header";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Dialog,
   DialogClose,
@@ -36,49 +35,18 @@ import {
   FormMessage,
   FormField,
 } from "@/components/ui/form";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { supabase } from "@/app/api/supabase.config";
-
-export const payloadSchema = z.object({
-  daCreatedAt: z.string(),
-  daUpdatedAt: z.string(),
-  txStatus: z.string(),
-  txCurrency: z.string(),
-  txReimbursementNoteID: z.string(),
-  txDescriptionDetails: z.string(),
-  txRecipientAccount: z.string(),
-  txApprovedBy: z.string(),
-  inBankTypeCode: z.number(),
-  inRecipientCompanyCode: z.number(),
-  txBankAccountCode: z.string(),
-  txChangeReason: z.string(),
-  txEmployeeCode: z.string(),
-  inCategoryID: z.number(),
-  dcNominalReimbursement: z.number(),
-});
-
-const approvalSchema = z.object({
-  changeReason: z.string(),
-});
-
-const voidSchema = z.object({
-  changeReason: z.string(),
-});
-
-const rejectSchema = z.object({
-  changeReason: z.string(),
-});
-
-const changeDescriptionSchema = z.object({
-  description: z.string(),
-});
-
-type ApprovalSchema = z.infer<typeof approvalSchema>;
-type VoidSchema = z.infer<typeof voidSchema>;
-type RejectSchema = z.infer<typeof rejectSchema>;
-type ChangeDescriptionSchema = z.infer<typeof changeDescriptionSchema>;
-
-export type Reimbursements = z.infer<typeof payloadSchema>;
+import { useMutation } from "@tanstack/react-query";
+import { useEmployeeIDQuery } from "@/queries/queries";
+import {
+  Reimbursements,
+  ChangeDescriptionSchema,
+  processSchema,
+  changeDescriptionSchema,
+  ApprovalSchema,
+  RejectSchema,
+  VoidSchema,
+} from "./schemas";
+import { QueryCell } from "./_components/query-cell-component";
 
 export const columns: ColumnDef<Reimbursements>[] = [
   {
@@ -145,55 +113,33 @@ export const columns: ColumnDef<Reimbursements>[] = [
       return <SortableHeader column={column} title="Bank Type" />;
     },
     cell: ({ row }) => {
-      const bankTypeQuery = useQuery({
-        queryKey: ["get-banks"],
-        queryFn: async (): Promise<Array<any>> => {
-          const res = await fetchJSONAPI("GET", "/api/v1/banks");
-          const json = await res.json();
-          return json.data;
-        },
-      });
-      const rowValue = row.getValue("inBankTypeCode");
-
-      if (bankTypeQuery.isError || bankTypeQuery.isLoading) {
-        return rowValue;
-      }
-
-      const name = bankTypeQuery.data?.find(
-        (obj) => obj.inBankTypeCode === rowValue
+      return (
+        <QueryCell
+          row={row}
+          queryKey={["get-banks"]}
+          queryUrl="/api/v1/banks"
+          fieldKey="inBankTypeCode"
+          targetFieldKey="txBankName"
+        />
       );
-      if (name === undefined) {
-        return "Unavailable";
-      }
-      return name.txBankName || "Unavailable";
     },
   },
   {
     accessorKey: "inRecipientCompanyCode",
     header: ({ column }) => {
-      return <SortableHeader column={column} title="Recipient Company Code" />;
+      return <SortableHeader column={column} title="Recipient Company" />;
     },
     cell: ({ row }) => {
-      const recipientCompanyQuery = useQuery({
-        queryKey: ["get-companies"],
-        queryFn: async (): Promise<Array<any>> => {
-          const res = await fetchJSONAPI("GET", "/api/v1/companies");
-          const json = await res.json();
-          return json.data;
-        },
-      });
-      const rowValue = row.getValue("inRecipientCompanyCode");
-
-      if (recipientCompanyQuery.isError || recipientCompanyQuery.isLoading) {
-        return rowValue;
-      }
-      const name = recipientCompanyQuery.data?.find(
-        (obj) => obj.inCompanyCode === rowValue
+      return (
+        <QueryCell
+          row={row}
+          queryKey={["get-companies"]}
+          queryUrl="/api/v1/companies"
+          fieldKey="inRecipientCompanyCode"
+          foreignFieldKey="inCompanyCode"
+          targetFieldKey="txCompanyName"
+        />
       );
-      if (name === undefined) {
-        return "Unavailable";
-      }
-      return name.txCompanyName || "Unavailable";
     },
   },
   {
@@ -220,27 +166,15 @@ export const columns: ColumnDef<Reimbursements>[] = [
       return <SortableHeader column={column} title="Category" />;
     },
     cell: ({ row }) => {
-      const categoryQuery = useQuery({
-        queryKey: ["get-categories"],
-        queryFn: async (): Promise<Array<any>> => {
-          const res = await fetchJSONAPI("GET", "/api/v1/categories");
-          const json = await res.json();
-          return json.data;
-        },
-      });
-      const rowValue = row.getValue("inCategoryID");
-
-      if (categoryQuery.isError || categoryQuery.isLoading) {
-        return rowValue;
-      }
-      const name = categoryQuery.data?.find(
-        (obj) => obj.inCategoryID === rowValue
+      return (
+        <QueryCell
+          row={row}
+          queryKey={["get-categories"]}
+          queryUrl="/api/v1/categories"
+          fieldKey="inCategoryID"
+          targetFieldKey="txCategoryName"
+        />
       );
-      if (name === undefined) {
-        return "Unavailable";
-      }
-
-      return name.txCategoryName || "Unavailable";
     },
   },
   {
@@ -251,7 +185,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const changeDescriptionForm = useForm<ChangeDescriptionSchema>({
         resolver: zodResolver(changeDescriptionSchema),
         defaultValues: {
@@ -260,61 +194,34 @@ export const columns: ColumnDef<Reimbursements>[] = [
       });
 
       const approveForm = useForm<ApprovalSchema>({
-        resolver: zodResolver(approvalSchema),
+        resolver: zodResolver(processSchema),
         defaultValues: {
           changeReason: row.getValue("txChangeReason") || "",
         },
       });
 
       const voidForm = useForm<VoidSchema>({
-        resolver: zodResolver(voidSchema),
+        resolver: zodResolver(processSchema),
         defaultValues: {
           changeReason: row.getValue("txChangeReason") || "",
         },
       });
 
       const rejectForm = useForm<RejectSchema>({
-        resolver: zodResolver(rejectSchema),
+        resolver: zodResolver(processSchema),
         defaultValues: {
           changeReason: row.getValue("txChangeReason") || "",
         },
       });
 
-      async function getEmpID() {
-        const { data, error } = await supabase.auth.getUser();
-
-        if (error) {
-          return;
-        }
-        if (data.user === null) {
-          return;
-        }
-
-        const empRes = await fetchJSONAPI(
-          "GET",
-          `/api/v1/employees/${data.user.id}`
-        );
-        const json = await empRes.json();
-        if (json.data.length === 0) {
-          return null;
-        }
-        return json.data[0].txEmployeeCode;
-      }
-
       const router = useRouter();
+      const pathname = usePathname();
       const [approvalModalOpen, setApprovalModalOpen] = useState(false);
       const [rejectModalOpen, setRejectModalOpen] = useState(false);
       const [voidModalOpen, setVoidModalOpen] = useState(false);
       const [descriptionModalOpen, setDescriptionModalOpen] = useState(false);
 
-      const checkAdminQuery = useQuery({
-        queryKey: ["check-admin"],
-        queryFn: getEmpID,
-        staleTime: Infinity,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      });
+      const checkAdminQuery = useEmployeeIDQuery();
 
       const isAdmin: boolean =
         checkAdminQuery.isSuccess && checkAdminQuery.data;
@@ -328,7 +235,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _approve,
         onSuccess: () => {
           setApprovalModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursements");
+          refreshData();
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -343,7 +250,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _reject,
         onSuccess: () => {
           setRejectModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursements");
+          refreshData();
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -358,7 +265,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _void,
         onSuccess: () => {
           setVoidModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursements");
+          refreshData();
           refreshAndRevalidatePage("/dashboard");
         },
         onError: (error) => {
@@ -373,7 +280,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
         mutationFn: _setDescription,
         onSuccess: () => {
           setDescriptionModalOpen(false);
-          refreshAndRevalidatePage("/dashboard/reimbursements");
+          refreshData();
         },
         onError: (error) => {
           changeDescriptionForm.setError("description", {
@@ -382,6 +289,9 @@ export const columns: ColumnDef<Reimbursements>[] = [
         },
       });
 
+      function refreshData() {
+        window.location.reload();
+      }
       function approve(data: ApprovalSchema) {
         approvalQuery.mutate(data);
       }
@@ -397,7 +307,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
       function changeDescription(data: ChangeDescriptionSchema) {
         changeDescriptionQuery.mutate(data);
       }
-
+      // refactor merge
       function _approvalModalCleanup(open: boolean) {
         if (!open) {
           setApprovalModalOpen(false);
@@ -424,7 +334,6 @@ export const columns: ColumnDef<Reimbursements>[] = [
         }
         changeDescriptionForm.clearErrors();
       }
-
       async function _approve(data: ApprovalSchema) {
         await fetchJSONAPI(
           "PUT",
@@ -536,6 +445,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                 </div>
               </DialogContent>
             </Dialog>
+            {/* admin only block */}
             {isAdmin && (
               <>
                 <Dialog
@@ -621,7 +531,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                     <DialogHeader>
                       <DialogTitle>Confirmation</DialogTitle>
                       <DialogDescription>
-                        Are you sure to reject this note?
+                        Are you sure to Reject this note?
                       </DialogDescription>
                     </DialogHeader>
                     <div className="flex items-center gap-2">
@@ -656,7 +566,7 @@ export const columns: ColumnDef<Reimbursements>[] = [
                                 {rejectQuery.isPending ? (
                                   <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                  "reject"
+                                  "Reject"
                                 )}
                               </Button>
                             </DialogFooter>
