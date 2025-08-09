@@ -1,8 +1,4 @@
 "use client";
-import constValues from "@/lib/constants";
-import { fetchJSONAPI, isValidInt } from "@/lib/lib";
-import z from "zod";
-import { supabase } from "@supabase-config";
 
 import {
   Form,
@@ -14,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCookies, refreshAndRevalidatePage } from "@/lib/server-lib";
+import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -38,53 +34,21 @@ import {
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 import { Loader2 } from "lucide-react";
-import { useMutation, useQuery, UseQueryResult } from "@tanstack/react-query";
-
-const reimbursementSchema = z.object({
-  txDescriptionDetails: z.string().max(constValues.maxTextLength),
-  txRecipientAccount: z
-    .string()
-    .max(constValues.maxBankCodeLength, "Code too long")
-    .refine((val) => isValidInt(val), "Must be Valid integer"),
-  inBankTypeCode: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
-  inRecipientCompanyCode: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
-  txBankAccountCode: z
-    .string()
-    .max(constValues.maxBankCodeLength, "Code too long")
-    .refine((val) => isValidInt(val), "Must be Valid integer"),
-  txCurrency: z
-    .string()
-    .length(constValues.currencyCodeStringLength, "Invalid Currency")
-    .transform((str) => str.toUpperCase()),
-  inCategoryID: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
-});
-
-const reimbursementItemSchema = z
-  .object({
-    txName: z.string().max(constValues.maxTextLength, "Name too Long!"),
-    inQuantity: z
-      .number()
-      .positive("Must use positive value")
-      .int("Integer values only"),
-    deIndividualPrice: z.number().positive("Must use positive value"),
-  })
-  .transform((data) => ({
-    ...data,
-    deTotalPrice: data.deIndividualPrice * data.inQuantity,
-    uid: crypto.randomUUID(),
-  }));
-
-type ReimbursementSchema = z.infer<typeof reimbursementSchema>;
-type ReimbursementItemSchema = z.infer<typeof reimbursementItemSchema>;
+import { useMutation } from "@tanstack/react-query";
+import {
+  addReimbursement,
+  useBankQuery,
+  useCategoryQuery,
+  useCompanyQuery,
+} from "./_queries/queries";
+import { QueryCombobox } from "./_components/query-combobox";
+import {
+  reimbursementSchema,
+  reimbursementItemSchema,
+  type ReimbursementItemSchema,
+  type ReimbursementSchema,
+} from "./schemas";
+import { useEmployeeIDQuery } from "@/queries/queries";
 
 const currencies: Array<ComboboxItem> = [
   {
@@ -132,55 +96,6 @@ export default function Page() {
     });
   }
 
-  async function _getEmpID() {
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error) {
-      _setReimbursementRootError(error.message);
-      return;
-    }
-    if (data.user === null) {
-      _setReimbursementRootError("Unregistered User");
-      return;
-    }
-
-    const empRes = await fetchJSONAPI(
-      "GET",
-      `/api/v1/employees/${data.user.id}`
-    );
-    const json = await empRes.json();
-    if (json.data.length === 0) {
-      return undefined;
-    }
-    return json.data[0].txEmployeeCode;
-  }
-
-  async function _addReimbursement({
-    reimbursementData,
-    empID,
-  }: {
-    reimbursementData: ReimbursementSchema;
-    empID: string;
-  }) {
-    const payload = {
-      ...reimbursementData,
-      txEmployeeCode: empID,
-      reimbursement_items: items,
-    };
-
-    const res = await fetch("/api/v1/reimbursements", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Idempotency-Key": crypto.randomUUID(),
-        cookie: await getCookies(),
-      },
-      body: JSON.stringify(payload),
-    });
-    // console.log(await res.json());
-    return await res.json();
-  }
-
   function addReimbursementItem(data: ReimbursementItemSchema) {
     setItems([...items, data]);
     setOpen(false);
@@ -201,82 +116,14 @@ export default function Page() {
     }
   }
 
-  async function fetchCombobox(fetchParams: {
-    url: string;
-    labelProperty: string;
-    valueProperty: string;
-  }): Promise<Array<ComboboxItem>> {
-    let data: Array<any> = [];
-    let pageNum = 1;
-    while (true) {
-      const searchParams = new URLSearchParams({
-        fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
-        paginationPage: pageNum.toString(),
-      }).toString();
-      const urlWithParams = fetchParams.url + "?" + searchParams;
-      const res = await fetchJSONAPI("GET", urlWithParams);
-      if (res.ok) {
-        const json = await res.json();
-        data = data.concat(json.data);
-        pageNum++;
-        if (json.pagination.isLastPage) {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-
-    return data.map(
-      (item: Record<string, any>) =>
-        ({
-          label: item[fetchParams.labelProperty],
-          value: item[fetchParams.valueProperty],
-        }) as ComboboxItem
-    );
-  }
-
-  const categoryComboboxQuery = useQuery({
-    queryKey: ["category-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/categories",
-        labelProperty: "txCategoryName",
-        valueProperty: "inCategoryID",
-      });
-    },
-  });
-
-  const bankComboboxQuery = useQuery({
-    queryKey: ["bank-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/banks",
-        labelProperty: "txBankName",
-        valueProperty: "inBankTypeCode",
-      });
-    },
-  });
-
-  const companyComboboxQuery = useQuery({
-    queryKey: ["company-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/companies",
-        labelProperty: "txCompanyName",
-        valueProperty: "inCompanyCode",
-      });
-    },
-  });
-
-  const getEmpIDQuery = useQuery({
-    queryKey: ["emp-id"],
-    queryFn: _getEmpID,
-  });
+  const categoryComboboxQuery = useCategoryQuery();
+  const bankComboboxQuery = useBankQuery();
+  const companyComboboxQuery = useCompanyQuery();
+  const getEmpIDQuery = useEmployeeIDQuery();
 
   const submitQuery = useMutation({
     mutationKey: ["reimbursement-send-mutation"],
-    mutationFn: _addReimbursement,
+    mutationFn: addReimbursement,
     onSuccess: () => {
       refreshAndRevalidatePage("/dashboard/reimbursement");
       refreshAndRevalidatePage("/");
@@ -287,35 +134,6 @@ export default function Page() {
       _setReimbursementRootError(error.message);
     },
   });
-
-  function QueryCombobox({
-    value,
-    onChange,
-    query,
-  }: {
-    value: string;
-    onChange: (val: string) => void;
-    query: UseQueryResult;
-  }) {
-    if (query.isLoading) {
-      return (
-        <FormCombobox value={value} onChange={onChange} items={[]} loading />
-      );
-    }
-    if (query.isError) {
-      console.error(query.error);
-      return (
-        <FormCombobox value={value} onChange={onChange} items={[]} error />
-      );
-    }
-    return (
-      <FormCombobox
-        value={value}
-        onChange={onChange}
-        items={query.data as Array<ComboboxItem>}
-      />
-    );
-  }
 
   function submitReimbursement(reimbursementData: ReimbursementSchema) {
     if (items.length === 0) {
@@ -328,7 +146,11 @@ export default function Page() {
       return;
     }
     const empID = getEmpIDQuery.data;
-    submitQuery.mutate({ reimbursementData: reimbursementData, empID: empID });
+    submitQuery.mutate({
+      reimbursementData: reimbursementData,
+      empID: empID,
+      items: items,
+    });
   }
 
   return (
