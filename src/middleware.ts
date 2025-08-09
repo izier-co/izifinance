@@ -26,8 +26,11 @@ export async function middleware(req: NextRequest) {
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
 
-  if (error && error.status === 401) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.status }
+    );
   }
 
   if (!user && !isAuthRoute && !isRootRoute) {

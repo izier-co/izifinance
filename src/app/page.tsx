@@ -22,7 +22,6 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import router from "next/router";
 
 const loginSchema = z.object({
   email: z.email("Invalid Email Format").nonempty("Please provide an email"),
