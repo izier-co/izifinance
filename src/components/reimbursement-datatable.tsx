@@ -137,6 +137,7 @@ export function ReimbursementDatatable<TData, TValue>({
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sorting,
     pagination.pageNumber,

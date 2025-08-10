@@ -1,6 +1,9 @@
 "use client";
 
-import { SortableHeader } from "@/components/sorting-datatable-header";
+import {
+  CommonRow,
+  SortableHeader,
+} from "@/components/sorting-datatable-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 
@@ -13,9 +16,7 @@ export const payloadSchema = z.object({
   deTotalPrice: z.number(),
 });
 
-export type ReimbursementItems = z.infer<typeof payloadSchema>;
-
-export const columns: ColumnDef<ReimbursementItems>[] = [
+export const columns: ColumnDef<CommonRow>[] = [
   {
     accessorKey: "daCreatedAt",
     header: ({ column }) => {

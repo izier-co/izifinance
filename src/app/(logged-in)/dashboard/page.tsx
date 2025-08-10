@@ -3,12 +3,11 @@ import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
 
 const url = "/api/v1/reimbursements?";
 
 type FetchData = {
-  data: Array<any>;
+  data: Array<{ dcNominalReimbursement: number }>;
   error?: string;
 };
 

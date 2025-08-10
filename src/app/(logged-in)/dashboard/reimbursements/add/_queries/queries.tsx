@@ -38,7 +38,7 @@ async function fetchCombobox(fetchParams: {
   labelProperty: string;
   valueProperty: string;
 }): Promise<Array<ComboboxItem>> {
-  let data: Array<any> = [];
+  let data: Array<Record<string, string>> = [];
   let pageNum = 1;
   while (true) {
     const searchParams = new URLSearchParams({
@@ -60,7 +60,7 @@ async function fetchCombobox(fetchParams: {
   }
 
   return data.map(
-    (item: Record<string, any>) =>
+    (item: Record<string, string | number>) =>
       ({
         label: item[fetchParams.labelProperty],
         value: item[fetchParams.valueProperty],
