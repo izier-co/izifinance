@@ -1,12 +1,13 @@
 import { Column } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "./ui/button";
+export type CommonRow = Record<string, string | number>;
 
 export const SortableHeader = ({
   column,
   title,
 }: {
-  column: Column<object, string>;
+  column: Column<CommonRow, unknown>;
   title: string;
 }) => {
   const isSorted = column.getIsSorted();

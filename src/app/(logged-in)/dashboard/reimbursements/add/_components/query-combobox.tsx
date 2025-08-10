@@ -7,7 +7,7 @@ export function QueryCombobox({
   query,
 }: {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (_: string) => void;
   query: UseQueryResult;
 }) {
   if (query.isLoading) {

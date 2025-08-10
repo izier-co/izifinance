@@ -128,6 +128,7 @@ export function ServerDataTable<TData, TValue>({
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorting, pagination.pageNumber, pagination.paginationSize]);
 
   return (
