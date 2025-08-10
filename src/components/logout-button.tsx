@@ -3,9 +3,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { fetchJSONAPI } from "@/lib/lib";
 
-export function LogoutButton({
-  ...props
-}: React.ComponentProps<typeof Button>) {
+export function LogoutButton() {
   async function _logout() {
     await fetchJSONAPI("POST", "/api/v1/auth/logout");
     redirect("/");

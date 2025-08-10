@@ -5,7 +5,7 @@ import { getCookies, getDomain } from "./server-lib";
 import constValues from "./constants";
 
 export async function verifyAuthentication(
-  supabase: SupabaseClient<any, any, any>
+  supabase: SupabaseClient
 ): Promise<NextResponse<unknown> | null> {
   const {
     data: { user },
@@ -17,7 +17,7 @@ export async function verifyAuthentication(
 }
 
 export async function authorizeAdmin(
-  supabase: SupabaseClient<any, any, any>
+  supabase: SupabaseClient
 ): Promise<NextResponse<JSONValue> | null> {
   const {
     data: { user },

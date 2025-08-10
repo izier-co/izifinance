@@ -13,9 +13,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export function DynamicBreadcrumbs({
-  ...props
-}: React.ComponentProps<typeof Breadcrumb>) {
+export function DynamicBreadcrumbs() {
   const pathName = usePathname();
   const pathNameList = pathName.split("/");
   // ignores empty string before first /

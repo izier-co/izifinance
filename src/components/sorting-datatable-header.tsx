@@ -6,7 +6,7 @@ export const SortableHeader = ({
   column,
   title,
 }: {
-  column: Column<any, any>;
+  column: Column<object, string>;
   title: string;
 }) => {
   const isSorted = column.getIsSorted();

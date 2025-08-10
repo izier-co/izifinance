@@ -25,7 +25,7 @@ export function FormCombobox({
   error,
 }: {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (_: string) => void;
   items: Array<ComboboxItem>;
   loading?: boolean;
   error?: boolean;
