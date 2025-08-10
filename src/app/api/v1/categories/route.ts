@@ -4,7 +4,7 @@ import { createClient } from "@/app/api/supabase_server.config";
 
 import { z } from "zod";
 import constValues from "@/lib/constants";
-import { sanitizeDatabaseOutputs, sortArray } from "@/lib/lib";
+import { removeByKey, sortArray } from "@/lib/lib";
 
 const categorySchema = z.object({
   txCategoryName: z
@@ -128,7 +128,7 @@ export const GET = async (req: NextRequest) => {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {
@@ -178,7 +178,7 @@ export const POST = async (req: NextRequest) => {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {

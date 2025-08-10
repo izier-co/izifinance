@@ -65,24 +65,6 @@ export function sortArray(str?: string) {
   }
 }
 
-export function sanitizeDatabaseOutputs(obj: object[]): object {
-  obj.map((v) => {
-    if ("uiReimbursementID" in v) {
-      delete v.uiReimbursementID;
-    }
-    if ("uiIdempotencyKey" in v) {
-      delete v.uiIdempotencyKey;
-    }
-    if ("uiReimbursementItemID" in v) {
-      delete v.uiReimbursementItemID;
-    }
-    if ("uiCategoryID" in v) {
-      delete v.uiCategoryID;
-    }
-  });
-  return obj;
-}
-
 export function removeByKey(data: object): object {
   const jsonString = JSON.stringify(data, (key, value) => {
     if (key === "uiReimbursementID") {

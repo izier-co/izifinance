@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/api/supabase_server.config";
-import { sanitizeDatabaseOutputs } from "@/lib/lib";
+import { removeByKey } from "@/lib/lib";
 
 export const GET = async (
   req: NextRequest,
@@ -25,7 +25,7 @@ export const GET = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {

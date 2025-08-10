@@ -11,7 +11,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
-import { isValidInt, sanitizeDatabaseOutputs, sortArray } from "@/lib/lib";
+import { isValidInt, removeByKey, sortArray } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
@@ -199,7 +199,7 @@ export const GET = async (req: NextRequest) => {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
   return NextResponse.json(
     {
       data: sanitizedData,

@@ -1,5 +1,5 @@
 import constValues from "@/lib/constants";
-import { sanitizeDatabaseOutputs } from "@/lib/lib";
+import { removeByKey } from "@/lib/lib";
 import { createClient } from "@/app/api/supabase_server.config";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -26,7 +26,7 @@ export const GET = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {
@@ -72,7 +72,7 @@ export const PUT = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {

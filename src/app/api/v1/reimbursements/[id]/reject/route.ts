@@ -1,6 +1,6 @@
 import { createClient } from "@/app/api/supabase_server.config";
 import constValues from "@/lib/constants";
-import { authorizeAdmin, sanitizeDatabaseOutputs } from "@/lib/lib";
+import { authorizeAdmin, removeByKey } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
 export const PUT = async (
@@ -83,7 +83,7 @@ export const PUT = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json({
     message: "Note Rejected!",

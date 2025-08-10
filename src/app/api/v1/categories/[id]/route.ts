@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/api/supabase_server.config";
-import { authorizeAdmin, sanitizeDatabaseOutputs } from "@/lib/lib";
+import { authorizeAdmin, removeByKey } from "@/lib/lib";
 
 export const GET = async (
   req: NextRequest,
@@ -24,7 +24,7 @@ export const GET = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json(
     {
@@ -55,7 +55,7 @@ export const DELETE = async (
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const sanitizedData = sanitizeDatabaseOutputs(data);
+  const sanitizedData = removeByKey(data);
 
   return NextResponse.json({
     message: "Data Successfully Deleted!",
