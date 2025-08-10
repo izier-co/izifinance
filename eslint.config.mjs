@@ -15,7 +15,12 @@ const eslintConfig = [
     rules: {
       "no-unused-vars": [
         "error",
-        { ignoreRestSiblings: true, argsIgnorePattern: "^_" },
+        {
+          ignoreRestSiblings: true,
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
       ],
     },
   },
