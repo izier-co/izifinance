@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 import { JSONValue } from "postgres";
 import { getCookies, getDomain } from "./server-lib";
 import constValues from "./constants";
+import { Database } from "../database.types";
 
 export async function verifyAuthentication(
-  supabase: SupabaseClient
+  supabase: SupabaseClient<Database, "dt_dwh">
 ): Promise<NextResponse<unknown> | null> {
   const {
     data: { user },
@@ -17,7 +18,7 @@ export async function verifyAuthentication(
 }
 
 export async function authorizeAdmin(
-  supabase: SupabaseClient
+  supabase: SupabaseClient<Database, "dt_dwh">
 ): Promise<NextResponse<JSONValue> | null> {
   const {
     data: { user },
