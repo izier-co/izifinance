@@ -128,7 +128,7 @@ export default function Page() {
                   </p>
                 )}
                 <Button type="submit" className="my-2">
-                  {categoryForm.formState.isSubmitting ? (
+                  {submitQuery.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     "Add Category"
