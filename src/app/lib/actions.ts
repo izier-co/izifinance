@@ -1,9 +1,9 @@
-"use server"
+// "use server"
 
-import {createClient} from "./supabase/client"
+// import {createClient} from "./supabase/client"
 
-const supabase = createClient();
+// const supabase = createClient();
 
-export async function create(){
-    
-}
+// export async function create(){
+
+// }

@@ -1,36 +1,36 @@
-import Decimal from 'decimal.js';
+import Decimal from "decimal.js";
 
 export type ReinbursementNotes = {
-    createdAt : Date
-    updatedAt : Date
-    reinbursementNoteID : Number
-    status : "Pending" | "Paid" | "Rejected" | "Void"
-    notes? : String
-    recipientAccount : String
-    bankTypeCode : Number
-    recipientCompanyCode : Number
-    bankAccountCode : String 
-    changeReason? : String 
-}
+  createdAt: Date;
+  updatedAt: Date;
+  reinbursementNoteID: number;
+  status: "Pending" | "Paid" | "Rejected" | "Void";
+  notes?: string;
+  recipientAccount: string;
+  bankTypeCode: number;
+  recipientCompanyCode: number;
+  bankAccountCode: string;
+  changeReason?: string;
+};
 
 export type ReinbursementItems = {
-    createdAt : Date
-    updatedAt : Date
-    reinbursementNoteID : Number
-    name : String
-    quantity : Number
-    individualPrice : Decimal 
-    totalPrice : Decimal
-    currency : String
-    categoryID : Number    
-}
+  createdAt: Date;
+  updatedAt: Date;
+  reinbursementNoteID: number;
+  name: string;
+  quantity: number;
+  individualPrice: Decimal;
+  totalPrice: Decimal;
+  currency: string;
+  categoryID: number;
+};
 
 export type ReinbursementCategory = {
-    createdAt : Date
-    updatedAt : Date
-    categoryID : Number
-    categoryName : String
-    categoryDescription? : String
-    active : boolean
-    status : boolean
-}
+  createdAt: Date;
+  updatedAt: Date;
+  categoryID: number;
+  categoryName: string;
+  categoryDescription?: string;
+  active: boolean;
+  status: boolean;
+};
