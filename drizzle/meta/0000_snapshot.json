@@ -1,0 +1,1410 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "dt_dwh.m_religion": {
+      "name": "m_religion",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiReligionId": {
+          "name": "uiReligionId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "inReligionCode": {
+          "name": "inReligionCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_religion_inReligionCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txReligionName": {
+          "name": "txReligionName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_religion_daUpdatedAt_key": {
+          "columns": [
+            "daUpdatedAt"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_religion_daUpdatedAt_key"
+        },
+        "m_religion_inReligionCode_key": {
+          "columns": [
+            "inReligionCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_religion_inReligionCode_key"
+        },
+        "m_religion_txReligionName_key": {
+          "columns": [
+            "txReligionName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_religion_txReligionName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_roles": {
+      "name": "m_roles",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiRolesId": {
+          "name": "uiRolesId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "inRoleCode": {
+          "name": "inRoleCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_roles_inRoleCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txLongRoleName": {
+          "name": "txLongRoleName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txRoleDescription": {
+          "name": "txRoleDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "txShortRoleName": {
+          "name": "txShortRoleName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_roles_inRoleCode_key": {
+          "columns": [
+            "inRoleCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_roles_inRoleCode_key"
+        },
+        "m_roles_inRoleCode_key1": {
+          "columns": [
+            "inRoleCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_roles_inRoleCode_key1"
+        },
+        "m_roles_txRoleName_key": {
+          "columns": [
+            "txLongRoleName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_roles_txRoleName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_bank": {
+      "name": "m_bank",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiBankId": {
+          "name": "uiBankId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "inBankTypeCode": {
+          "name": "inBankTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_bank_inBankTypeCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txBankName": {
+          "name": "txBankName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boLocalBank": {
+          "name": "boLocalBank",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "boEWallet": {
+          "name": "boEWallet",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_bank_inBankTypeCode_key": {
+          "columns": [
+            "inBankTypeCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_bank_inBankTypeCode_key"
+        },
+        "m_bank_txBankName_key": {
+          "columns": [
+            "txBankName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_bank_txBankName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_position": {
+      "name": "m_position",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiPositionId": {
+          "name": "uiPositionId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "inPositionCode": {
+          "name": "inPositionCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_position_inPositionCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txPositionName": {
+          "name": "txPositionName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txPositionDetails": {
+          "name": "txPositionDetails",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_position_inPositionCode_key": {
+          "columns": [
+            "inPositionCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_position_inPositionCode_key"
+        },
+        "m_position_txPositionName_key": {
+          "columns": [
+            "txPositionName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_position_txPositionName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.reimbursement_items": {
+      "name": "reimbursement_items",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiReimbursementItemID": {
+          "name": "uiReimbursementItemID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inReimbursementNoteID": {
+          "name": "inReimbursementNoteID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txName": {
+          "name": "txName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inQuantity": {
+          "name": "inQuantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deIndividualPrice": {
+          "name": "deIndividualPrice",
+          "type": "numeric(100, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deTotalPrice": {
+          "name": "deTotalPrice",
+          "type": "numeric(100, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txCurrency": {
+          "name": "txCurrency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inCategoryID": {
+          "name": "inCategoryID",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reimbursement_items_inReimbursementNoteID_fkey": {
+          "name": "reimbursement_items_inReimbursementNoteID_fkey",
+          "tableFrom": "reimbursement_items",
+          "tableTo": "reimbursement_notes",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inReimbursementNoteID"
+          ],
+          "columnsTo": [
+            "inReimbursementNoteID"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reinbursement_items_inCategoryID_fkey": {
+          "name": "reinbursement_items_inCategoryID_fkey",
+          "tableFrom": "reimbursement_items",
+          "tableTo": "m_category",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inCategoryID"
+          ],
+          "columnsTo": [
+            "inCategoryID"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {
+        "Enable read access for all users": {
+          "name": "Enable read access for all users",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "true"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_employment": {
+      "name": "m_employment",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiEmploymentId": {
+          "name": "uiEmploymentId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "inEmploymentTypeCode": {
+          "name": "inEmploymentTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_employment_inEmploymentTypeCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txEmploymentTypeName": {
+          "name": "txEmploymentTypeName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_employment_inEmploymentTypeCode_key": {
+          "columns": [
+            "inEmploymentTypeCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_employment_inEmploymentTypeCode_key"
+        },
+        "m_employment_txEmploymentTypeName_key": {
+          "columns": [
+            "txEmploymentTypeName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_employment_txEmploymentTypeName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_company_type": {
+      "name": "m_company_type",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiCompanyTypeId": {
+          "name": "uiCompanyTypeId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() AT TIME ZONE 'utc'::text)"
+        },
+        "inCompanyTypeCode": {
+          "name": "inCompanyTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_company_type_inCompanyTypeCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "32767",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txLongCompanyTypeName": {
+          "name": "txLongCompanyTypeName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txShortCompanyTypeName": {
+          "name": "txShortCompanyTypeName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_company_type_inCompanyTypeCode_key": {
+          "columns": [
+            "inCompanyTypeCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_company_type_inCompanyTypeCode_key"
+        },
+        "m_company_type_txLongCompanyTypeName_key": {
+          "columns": [
+            "txLongCompanyTypeName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_company_type_txLongCompanyTypeName_key"
+        },
+        "m_company_type_txShortCompanyTypeName_key": {
+          "columns": [
+            "txShortCompanyTypeName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_company_type_txShortCompanyTypeName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_employees": {
+      "name": "m_employees",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiEmployeeId": {
+          "name": "uiEmployeeId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daJoinDate": {
+          "name": "daJoinDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inYear": {
+          "name": "inYear",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inMonth": {
+          "name": "inMonth",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txFullName": {
+          "name": "txFullName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daDateOfBirth": {
+          "name": "daDateOfBirth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txHomeAddress": {
+          "name": "txHomeAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txNationalIdNumber": {
+          "name": "txNationalIdNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inReligionCode": {
+          "name": "inReligionCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txTaxNumber": {
+          "name": "txTaxNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boMarriageStatus": {
+          "name": "boMarriageStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inNumOfDeps": {
+          "name": "inNumOfDeps",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "flSalary": {
+          "name": "flSalary",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inRoleCode": {
+          "name": "inRoleCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inEmploymentTypeCode": {
+          "name": "inEmploymentTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txEmployeeCode": {
+          "name": "txEmployeeCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inCompanyCode": {
+          "name": "inCompanyCode",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txPhoneNumber": {
+          "name": "txPhoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txEmailAddress": {
+          "name": "txEmailAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inBankTypeCode": {
+          "name": "inBankTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txBankAccountNumber": {
+          "name": "txBankAccountNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "m_employees_inBankTypeCode_fkey": {
+          "name": "m_employees_inBankTypeCode_fkey",
+          "tableFrom": "m_employees",
+          "tableTo": "m_bank",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inBankTypeCode"
+          ],
+          "columnsTo": [
+            "inBankTypeCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "m_employees_inCompanyCode_fkey": {
+          "name": "m_employees_inCompanyCode_fkey",
+          "tableFrom": "m_employees",
+          "tableTo": "m_company",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inCompanyCode"
+          ],
+          "columnsTo": [
+            "inCompanyCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "m_employees_inEmploymentTypeCode_fkey": {
+          "name": "m_employees_inEmploymentTypeCode_fkey",
+          "tableFrom": "m_employees",
+          "tableTo": "m_employment",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inEmploymentTypeCode"
+          ],
+          "columnsTo": [
+            "inEmploymentTypeCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "m_employees_inReligionCode_fkey": {
+          "name": "m_employees_inReligionCode_fkey",
+          "tableFrom": "m_employees",
+          "tableTo": "m_religion",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inReligionCode"
+          ],
+          "columnsTo": [
+            "inReligionCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "m_employees_inRoleCode_fkey": {
+          "name": "m_employees_inRoleCode_fkey",
+          "tableFrom": "m_employees",
+          "tableTo": "m_roles",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inRoleCode"
+          ],
+          "columnsTo": [
+            "inRoleCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {
+        "Enable read access for all users": {
+          "name": "Enable read access for all users",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "true"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "dt_dwh.reimbursement_notes": {
+      "name": "reimbursement_notes",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiReimbursementID": {
+          "name": "uiReimbursementID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "inReimbursementNoteID": {
+          "name": "inReimbursementNoteID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txStatus": {
+          "name": "txStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txNotes": {
+          "name": "txNotes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "txRecipientAccount": {
+          "name": "txRecipientAccount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inBankTypeCode": {
+          "name": "inBankTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inRecipientCompanyCode": {
+          "name": "inRecipientCompanyCode",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txBankAccountCode": {
+          "name": "txBankAccountCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txChangeReason": {
+          "name": "txChangeReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "reinbursement_notes_inBankTypeCode_fkey": {
+          "name": "reinbursement_notes_inBankTypeCode_fkey",
+          "tableFrom": "reimbursement_notes",
+          "tableTo": "m_bank",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inBankTypeCode"
+          ],
+          "columnsTo": [
+            "inBankTypeCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "reinbursement_notes_inRecipientCompanyCode_fkey": {
+          "name": "reinbursement_notes_inRecipientCompanyCode_fkey",
+          "tableFrom": "reimbursement_notes",
+          "tableTo": "m_company",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inRecipientCompanyCode"
+          ],
+          "columnsTo": [
+            "inCompanyCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "reinbursement_notes_inReinbursementNoteID_key": {
+          "columns": [
+            "inReimbursementNoteID"
+          ],
+          "nullsNotDistinct": false,
+          "name": "reinbursement_notes_inReinbursementNoteID_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {
+        "Enable update for authenticated users": {
+          "name": "Enable update for authenticated users",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "authenticated"
+          ],
+          "withCheck": "true",
+          "using": "true"
+        },
+        "Enable insert for authenticated users only": {
+          "name": "Enable insert for authenticated users only",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "authenticated"
+          ]
+        },
+        "Enable read access for all users": {
+          "name": "Enable read access for all users",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_company": {
+      "name": "m_company",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiCompanyId": {
+          "name": "uiCompanyId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "inCompanyCode": {
+          "name": "inCompanyCode",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "dt_dwh.\"m_company_inCompanyCode_seq\"",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "startWith": "1",
+            "cycle": false,
+            "schema": "dt_dwh"
+          }
+        },
+        "txCompanyName": {
+          "name": "txCompanyName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txCompanyDetails": {
+          "name": "txCompanyDetails",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inCompanyTypeCode": {
+          "name": "inCompanyTypeCode",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "m_company_inCompanyTypeCode_fkey": {
+          "name": "m_company_inCompanyTypeCode_fkey",
+          "tableFrom": "m_company",
+          "tableTo": "m_company_type",
+          "schemaTo": "dt_dwh",
+          "columnsFrom": [
+            "inCompanyTypeCode"
+          ],
+          "columnsTo": [
+            "inCompanyTypeCode"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_company_inCompanyCode_key": {
+          "columns": [
+            "inCompanyCode"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_company_inCompanyCode_key"
+        },
+        "m_company_txCompanyName_key": {
+          "columns": [
+            "txCompanyName"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_company_txCompanyName_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "dt_dwh.m_category": {
+      "name": "m_category",
+      "schema": "dt_dwh",
+      "columns": {
+        "uiCategoryID": {
+          "name": "uiCategoryID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "daCreatedAt": {
+          "name": "daCreatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "daUpdatedAt": {
+          "name": "daUpdatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "inCategoryID": {
+          "name": "inCategoryID",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txCategoryName": {
+          "name": "txCategoryName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "txCategoryDescription": {
+          "name": "txCategoryDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "boActive": {
+          "name": "boActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "boStatus": {
+          "name": "boStatus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "m_category_inCategoryID_key": {
+          "columns": [
+            "inCategoryID"
+          ],
+          "nullsNotDistinct": false,
+          "name": "m_category_inCategoryID_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {
+        "Enable update for authenticated users": {
+          "name": "Enable update for authenticated users",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ],
+          "withCheck": "true",
+          "using": "true"
+        },
+        "Enable insert for authenticated users only": {
+          "name": "Enable insert for authenticated users only",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "authenticated"
+          ]
+        },
+        "Enable read access for all users": {
+          "name": "Enable read access for all users",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "isRLSEnabled": true
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "dt_dwh": "dt_dwh"
+  },
+  "sequences": {
+    "dt_dwh.m_company_inCompanyCode_seq": {
+      "name": "m_company_inCompanyCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "2147483647",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_bank_inBankTypeCode_seq": {
+      "name": "m_bank_inBankTypeCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_religion_inReligionCode_seq": {
+      "name": "m_religion_inReligionCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_position_inPositionCode_seq": {
+      "name": "m_position_inPositionCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_company_type_inCompanyTypeCode_seq": {
+      "name": "m_company_type_inCompanyTypeCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_employment_inEmploymentTypeCode_seq": {
+      "name": "m_employment_inEmploymentTypeCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    },
+    "dt_dwh.m_roles_inRoleCode_seq": {
+      "name": "m_roles_inRoleCode_seq",
+      "schema": "dt_dwh",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "32767",
+      "increment": "1",
+      "cycle": false,
+      "cache": "1"
+    }
+  },
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "m_religion": {
+        "columns": {
+          "daCreatedAt": {
+            "isDefaultAnExpression": true
+          },
+          "daUpdatedAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "m_roles": {
+        "columns": {
+          "daUpdatedAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "m_bank": {
+        "columns": {
+          "daCreatedAt": {
+            "isDefaultAnExpression": true
+          },
+          "daUpdatedAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "m_position": {
+        "columns": {
+          "daCreatedAt": {
+            "isDefaultAnExpression": true
+          },
+          "daUpdatedAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "m_company_type": {
+        "columns": {
+          "daCreatedAt": {
+            "isDefaultAnExpression": true
+          },
+          "daUpdatedAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    }
+  }
+}

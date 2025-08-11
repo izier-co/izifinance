@@ -19,9 +19,25 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@supabase-config": ["./src/app/api/supabase.config.ts"],
+      "@supabase-server": ["./src/app/api/supabase_server.config.ts"],
+      "@drizzle-db": ["./drizzle-db.ts"],
+      "@lib/*": ["./lib/*"],
+      "@mocks/*": ["./tests/__mocks__/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tests/categories/get.test.ts",
+    "tests/categories/[id]/delete.test.ts",
+    "tests/categories/post.test.ts",
+    "tests/reimbursements/get.test.ts",
+    "tests/reimbursements/post.test.ts",
+    "tests/reimbursements/void/put.test.ts"
+  ],
   "exclude": ["node_modules"]
 }

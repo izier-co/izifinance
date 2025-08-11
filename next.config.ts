@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import MillionLint from "@million/lint";
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // config here
 };
 
+// export default MillionLint.next({ rsc: true })(nextConfig);
 export default nextConfig;
