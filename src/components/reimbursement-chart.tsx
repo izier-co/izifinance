@@ -38,10 +38,8 @@ async function generateChartData() {
   for (let i = 0; i < json.data.length; i++) {
     const reimbursement = json.data[i];
     const date = new Date(reimbursement.daCreatedAt);
-    console.log(date.getDate());
     chartData[date.getDate() - 1].reimbursement++;
   }
-  console.log(chartData);
   return chartData;
 }
 

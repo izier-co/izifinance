@@ -15,8 +15,6 @@ export const GET = async (
   if (fields && fields !== "") {
     tableFields = fields;
   }
-  console.log("params" + params.userUid);
-
   const { data, error } = await supabase
     .from("m_employees")
     .select(tableFields)
