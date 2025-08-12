@@ -19,27 +19,35 @@ export async function middleware(req: NextRequest) {
 
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
+
+  if (req.nextUrl.pathname === "/") {
+    return NextResponse.next();
+  }
 
   const isRootRoute = req.nextUrl.pathname === "/";
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
 
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: error.status }
-    );
-  }
-
-  if (!user && !isAuthRoute && !isRootRoute) {
-    if (isApiRoute) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    if (!user && !isAuthRoute && !isRootRoute) {
+      if (isApiRoute) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      } else {
+        const url = req.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.name === "AuthSessionMissingError") {
+      return NextResponse.redirect(new URL("/", req.url));
     } else {
-      const url = req.nextUrl.clone();
-      url.pathname = "/";
-      return NextResponse.redirect(url);
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status }
+      );
     }
   }
   return NextResponse.next();
