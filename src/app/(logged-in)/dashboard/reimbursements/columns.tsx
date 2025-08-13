@@ -68,23 +68,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Recipient Account" />;
     },
   },
-  {
-    accessorKey: "inBankTypeCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Bank Type" />;
-    },
-    cell: ({ row }) => {
-      return (
-        <QueryCell
-          row={row}
-          queryKey={["get-banks"]}
-          queryUrl="/api/v1/banks"
-          fieldKey="inBankTypeCode"
-          targetFieldKey="txBankName"
-        />
-      );
-    },
-  },
+
   {
     accessorKey: "inRecipientCompanyCode",
     header: ({ column }) => {
@@ -101,12 +85,6 @@ export const columns: ColumnDef<CommonRow>[] = [
           targetFieldKey="txCompanyName"
         />
       );
-    },
-  },
-  {
-    accessorKey: "txBankAccountCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Bank Account Code" />;
     },
   },
   {

@@ -37,7 +37,6 @@ import { Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import {
   addReimbursement,
-  useBankQuery,
   useCategoryQuery,
   useCompanyQuery,
 } from "./_queries/queries";
@@ -71,9 +70,7 @@ export default function Page() {
     defaultValues: {
       txDescriptionDetails: "",
       txRecipientAccount: "",
-      inBankTypeCode: 0,
       inRecipientCompanyCode: 0,
-      txBankAccountCode: "",
       txCurrency: "",
     },
   });
@@ -117,7 +114,6 @@ export default function Page() {
   }
 
   const categoryComboboxQuery = useCategoryQuery();
-  const bankComboboxQuery = useBankQuery();
   const companyComboboxQuery = useCompanyQuery();
   const getEmpIDQuery = useEmployeeIDQuery();
 
@@ -212,23 +208,6 @@ export default function Page() {
             />
             <FormField
               control={reimbursementForm.control}
-              name="inBankTypeCode"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">Bank Type :</FormLabel>
-                  <FormControl>
-                    <QueryCombobox
-                      value={field.value as string}
-                      onChange={field.onChange}
-                      query={bankComboboxQuery}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={reimbursementForm.control}
               name="inRecipientCompanyCode"
               render={({ field }) => (
                 <FormItem className="my-3">
@@ -241,21 +220,6 @@ export default function Page() {
                       onChange={field.onChange}
                       query={companyComboboxQuery}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={reimbursementForm.control}
-              name="txBankAccountCode"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">
-                    Bank Account Code :
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
