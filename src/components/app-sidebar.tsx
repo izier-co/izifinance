@@ -22,10 +22,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./logout-button";
-import { fetchJSONAPI } from "@/lib/lib";
-import { supabase } from "@/app/api/supabase.config";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useEmployeeIDQuery } from "@/queries/queries";
 
 const adminSidebarData = {
   navMain: [
@@ -100,35 +98,7 @@ const userSidebarData = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  async function getEmpID() {
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-    if (data.user === null) {
-      throw new Error("Unauthorized User");
-    }
-
-    const empRes = await fetchJSONAPI(
-      "GET",
-      `/api/v1/employees/${data.user.id}`
-    );
-    const json = await empRes.json();
-    if (json.data.length === 0) {
-      throw new Error("Unauthorized User");
-    }
-    return json.data[0].txEmployeeCode;
-  }
-
-  const checkAdminQuery = useQuery({
-    queryKey: ["check-admin"],
-    queryFn: getEmpID,
-    staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const checkAdminQuery = useEmployeeIDQuery();
 
   const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
   let sidebarData = userSidebarData;

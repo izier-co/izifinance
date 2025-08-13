@@ -12,7 +12,10 @@ async function getEmpID() {
     throw new Error("Unauthorized User");
   }
 
-  const res = await fetchJSONAPI("GET", `/api/v1/employees/${data.user.id}`);
+  const res = await fetchJSONAPI(
+    "GET",
+    `/api/v1/employees/get-id/${data.user.id}`
+  );
   const json = await res.json();
   if (!res.ok) {
     throw new Error(json.error);

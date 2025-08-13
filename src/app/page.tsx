@@ -65,19 +65,18 @@ export default function Home() {
     if (data.user === null) {
       throw new Error("Unregistered Account");
     }
-    // todo fix
-    // const empRes = await fetchJSONAPI(
-    //   "GET",
-    //   `/api/v1/employees/${data.user.id}`
-    // );
-    // const json = await empRes.json();
+    const empRes = await fetchJSONAPI(
+      "GET",
+      `/api/v1/employees/get-id/${data.user.id}`
+    );
+    const json = await empRes.json();
 
-    // if (!empRes.ok) {
-    //   throw new Error(json.error || "Something went wrong in our end");
-    // }
-    // if (json.data.length === 0) {
-    //   throw new Error("Unregistered account, please contact your adminstrator");
-    // }
+    if (!empRes.ok) {
+      throw new Error(json.error || "Something went wrong in our end");
+    }
+    if (json.data.length === 0) {
+      throw new Error("Unregistered account, please contact your adminstrator");
+    }
     const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginData);
 
     if (!res.ok) {
