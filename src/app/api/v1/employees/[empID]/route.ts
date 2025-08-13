@@ -4,7 +4,7 @@ import { removeByKey } from "@/lib/lib";
 
 export const GET = async (
   req: NextRequest,
-  props: { params: Promise<{ userUid: string }> }
+  props: { params: Promise<{ empID: string }> }
 ) => {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
@@ -18,7 +18,7 @@ export const GET = async (
   const { data, error } = await supabase
     .from("m_employees")
     .select(tableFields)
-    .eq("uiUserID", params.userUid);
+    .eq("txEmployeeCode", params.empID);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
