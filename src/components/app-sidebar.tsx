@@ -57,6 +57,16 @@ const adminSidebarData = {
         },
       ],
     },
+    {
+      title: "Employees",
+      url: "#",
+      items: [
+        {
+          title: "Manage Employees",
+          url: "/dashboard/employees",
+        },
+      ],
+    },
   ],
 };
 
