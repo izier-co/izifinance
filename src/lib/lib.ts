@@ -65,6 +65,26 @@ export function sortArray(str?: string) {
   }
 }
 
+export function booleanToString(
+  bool: boolean,
+  trueValue?: string,
+  falseValue?: string
+): string {
+  let trueString = "True";
+  let falseString = "False";
+  if (trueValue) {
+    trueString = trueValue;
+  }
+  if (falseValue) {
+    falseString = falseValue;
+  }
+  if (bool === true) {
+    return trueString;
+  } else {
+    return falseString;
+  }
+}
+
 export function removeByKey(data: object): object {
   const jsonString = JSON.stringify(data, (key, value) => {
     if (key === "uiReimbursementID") {

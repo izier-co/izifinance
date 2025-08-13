@@ -6,6 +6,7 @@ import {
 } from "@/components/sorting-datatable-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeDropdownMenu } from "./_components/dropdown_menu";
+import { booleanToString } from "@/lib/lib";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -53,11 +54,8 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Marriage Status" />;
     },
     cell: ({ row }) => {
-      const booleanData = row.getValue("boMarriageStatus");
-      if (booleanData === true) {
-        return <>Married</>;
-      }
-      return <>Not Married</>;
+      const booleanData = row.getValue("boMarriageStatus") as boolean;
+      booleanToString(booleanData, "Married", "Unmarried");
     },
   },
   {
@@ -72,11 +70,8 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Employment Status" />;
     },
     cell: ({ row }) => {
-      const booleanData = row.getValue("boActive");
-      if (booleanData === true) {
-        return <>Active</>;
-      }
-      return <>Inactive</>;
+      const booleanData = row.getValue("boActive") as boolean;
+      booleanToString(booleanData, "Active", "Inactive");
     },
   },
   {
@@ -115,11 +110,8 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Admin Access" />;
     },
     cell: ({ row }) => {
-      const booleanData = row.getValue("boActive");
-      if (booleanData === true) {
-        return <>True</>;
-      }
-      return <>False</>;
+      const booleanData = row.getValue("boActive") as boolean;
+      return booleanToString(booleanData);
     },
   },
   {
