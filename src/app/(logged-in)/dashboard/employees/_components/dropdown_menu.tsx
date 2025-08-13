@@ -16,6 +16,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { useEmployeeIDQuery } from "@/queries/queries";
 import { Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -81,6 +82,11 @@ function RevokeAdminDialog({ row }: { row: Row<CommonRow> }) {
 }
 
 function GrantRevokeDialogMenu({ row }: { row: Row<CommonRow> }) {
+  const checkAdminQuery = useEmployeeIDQuery();
+  const isAdmin = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  if (!isAdmin) {
+    return;
+  }
   const adminStatus = row.getValue("boHasAdminAccess") as boolean;
   if (adminStatus === true) {
     return <RevokeAdminDialog row={row} />;
