@@ -55,7 +55,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
     cell: ({ row }) => {
       const booleanData = row.getValue("boMarriageStatus") as boolean;
-      booleanToString(booleanData, "Married", "Unmarried");
+      return booleanToString(booleanData, "Married", "Unmarried");
     },
   },
   {
@@ -71,7 +71,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
     cell: ({ row }) => {
       const booleanData = row.getValue("boActive") as boolean;
-      booleanToString(booleanData, "Active", "Inactive");
+      return booleanToString(booleanData, "Active", "Inactive");
     },
   },
   {
@@ -116,7 +116,7 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       return <EmployeeDropdownMenu row={row} />;
     },
   },
