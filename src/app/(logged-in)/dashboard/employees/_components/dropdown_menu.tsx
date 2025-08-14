@@ -20,12 +20,25 @@ import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { useEmployeeIDQuery } from "@/queries/queries";
 import { useMutation } from "@tanstack/react-query";
-import { Row } from "@tanstack/react-table";
+import { Column, Row, RowData, Table } from "@tanstack/react-table";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-function GrantAdminDialog({ row }: { row: Row<CommonRow> }) {
+declare module "@tanstack/table-core" {
+  interface TableMeta<TData extends RowData> {
+    column?: Column<TData>;
+    triggerRefetch: () => void;
+  }
+}
+
+function GrantAdminDialog({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const [error, setError] = useState("");
   const grantAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
@@ -39,8 +52,9 @@ function GrantAdminDialog({ row }: { row: Row<CommonRow> }) {
       console.error(error);
       setError(error.message);
     },
-    onMutate: () => {
+    onSuccess: () => {
       refreshAndRevalidatePage("/dashboard/employees");
+      table.options.meta?.triggerRefetch();
     },
   });
   return (
@@ -86,23 +100,29 @@ function GrantAdminDialog({ row }: { row: Row<CommonRow> }) {
   );
 }
 
-function RevokeAdminDialog({ row }: { row: Row<CommonRow> }) {
+function RevokeAdminDialog({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const [error, setError] = useState("");
   const revokeAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
-      const res = await fetchJSONAPI(
+      await fetchJSONAPI(
         "PUT",
         `/api/v1/employees/${row.getValue("txEmployeeCode")}/revoke-admin`
       );
-      console.log(await res.json());
     },
     onError: (error) => {
       console.error(error);
       setError(error.message);
     },
-    onMutate: () => {
+    onSuccess: () => {
       refreshAndRevalidatePage("/dashboard/employees");
+      table.options.meta?.triggerRefetch();
     },
   });
   return (
@@ -148,7 +168,13 @@ function RevokeAdminDialog({ row }: { row: Row<CommonRow> }) {
   );
 }
 
-function GrantRevokeDialogMenu({ row }: { row: Row<CommonRow> }) {
+function GrantRevokeDialogMenu({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const checkAdminQuery = useEmployeeIDQuery();
   const isAdmin = checkAdminQuery.isSuccess && checkAdminQuery.data;
   if (!isAdmin) {
@@ -159,13 +185,19 @@ function GrantRevokeDialogMenu({ row }: { row: Row<CommonRow> }) {
   }
   const adminStatus = row.getValue("boHasAdminAccess") as boolean;
   if (adminStatus === true) {
-    return <RevokeAdminDialog row={row} />;
+    return <RevokeAdminDialog row={row} table={table} />;
   } else {
-    return <GrantAdminDialog row={row} />;
+    return <GrantAdminDialog row={row} table={table} />;
   }
 }
 
-export function EmployeeDropdownMenu({ row }: { row: Row<CommonRow> }) {
+export function EmployeeDropdownMenu({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -185,7 +217,7 @@ export function EmployeeDropdownMenu({ row }: { row: Row<CommonRow> }) {
         >
           View Details
         </DropdownMenuItem>
-        <GrantRevokeDialogMenu row={row} />
+        <GrantRevokeDialogMenu row={row} table={table} />
       </DropdownMenuContent>
     </DropdownMenu>
   );

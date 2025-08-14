@@ -116,8 +116,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <EmployeeDropdownMenu row={row} />;
+    cell: ({ row, table }) => {
+      return <EmployeeDropdownMenu table={table} row={row} />;
     },
   },
 ];
