@@ -20,7 +20,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { MoreHorizontal, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Row } from "@tanstack/react-table";
+import { Column, Row, RowData, Table } from "@tanstack/react-table";
 import {
   FormField,
   FormItem,
@@ -42,7 +42,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { CommonRow } from "@/components/sorting-datatable-header";
 
-export function ReimbursementDropdownMenu({ row }: { row: Row<CommonRow> }) {
+declare module "@tanstack/table-core" {
+  interface TableMeta<TData extends RowData> {
+    column?: Column<TData>;
+    triggerRefetch: () => void;
+  }
+}
+
+export function ReimbursementDropdownMenu({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const changeDescriptionForm = useForm<ChangeDescriptionSchema>({
     resolver: zodResolver(changeDescriptionSchema),
     defaultValues: {
@@ -90,8 +103,8 @@ export function ReimbursementDropdownMenu({ row }: { row: Row<CommonRow> }) {
     mutationFn: _approve,
     onSuccess: () => {
       setApprovalModalOpen(false);
-      refreshData();
       refreshAndRevalidatePage("/dashboard");
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       approveForm.setError("changeReason", {
@@ -105,8 +118,8 @@ export function ReimbursementDropdownMenu({ row }: { row: Row<CommonRow> }) {
     mutationFn: _reject,
     onSuccess: () => {
       setRejectModalOpen(false);
-      refreshData();
       refreshAndRevalidatePage("/dashboard");
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       rejectForm.setError("changeReason", {

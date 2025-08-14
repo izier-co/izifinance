@@ -29,10 +29,14 @@ import { Input } from "./ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  refetchIndex: number;
+  triggerRefetch: () => void;
 }
 
 export function ReimbursementDatatable<TData, TValue>({
   columns,
+  refetchIndex,
+  triggerRefetch,
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -115,6 +119,9 @@ export function ReimbursementDatatable<TData, TValue>({
     pageCount: pagination.isLastPage
       ? pagination.pageNumber
       : pagination.pageNumber + 1,
+    meta: {
+      triggerRefetch,
+    },
   });
 
   function handlePrev() {
@@ -143,6 +150,7 @@ export function ReimbursementDatatable<TData, TValue>({
     pagination.pageNumber,
     pagination.paginationSize,
     columnFilters,
+    refetchIndex,
   ]);
 
   return (

@@ -124,8 +124,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <ReimbursementDropdownMenu row={row} />;
+    cell: ({ row, table }) => {
+      return <ReimbursementDropdownMenu row={row} table={table} />;
     },
   },
 ];
