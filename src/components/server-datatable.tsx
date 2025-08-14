@@ -29,6 +29,8 @@ import { useEffect } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   rowName: string;
+  refetchIndex: number;
+  triggerRefetch: () => void;
 }
 
 function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
@@ -44,6 +46,8 @@ function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
 export function ServerDataTable<TData, TValue>({
   rowName,
   columns,
+  refetchIndex,
+  triggerRefetch,
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -106,6 +110,9 @@ export function ServerDataTable<TData, TValue>({
     pageCount: pagination.isLastPage
       ? pagination.pageNumber
       : pagination.pageNumber + 1,
+    meta: {
+      triggerRefetch,
+    },
   });
 
   function handlePrev() {
@@ -128,8 +135,8 @@ export function ServerDataTable<TData, TValue>({
 
   useEffect(() => {
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting, pagination.pageNumber, pagination.paginationSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorting, pagination.pageNumber, pagination.paginationSize, refetchIndex]);
 
   return (
     <>
