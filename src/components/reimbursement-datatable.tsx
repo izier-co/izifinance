@@ -153,20 +153,25 @@ export function ReimbursementDatatable<TData, TValue>({
     refetchIndex,
   ]);
 
+  const initialFilterValue =
+    (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
+
+  const [filterValue, setFilterValue] = React.useState(initialFilterValue);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      table.getColumn("txEmployeeCode")?.setFilterValue(filterValue);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [filterValue, table]);
   return (
     <>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter employee ID..."
-          value={
-            (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("txEmployeeCode")
-              ?.setFilterValue(event.target.value)
-          }
+          value={filterValue}
+          onChange={(event) => setFilterValue(event.target.value)}
           className="max-w-sm"
         />
       </div>
