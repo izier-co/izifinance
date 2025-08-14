@@ -18,7 +18,7 @@ export const PUT = async (
     .update({
       boHasAdminAccess: true,
     })
-    .eq("txReimbursementNoteID", id)
+    .eq("txEmployeeCode", id)
     .select();
 
   if (error)
@@ -27,7 +27,7 @@ export const PUT = async (
   const sanitizedData = removeByKey(data);
 
   return NextResponse.json({
-    message: "Note Approved!",
+    message: "Admin Granted!",
     data: sanitizedData,
   });
 };

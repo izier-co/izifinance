@@ -18,8 +18,9 @@ export const PUT = async (
     .update({
       boHasAdminAccess: false,
     })
-    .eq("txReimbursementNoteID", id)
+    .eq("txEmployeeCode", id)
     .select();
+  console.log(id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -27,7 +28,7 @@ export const PUT = async (
   const sanitizedData = removeByKey(data);
 
   return NextResponse.json({
-    message: "Note Approved!",
+    message: "Admin Revoked!",
     data: sanitizedData,
   });
 };
