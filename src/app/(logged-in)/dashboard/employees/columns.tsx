@@ -110,7 +110,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Admin Access" />;
     },
     cell: ({ row }) => {
-      const booleanData = row.getValue("boActive") as boolean;
+      const booleanData = row.getValue("boHasAdminAccess") as boolean;
       return booleanToString(booleanData);
     },
   },
