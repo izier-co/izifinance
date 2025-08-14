@@ -6,9 +6,7 @@ import { ServerDataTable } from "@/components/server-datatable";
 export default function Page() {
   const [refetchIndex, setRefetchIndex] = useState(0);
 
-  // This is the function we need to call from the dropdown menu
   const triggerRefetch = () => {
-    console.log("Refetch triggered!");
     setRefetchIndex((prevIndex) => prevIndex + 1);
   };
   return (
