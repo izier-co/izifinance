@@ -11,7 +11,7 @@ import {
   reimbursementItemsInDtDwh,
   reimbursementNotesInDtDwh,
 } from "@/db/schema";
-import { isValidInt, removeByKey, sortArray } from "@/lib/lib";
+import { removeByKey, sortArray } from "@/lib/lib";
 import constValues from "@/lib/constants";
 
 const reimbursementSchema = z.object({
@@ -25,16 +25,7 @@ const reimbursementSchema = z.object({
         ""
       );
     }),
-  txRecipientAccount: z
-    .string()
-    .max(constValues.maxBankCodeLength)
-    .refine((val) => isValidInt(val)),
-  inBankTypeCode: z.number().positive().int(),
   inRecipientCompanyCode: z.number().positive().int(),
-  txBankAccountCode: z
-    .string()
-    .max(constValues.maxBankCodeLength)
-    .refine((val) => isValidInt(val)),
   txEmployeeCode: z
     .string()
     .length(9)
@@ -68,7 +59,6 @@ const getRequestParams = z.object({
   paginationPage: z.coerce.number().positive().optional().default(1),
   paginationSize: z.coerce.number().positive().min(1).optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
-  bankTypeCode: z.coerce.number().positive().optional(),
   recipientCompanyCode: z.coerce.number().positive().optional(),
   fields: z
     .string()
@@ -168,9 +158,6 @@ export const GET = async (req: NextRequest) => {
   }
   if (params.changedBy) {
     query.ilike("txChangedBy", `%${params.changedBy}%`);
-  }
-  if (params.bankTypeCode) {
-    query.eq("inBankTypeCode", params.bankTypeCode);
   }
   if (params.recipientCompanyCode) {
     query.eq("inRecipientCompanyCode", params.recipientCompanyCode);
@@ -297,10 +284,7 @@ export const POST = async (req: NextRequest) => {
           uiIdempotencyKey: idempotencyKey,
           txDescriptionDetails: noteItem.txDescriptionDetails,
           inCategoryID: noteItem.inCategoryID,
-          txRecipientAccount: noteItem.txRecipientAccount,
-          inBankTypeCode: noteItem.inBankTypeCode,
           inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
-          txBankAccountCode: noteItem.txBankAccountCode,
           txEmployeeCode: noteItem.txEmployeeCode,
           txCurrency: noteItem.txCurrency,
         })
