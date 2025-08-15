@@ -6,7 +6,6 @@ import {
   CommonRow,
   SortableHeader,
 } from "@/components/sorting-datatable-header";
-// import { Categories } from "./schemas";
 import { CategoryDropdownMenu } from "./_components/dropdown_menu";
 
 export const columns: ColumnDef<CommonRow>[] = [
@@ -33,6 +32,12 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
+    accessorKey: "inCategoryID",
+    header: ({ column }) => {
+      return <SortableHeader column={column} title="Category ID" />;
+    },
+  },
+  {
     accessorKey: "txCategoryName",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category Name" />;
@@ -46,8 +51,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <CategoryDropdownMenu row={row} />;
+    cell: ({ row, table }) => {
+      return <CategoryDropdownMenu row={row} table={table} />;
     },
   },
 ];
