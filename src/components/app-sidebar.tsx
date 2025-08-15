@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./logout-button";
 import Link from "next/link";
-// import { useEmployeeIDQuery } from "@/queries/queries";
 import { getEmpAdminStatus } from "@/queries/server-queries";
 
 const adminSidebarData = {
@@ -102,8 +101,6 @@ export async function AppSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   const isAdmin = await getEmpAdminStatus();
 
-  // const isAdmin: boolean =
-  //   checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   let sidebarData = userSidebarData;
   if (isAdmin) {
     sidebarData = adminSidebarData;
