@@ -391,7 +391,6 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
     txReimbursementNoteID: text().default(""),
     txStatus: text(),
     txDescriptionDetails: text(),
-    inRecipientCompanyCode: integer().notNull(),
     txChangeReason: text(),
     txEmployeeCode: text().notNull(),
     txChangedBy: text(),
@@ -410,11 +409,6 @@ export const reimbursementNotesInDtDwh = dtDwh.table(
       columns: [table.inCategoryID],
       foreignColumns: [mCategoryInDtDwh.inCategoryID],
       name: "reinbursement_items_inCategoryID_fkey",
-    }),
-    foreignKey({
-      columns: [table.inRecipientCompanyCode],
-      foreignColumns: [mCompanyInDtDwh.inCompanyCode],
-      name: "reinbursement_notes_inRecipientCompanyCode_fkey",
     }),
     foreignKey({
       columns: [table.txChangedBy],

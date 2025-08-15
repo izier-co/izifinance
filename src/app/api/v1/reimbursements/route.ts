@@ -25,7 +25,6 @@ const reimbursementSchema = z.object({
         ""
       );
     }),
-  inRecipientCompanyCode: z.number().positive().int(),
   txEmployeeCode: z
     .string()
     .length(9)
@@ -59,7 +58,6 @@ const getRequestParams = z.object({
   paginationPage: z.coerce.number().positive().optional().default(1),
   paginationSize: z.coerce.number().positive().min(1).optional(),
   status: z.enum(["Pending", "Approved", "Rejected", "Void"]).optional(),
-  recipientCompanyCode: z.coerce.number().positive().optional(),
   fields: z
     .string()
     .optional()
@@ -158,9 +156,6 @@ export const GET = async (req: NextRequest) => {
   }
   if (params.changedBy) {
     query.ilike("txChangedBy", `%${params.changedBy}%`);
-  }
-  if (params.recipientCompanyCode) {
-    query.eq("inRecipientCompanyCode", params.recipientCompanyCode);
   }
 
   if (params.createdBefore) {
@@ -284,7 +279,6 @@ export const POST = async (req: NextRequest) => {
           uiIdempotencyKey: idempotencyKey,
           txDescriptionDetails: noteItem.txDescriptionDetails,
           inCategoryID: noteItem.inCategoryID,
-          inRecipientCompanyCode: noteItem.inRecipientCompanyCode,
           txEmployeeCode: noteItem.txEmployeeCode,
           txCurrency: noteItem.txCurrency,
         })
