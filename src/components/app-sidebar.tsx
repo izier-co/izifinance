@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import { LayoutDashboard, Minus, Plus } from "lucide-react";
 
@@ -23,7 +22,8 @@ import {
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./logout-button";
 import Link from "next/link";
-import { useEmployeeIDQuery } from "@/queries/queries";
+// import { useEmployeeIDQuery } from "@/queries/queries";
+import { getEmpAdminStatus } from "@/queries/server-queries";
 
 const adminSidebarData = {
   navMain: [
@@ -97,11 +97,13 @@ const userSidebarData = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const checkAdminQuery = useEmployeeIDQuery();
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const isAdmin = await getEmpAdminStatus();
 
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+  // const isAdmin: boolean =
+  //   checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   let sidebarData = userSidebarData;
   if (isAdmin) {
     sidebarData = adminSidebarData;
