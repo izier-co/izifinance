@@ -1,25 +1,8 @@
 import constValues from "@/lib/constants";
-import { isValidInt } from "@/lib/lib";
 import z from "zod";
 
 export const reimbursementSchema = z.object({
   txDescriptionDetails: z.string().max(constValues.maxTextLength),
-  txRecipientAccount: z
-    .string()
-    .max(constValues.maxBankCodeLength, "Code too long")
-    .refine((val) => isValidInt(val), "Must be Valid integer"),
-  inBankTypeCode: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
-  inRecipientCompanyCode: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
-  txBankAccountCode: z
-    .string()
-    .max(constValues.maxBankCodeLength, "Code too long")
-    .refine((val) => isValidInt(val), "Must be Valid integer"),
   txCurrency: z
     .string()
     .length(constValues.currencyCodeStringLength, "Invalid Currency")

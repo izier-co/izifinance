@@ -35,11 +35,7 @@ import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 import { Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import {
-  addReimbursement,
-  useCategoryQuery,
-  useCompanyQuery,
-} from "./_queries/queries";
+import { addReimbursement, useCategoryQuery } from "./_queries/queries";
 import { QueryCombobox } from "./_components/query-combobox";
 import {
   reimbursementSchema,
@@ -69,8 +65,6 @@ export default function Page() {
     resolver: zodResolver(reimbursementSchema),
     defaultValues: {
       txDescriptionDetails: "",
-      txRecipientAccount: "",
-      inRecipientCompanyCode: 0,
       txCurrency: "",
     },
   });
@@ -114,7 +108,6 @@ export default function Page() {
   }
 
   const categoryComboboxQuery = useCategoryQuery();
-  const companyComboboxQuery = useCompanyQuery();
   const getEmpIDQuery = useEmployeeIDQuery();
 
   const submitQuery = useMutation({
@@ -191,40 +184,6 @@ export default function Page() {
               }}
             />
 
-            <FormField
-              control={reimbursementForm.control}
-              name="txRecipientAccount"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">
-                    Recipient Account :
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={reimbursementForm.control}
-              name="inRecipientCompanyCode"
-              render={({ field }) => (
-                <FormItem className="my-3">
-                  <FormLabel className="capitalize">
-                    Recipient Company :
-                  </FormLabel>
-                  <FormControl>
-                    <QueryCombobox
-                      value={field.value as string}
-                      onChange={field.onChange}
-                      query={companyComboboxQuery}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={reimbursementForm.control}
               name="inCategoryID"
