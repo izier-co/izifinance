@@ -93,7 +93,8 @@ export function ReimbursementDropdownMenu({
 
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   const isApproved: boolean = row.getValue("txStatus") === "Approved";
   const isRejected: boolean = row.getValue("txStatus") === "Rejected";
   const isVoid: boolean = row.getValue("txStatus") === "Void";

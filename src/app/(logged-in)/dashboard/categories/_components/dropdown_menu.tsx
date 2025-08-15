@@ -47,7 +47,8 @@ export function CategoryDropdownMenu({
 
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
 
   function deleteCategory() {
     deleteQuery.mutate();

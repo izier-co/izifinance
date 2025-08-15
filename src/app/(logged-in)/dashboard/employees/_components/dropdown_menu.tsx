@@ -176,7 +176,8 @@ function GrantRevokeDialogMenu({
   table: Table<CommonRow>;
 }) {
   const checkAdminQuery = useEmployeeIDQuery();
-  const isAdmin = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   if (!isAdmin) {
     return;
   }

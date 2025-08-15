@@ -100,7 +100,8 @@ const userSidebarData = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   let sidebarData = userSidebarData;
   if (isAdmin) {
     sidebarData = adminSidebarData;
