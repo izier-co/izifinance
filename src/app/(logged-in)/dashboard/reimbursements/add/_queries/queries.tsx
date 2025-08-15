@@ -80,29 +80,3 @@ export function useCategoryQuery() {
     },
   });
 }
-
-export function useBankQuery() {
-  return useQuery({
-    queryKey: ["bank-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/banks",
-        labelProperty: "txBankName",
-        valueProperty: "inBankTypeCode",
-      });
-    },
-  });
-}
-
-export function useCompanyQuery() {
-  return useQuery({
-    queryKey: ["company-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/companies",
-        labelProperty: "txCompanyName",
-        valueProperty: "inCompanyCode",
-      });
-    },
-  });
-}

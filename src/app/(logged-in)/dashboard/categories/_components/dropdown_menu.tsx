@@ -21,10 +21,16 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { MoreHorizontal, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Row } from "@tanstack/react-table";
+import { Row, Table } from "@tanstack/react-table";
 import { CommonRow } from "@/components/sorting-datatable-header";
 
-export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
+export function CategoryDropdownMenu({
+  row,
+  table,
+}: {
+  row: Row<CommonRow>;
+  table: Table<CommonRow>;
+}) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const deleteQuery = useMutation({
@@ -32,6 +38,7 @@ export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
     mutationFn: _deleteCategory,
     onSuccess: () => {
       refreshAndRevalidatePage("/categories");
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       setErrorMessage(error.message);

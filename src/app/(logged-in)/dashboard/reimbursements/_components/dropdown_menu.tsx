@@ -22,6 +22,7 @@ import { MoreHorizontal, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
 import {
+  Form,
   FormField,
   FormItem,
   FormLabel,
@@ -29,7 +30,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   ChangeDescriptionSchema,
   changeDescriptionSchema,
@@ -133,7 +134,7 @@ export function ReimbursementDropdownMenu({
     mutationFn: _void,
     onSuccess: () => {
       setVoidModalOpen(false);
-      refreshData();
+      table.options.meta?.triggerRefetch();
       refreshAndRevalidatePage("/dashboard");
     },
     onError: (error) => {
@@ -148,7 +149,7 @@ export function ReimbursementDropdownMenu({
     mutationFn: _setDescription,
     onSuccess: () => {
       setDescriptionModalOpen(false);
-      refreshData();
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       changeDescriptionForm.setError("description", {
@@ -157,9 +158,6 @@ export function ReimbursementDropdownMenu({
     },
   });
 
-  function refreshData() {
-    window.location.reload();
-  }
   function approve(data: ApprovalSchema) {
     approvalQuery.mutate(data);
   }

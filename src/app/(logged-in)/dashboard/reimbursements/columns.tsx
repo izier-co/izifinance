@@ -63,31 +63,6 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "txRecipientAccount",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Recipient Account" />;
-    },
-  },
-
-  {
-    accessorKey: "inRecipientCompanyCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Recipient Company" />;
-    },
-    cell: ({ row }) => {
-      return (
-        <QueryCell
-          row={row}
-          queryKey={["get-companies"]}
-          queryUrl="/api/v1/companies"
-          fieldKey="inRecipientCompanyCode"
-          foreignFieldKey="inCompanyCode"
-          targetFieldKey="txCompanyName"
-        />
-      );
-    },
-  },
-  {
     accessorKey: "txChangeReason",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Change Reason" />;
