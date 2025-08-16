@@ -20,9 +20,16 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LogoutButton } from "./logout-button";
+// import { LogoutButton } from "./logout-button";
 import Link from "next/link";
 import { getEmpAdminStatus } from "@/queries/server-queries";
+import { NavUser } from "./nav-user";
+
+const user = {
+  name: "name",
+  email: "example@mail.com",
+  avatar: "shadcn",
+};
 
 const adminSidebarData = {
   navMain: [
@@ -162,7 +169,8 @@ export async function AppSidebar({
       </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
-        <LogoutButton />
+        {/* <LogoutButton /> */}
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );
