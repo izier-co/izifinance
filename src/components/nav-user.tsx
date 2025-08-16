@@ -82,7 +82,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
-                onClick={() => {
+                onSelect={() => {
                   redirect("/dashboard/settings");
                 }}
               >
