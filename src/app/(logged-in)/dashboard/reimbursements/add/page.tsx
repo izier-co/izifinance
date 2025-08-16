@@ -137,7 +137,7 @@ export default function Page() {
     const empID = getEmpIDQuery.data;
     submitQuery.mutate({
       reimbursementData: reimbursementData,
-      empID: empID,
+      empID: empID?.empID,
       items: items,
     });
   }
