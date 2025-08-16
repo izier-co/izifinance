@@ -20,16 +20,9 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-// import { LogoutButton } from "./logout-button";
 import Link from "next/link";
-import { getEmpAdminStatus } from "@/queries/server-queries";
+import { getEmpInfo, getUser } from "@/queries/server-queries";
 import { NavUser } from "./nav-user";
-
-const user = {
-  name: "name",
-  email: "example@mail.com",
-  avatar: "shadcn",
-};
 
 const adminSidebarData = {
   navMain: [
@@ -106,10 +99,16 @@ const userSidebarData = {
 export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const isAdmin = await getEmpAdminStatus();
+  const empData = await getEmpInfo();
+  const supabaseUser = await getUser();
+  const user = {
+    name: empData.txFullName,
+    email: supabaseUser.email || "example@mail.com",
+    avatar: supabaseUser.user_metadata.profile_picture,
+  };
 
   let sidebarData = userSidebarData;
-  if (isAdmin) {
+  if (empData.boHasAdminStatus) {
     sidebarData = adminSidebarData;
   }
   return (
@@ -169,7 +168,6 @@ export async function AppSidebar({
       </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
-        {/* <LogoutButton /> */}
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

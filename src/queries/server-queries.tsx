@@ -1,12 +1,12 @@
 import { createClient } from "@/app/api/supabase_server.config";
 import { fetchJSONAPI } from "@/lib/lib";
 
-export async function getEmpAdminStatus() {
+export async function getEmpInfo() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    return false;
+    throw new Error(error.message);
   }
   if (data.user === null) {
     throw new Error("Unauthorized User");
@@ -18,23 +18,31 @@ export async function getEmpAdminStatus() {
   );
   const json = await res.json();
   if (!res.ok) {
-    return false;
+    throw new Error("Something went wrong");
   }
   if (json.data.length === 0) {
-    return false;
+    throw new Error("");
   }
   const empID = json.data[0].txEmployeeCode;
   const adminRes = await fetchJSONAPI("GET", `/api/v1/employees/${empID}`);
   if (!adminRes.ok) {
-    return false;
+    throw new Error("Something went wrong");
   }
 
   const adminJson = await adminRes.json();
   if (adminJson.data === undefined || adminJson.data.length === 0) {
-    return false;
+    throw new Error("No Employee");
   }
-  if (adminJson.data[0].boHasAdminAccess) {
-    return true;
+  return adminJson.data[0];
+}
+
+export async function getUser() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    throw new Error(error.message);
   }
-  return false;
+  return data.user;
 }
