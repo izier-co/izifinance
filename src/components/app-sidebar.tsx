@@ -108,7 +108,8 @@ export async function AppSidebar({
   };
 
   let sidebarData = userSidebarData;
-  if (empData.boHasAdminStatus) {
+
+  if (empData.boHasAdminAccess === true) {
     sidebarData = adminSidebarData;
   }
   return (
