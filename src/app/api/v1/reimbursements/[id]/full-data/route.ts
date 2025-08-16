@@ -12,7 +12,7 @@ export const GET = async (
   const { data, error } = await supabase
     .from("reimbursement_notes")
     .select(
-      "*, reimbursement_items(*), m_category(*), issuer_emp_data:txEmployeeCode(*), admin_emp_data:txChangedBy(*)"
+      "*, reimbursement_items(*), m_category(*), issuer_emp_data:txEmployeeCode(*, m_bank(*)), admin_emp_data:txChangedBy(*)"
     )
     .eq("txReimbursementNoteID", urlParams.id);
 
