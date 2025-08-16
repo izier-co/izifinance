@@ -256,6 +256,7 @@ export function ReimbursementDropdownMenu({
           onOpenChange={_descriptionModalCleanup}
         >
           <DropdownMenuItem
+            className={isChanged ? "pointer-events-none opacity-50" : ""}
             // prevents weird closing bug when opening
             onSelect={(e) => {
               e.preventDefault();
