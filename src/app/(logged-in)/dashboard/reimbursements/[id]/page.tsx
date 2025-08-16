@@ -16,7 +16,10 @@ import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
 
 async function getData(id: string) {
-  const data = await fetchJSONAPI("GET", `/api/v1/reimbursements/${id}/notes`);
+  const data = await fetchJSONAPI(
+    "GET",
+    `/api/v1/reimbursements/${id}/full-data`
+  );
   const json = await data.json();
   return json["data"][0];
 }
@@ -70,40 +73,36 @@ function ReimbursementTable({ id }: { id: string }) {
           <TableCell>{data["txDescriptionDetails"]}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Recipient Account</TableCell>
-          <TableCell>{data["txRecipientAccount"]}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Bank Type Code</TableCell>
-          <TableCell>{data["inBankTypeCode"]}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Recipient Company Code</TableCell>
-          <TableCell>{data["inRecipientCompanyCode"]}</TableCell>
+          <TableCell>Bank Name</TableCell>
+          <TableCell>
+            {data["issuer_emp_data"]["m_bank"]["txBankName"]}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Account Code</TableCell>
-          <TableCell>{data["txBankAccountCode"]}</TableCell>
+          <TableCell>{data["issuer_emp_data"]["txBankAccountCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Change Reason</TableCell>
           <TableCell>{data["txChangeReason"]}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Employee Code</TableCell>
-          <TableCell>{data["txEmployeeCode"]}</TableCell>
+          <TableCell>Issued By</TableCell>
+          <TableCell>{data["issuer_emp_data"]["txFullName"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Changed By</TableCell>
-          <TableCell>{data["txChangedBy"]}</TableCell>
+          <TableCell>{data["admin_emp_data"]["txFullName"]}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Total Reimbursement</TableCell>
-          <TableCell>{data["dcNominalReimbursement"]}</TableCell>
+          <TableCell>Total Reimbursement Value</TableCell>
+          <TableCell>
+            {data["txCurrency"]} {data["dcNominalReimbursement"]}
+          </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell>Category ID</TableCell>
-          <TableCell>{data["inCategoryID"]}</TableCell>
+          <TableCell>Category</TableCell>
+          <TableCell>{data["m_category"]["txCategoryName"]}</TableCell>
         </TableRow>
       </TableBody>
     </Table>
