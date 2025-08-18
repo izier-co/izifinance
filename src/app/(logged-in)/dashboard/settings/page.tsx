@@ -54,9 +54,6 @@ export default function Page() {
   const emailMutation = useMutation({
     mutationKey: ["change-email"],
     mutationFn: _changeEmail,
-    onSuccess: () => {
-      emailForm.reset();
-    },
     onError: (error) => {
       emailForm.setError("root", {
         message: error.message,
@@ -78,9 +75,6 @@ export default function Page() {
   const passwordMutation = useMutation({
     mutationKey: ["change-password"],
     mutationFn: _changePassword,
-    onSuccess: () => {
-      emailForm.reset();
-    },
     onError: (error) => {
       passwordForm.setError("root", {
         message: error.message,
