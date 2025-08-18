@@ -206,7 +206,11 @@ export default function Page() {
                       <FormItem>
                         <FormLabel className="capitalize">Password :</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input
+                            type="password"
+                            autoComplete="new-password"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
