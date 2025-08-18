@@ -37,11 +37,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Row } from "@tanstack/react-table";
-import { Loader2, MoreHorizontal } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
+  const [showPassword, setShowPassword] = useState(false);
+
   const [emailOpen, setEmailOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   async function _changeEmail(data: EmailFormSchema) {
@@ -108,6 +110,19 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
     passwordMutation.mutate(data);
   }
 
+  function _emailModalCleanup(open: boolean) {
+    if (!open) {
+      setEmailOpen(false);
+    }
+    emailForm.clearErrors();
+  }
+  function _passwordModalCleanup(open: boolean) {
+    if (!open) {
+      setPasswordOpen(false);
+    }
+    passwordForm.clearErrors();
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -146,11 +161,12 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Dialog open={emailOpen}>
+          <Dialog open={emailOpen} onOpenChange={_emailModalCleanup}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();
+                  setEmailOpen(true);
                 }}
               >
                 Change Email
@@ -199,7 +215,7 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
               </Form>
             </DialogContent>
           </Dialog>
-          <Dialog open={passwordOpen}>
+          <Dialog open={passwordOpen} onOpenChange={_passwordModalCleanup}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => {
@@ -229,13 +245,28 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="capitalize">Password :</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            autoComplete="new-password"
-                            {...field}
-                          />
-                        </FormControl>
+                        <div className="flex flex-row gap-1 justify-center item-center">
+                          <FormControl>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              autoComplete="new-password"
+                              {...field}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                          >
+                            {showPassword ? (
+                              <EyeIcon className="w-4 h-4" />
+                            ) : (
+                              <EyeOffIcon className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
