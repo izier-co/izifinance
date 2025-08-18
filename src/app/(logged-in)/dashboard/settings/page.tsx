@@ -33,6 +33,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+interface ImageFormValues {
+  image: File[];
+}
+
 export default function Page() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -89,6 +93,35 @@ export default function Page() {
     passwordMutation.mutate(data);
   }
 
+  async function uploadImage(data: { image: File[] }) {
+    const formData = new FormData();
+    formData.append("image", data.image[0]);
+
+    const response = await fetchJSONAPI("POST", "/api/v1/")
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    return response.json();
+  }
+
+  const imageUploadForm = useForm<ImageFormValues>();
+
+  const imageUploadMutation = useMutation({
+    mutationFn: uploadImage,
+    onSuccess: (data) => {
+      console.log("Upload success:", data);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  function onImageSubmit(data: { image: File[] }) {
+    imageUploadMutation.mutate(data);
+  }
+
   return (
     <>
       <div className="w-auto">
@@ -110,14 +143,19 @@ export default function Page() {
                   Upload your new profile picture
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="secondary" type="button">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button type="button">Confirm</Button>
-              </DialogFooter>
+              <Form {...imageUploadForm}>
+                <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
+                  <Input type="file" accept="image/*" />
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="secondary" type="button">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">Confirm</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
         </div>
