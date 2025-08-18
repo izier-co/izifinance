@@ -97,7 +97,13 @@ export default function Page() {
     const formData = new FormData();
     formData.append("image", data.image[0]);
 
-    const response = await fetchJSONAPI("POST", "/api/v1/")
+    const response = await fetch(
+      "/api/v1/auth/update-credentials/update-avatar",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Upload failed");
@@ -110,11 +116,10 @@ export default function Page() {
 
   const imageUploadMutation = useMutation({
     mutationFn: uploadImage,
-    onSuccess: (data) => {
-      console.log("Upload success:", data);
-    },
     onError: (err) => {
-      console.error(err);
+      imageUploadForm.setError("image", {
+        message: err.message,
+      });
     },
   });
 
@@ -145,14 +150,24 @@ export default function Page() {
               </DialogHeader>
               <Form {...imageUploadForm}>
                 <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
-                  <Input type="file" accept="image/*" />
-                  <DialogFooter>
+                  <Input
+                    type="file"
+                    {...imageUploadForm.register("image")}
+                    accept="image/*"
+                  />
+                  <DialogFooter className="my-2">
                     <DialogClose asChild>
                       <Button variant="secondary" type="button">
                         Cancel
                       </Button>
                     </DialogClose>
-                    <Button type="submit">Confirm</Button>
+                    <Button type="submit">
+                      {imageUploadMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "Confirm"
+                      )}
+                    </Button>
                   </DialogFooter>
                 </form>
               </Form>
