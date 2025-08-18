@@ -1,3 +1,4 @@
+"use client";
 import {
   CommonRow,
   SortableHeader,
@@ -9,23 +10,23 @@ import { UserDropdownMenu } from "./_components/dropdown_menu";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
-    accessorKey: "createdAt",
+    accessorKey: "created_at",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daCreatedAt"));
+      const dateFromISO = new Date(row.getValue("created_at"));
       const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
     },
   },
   {
-    accessorKey: "updatedAt",
+    accessorKey: "updated_at",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daUpdatedAt"));
+      const dateFromISO = new Date(row.getValue("updated_at"));
       const localTime = dateFromISO.toLocaleString();
       return <div>{localTime}</div>;
     },
