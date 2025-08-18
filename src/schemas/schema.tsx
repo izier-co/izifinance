@@ -13,5 +13,13 @@ export const passwordSchema = z
   .min(MIN_PASSWORD_LENGTH, "Password must be at least 8 characters")
   .max(MAX_PASSWORD_LENGTH, "Password must be at most 200 characters");
 
-export type EmailSchema = z.infer<typeof emailSchema>;
-export type PasswordSchema = z.infer<typeof passwordSchema>
+export const emailFormSchema = z.object({
+  email: emailSchema,
+});
+
+export const passwordFormSchema = z.object({
+  password: passwordSchema,
+});
+
+export type EmailFormSchema = z.infer<typeof emailFormSchema>;
+export type PasswordFormSchema = z.infer<typeof passwordFormSchema>;
