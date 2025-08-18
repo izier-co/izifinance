@@ -5,7 +5,6 @@ import { fetchJSONAPI } from "@/lib/lib";
 async function getUsers() {
   const res = await fetchJSONAPI("GET", "/api/v1/auth/admin");
   const data = await res.json();
-  console.log(data["data"]["users"]);
   return data["data"]["users"];
 }
 
