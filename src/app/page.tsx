@@ -22,14 +22,11 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
+import { emailSchema, passwordSchema } from "@/schemas/schema";
 
 const loginSchema = z.object({
-  email: z.email("Invalid Email Format").nonempty("Please provide an email"),
-  password: z
-    .string()
-    .nonempty("Please provide a password")
-    .min(8, "Password must be at least 8 characters")
-    .max(200, "Password must be at most 200 characters"),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 type LoginSchema = z.infer<typeof loginSchema>;
