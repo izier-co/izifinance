@@ -28,12 +28,15 @@ import {
 } from "@/schemas/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Page() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
   async function _changeEmail(data: EmailFormSchema) {
     await fetchJSONAPI("POST", "/api/v1/auth/update-credentials", data);
     await fetchJSONAPI("POST", "/api/v1/auth/logout");
@@ -205,13 +208,28 @@ export default function Page() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="capitalize">Password :</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            autoComplete="new-password"
-                            {...field}
-                          />
-                        </FormControl>
+                        <div className="flex flex-row gap-1 justify-center item-center">
+                          <FormControl>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              autoComplete="new-password"
+                              {...field}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                          >
+                            {showPassword ? (
+                              <EyeIcon className="w-4 h-4" />
+                            ) : (
+                              <EyeOffIcon className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
