@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { fetchJSONAPI } from "@/lib/lib";
+import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import {
   EmailFormSchema,
   PasswordFormSchema,
@@ -41,9 +42,14 @@ import { EyeIcon, EyeOffIcon, Loader2, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+interface ImageFormValues {
+  image: File[];
+}
+
 export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
   const [showPassword, setShowPassword] = useState(false);
 
+  const [profileOpen, setProfileOpen] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   async function _changeEmail(data: EmailFormSchema) {
@@ -122,6 +128,50 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
     }
     passwordForm.clearErrors();
   }
+  function _profileModalCleanup(open: boolean) {
+    if (!open) {
+      setProfileOpen(false);
+    }
+    imageUploadForm.clearErrors();
+  }
+
+  async function uploadImage(data: { image: File[] }) {
+    const formData = new FormData();
+    formData.append("image", data.image[0]);
+
+    const response = await fetch(
+      `/api/v1/auth/admin/${row.getValue("id")}/update-avatar`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    return response.json();
+  }
+
+  const imageUploadForm = useForm<ImageFormValues>();
+
+  const imageUploadMutation = useMutation({
+    mutationFn: uploadImage,
+    onSuccess: () => {
+      refreshAndRevalidatePage("/dashboard", "layout");
+      setProfileOpen(false);
+    },
+    onError: (err) => {
+      imageUploadForm.setError("image", {
+        message: err.message,
+      });
+    },
+  });
+
+  function onImageSubmit(data: { image: File[] }) {
+    imageUploadMutation.mutate(data);
+  }
 
   return (
     <DropdownMenu>
@@ -133,12 +183,12 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <Dialog>
+          <Dialog open={profileOpen} onOpenChange={_profileModalCleanup}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();
-                  setEmailOpen(true);
+                  setProfileOpen(true);
                 }}
               >
                 Change Profile Picture
@@ -151,14 +201,29 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
                   Upload your new profile picture
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="secondary" type="button">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button type="button">Confirm</Button>
-              </DialogFooter>
+              <Form {...imageUploadForm}>
+                <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
+                  <Input
+                    type="file"
+                    {...imageUploadForm.register("image")}
+                    accept="image/*"
+                  />
+                  <DialogFooter className="my-2">
+                    <DialogClose asChild>
+                      <Button variant="secondary" type="button">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">
+                      {imageUploadMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        "Confirm"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
           <Dialog open={emailOpen} onOpenChange={_emailModalCleanup}>
