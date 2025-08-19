@@ -8,6 +8,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
 import { UserDropdownMenu } from "./_components/dropdown_menu";
 
+type RowWithMetadata = {
+  user_metadata?: {
+    profile_picture?: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+};
+
 export const columns: ColumnDef<CommonRow>[] = [
   {
     accessorKey: "created_at",
@@ -45,6 +53,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     accessorKey: "profile_picture",
+    accessorFn: (row: RowWithMetadata) => row.user_metadata?.profile_picture,
+    id: "profile_picture",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Profile Picture" />;
     },
@@ -62,7 +72,7 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       return <UserDropdownMenu row={row} />;
     },
   },
