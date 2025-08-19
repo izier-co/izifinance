@@ -15,8 +15,26 @@ export async function POST(
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
+    const { data: oldData, error: dataFetchError } =
+      await supabase.auth.admin.getUserById(params.id);
+
+    if (dataFetchError) {
+      return NextResponse.json(
+        { error: dataFetchError.message },
+        { status: 500 }
+      );
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = `profile-pictures/avatar-${params.id}`;
+    const filename = `profile-pictures/avatar-${params.id}-${Date.now()}`;
+
+    const { error: deleteError } = await supabase.storage
+      .from("profile-pictures")
+      .remove([oldData.user.user_metadata.profile_image]);
+
+    if (deleteError) {
+      return NextResponse.json({ error: deleteError.message }, { status: 500 });
+    }
 
     const { data, error } = await supabase.storage
       .from("profile-pictures")
@@ -37,6 +55,7 @@ export async function POST(
       params.id,
       {
         user_metadata: {
+          profile_image: filename,
           profile_picture: publicUrl,
         },
       }
