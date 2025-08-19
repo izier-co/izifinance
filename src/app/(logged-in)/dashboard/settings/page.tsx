@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { fetchJSONAPI } from "@/lib/lib";
+import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import {
   emailFormSchema,
   EmailFormSchema,
@@ -40,6 +41,7 @@ interface ImageFormValues {
 export default function Page() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   async function _changeEmail(data: EmailFormSchema) {
     await fetchJSONAPI("POST", "/api/v1/auth/update-credentials", data);
@@ -116,6 +118,10 @@ export default function Page() {
 
   const imageUploadMutation = useMutation({
     mutationFn: uploadImage,
+    onSuccess: () => {
+      refreshAndRevalidatePage("/dashboard", "layout");
+      setProfileOpen(false);
+    },
     onError: (err) => {
       imageUploadForm.setError("image", {
         message: err.message,
@@ -125,6 +131,13 @@ export default function Page() {
 
   function onImageSubmit(data: { image: File[] }) {
     imageUploadMutation.mutate(data);
+  }
+
+  function _profileModalCleanup(open: boolean) {
+    if (!open) {
+      setProfileOpen(false);
+    }
+    imageUploadForm.clearErrors();
   }
 
   return (
@@ -137,9 +150,16 @@ export default function Page() {
             <h2>Profile Picture</h2>
             <p className="text-sm">Update Profile Picture</p>
           </div>
-          <Dialog>
+          <Dialog open={profileOpen} onOpenChange={_profileModalCleanup}>
             <DialogTrigger asChild>
-              <Button className="ml-auto my-auto">Upload</Button>
+              <Button
+                onClick={() => {
+                  setProfileOpen(true);
+                }}
+                className="ml-auto my-auto"
+              >
+                Upload
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
