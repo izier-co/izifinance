@@ -29,7 +29,7 @@ const reimbursementSchema = z.object({
     .string()
     .length(9)
     .regex(/^[a-zA-Z0-9]+$/),
-  inCategoryID: z.number().positive().int(),
+  txCategoryID: z.string(),
   txCurrency: z
     .string()
     .length(
@@ -278,7 +278,7 @@ export const POST = async (req: NextRequest) => {
         .values({
           uiIdempotencyKey: idempotencyKey,
           txDescriptionDetails: noteItem.txDescriptionDetails,
-          inCategoryID: noteItem.inCategoryID,
+          txCategoryID: noteItem.txCategoryID,
           txEmployeeCode: noteItem.txEmployeeCode,
           txCurrency: noteItem.txCurrency,
         })

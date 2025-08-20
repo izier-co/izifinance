@@ -19,7 +19,7 @@ export const GET = async (
   const { data, error } = await supabase
     .from("m_category")
     .select(tableFields)
-    .eq("inCategoryID", params.id);
+    .eq("txCategoryID", params.id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -49,7 +49,7 @@ export const DELETE = async (
   const { data, error } = await supabase
     .from("m_category")
     .update({ boActive: false, boStatus: false })
-    .eq("inCategoryID", idParam)
+    .eq("txCategoryID", idParam)
     .select();
 
   if (error)
