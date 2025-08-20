@@ -54,7 +54,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "inRoleCode",
+    accessorKey: "txRoleCode",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Role Code" />;
     },
@@ -93,7 +93,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "inBankTypeCode",
+    accessorKey: "txBankTypeCode",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Type" />;
     },

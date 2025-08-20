@@ -7,10 +7,7 @@ export const reimbursementSchema = z.object({
     .string()
     .length(constValues.currencyCodeStringLength, "Invalid Currency")
     .transform((str) => str.toUpperCase()),
-  inCategoryID: z.coerce
-    .number("Invalid Input")
-    .positive("Invalid Input")
-    .int("Integer values only"),
+  txCategoryID: z.string("Invalid Value"),
 });
 
 export const reimbursementItemSchema = z

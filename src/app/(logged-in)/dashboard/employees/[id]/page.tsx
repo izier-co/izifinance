@@ -79,7 +79,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Religion Code</TableCell>
-          <TableCell>{data["inReligionCode"]}</TableCell>
+          <TableCell>{data["txReligionCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Tax Number</TableCell>
@@ -101,7 +101,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Role Code</TableCell>
-          <TableCell>{data["inRoleCode"]}</TableCell>
+          <TableCell>{data["txRoleCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Active Status</TableCell>
@@ -111,7 +111,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Employment Type</TableCell>
-          <TableCell>{data["inEmploymentTypeCode"]}</TableCell>
+          <TableCell>{data["txEmploymentTypeCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Employee Code</TableCell>
@@ -119,7 +119,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Company Name</TableCell>
-          <TableCell>{data["inCompanyCode"]}</TableCell>
+          <TableCell>{data["txCompanyCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Phone Number</TableCell>
@@ -131,7 +131,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Bank Type</TableCell>
-          <TableCell>{data["inBankTypeCode"]}</TableCell>
+          <TableCell>{data["txBankTypeCode"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Account Number</TableCell>

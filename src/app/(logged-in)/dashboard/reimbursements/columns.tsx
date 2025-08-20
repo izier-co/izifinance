@@ -72,7 +72,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "inCategoryID",
+    accessorKey: "txCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category" />;
     },
@@ -82,7 +82,7 @@ export const columns: ColumnDef<CommonRow>[] = [
           row={row}
           queryKey={["get-categories"]}
           queryUrl="/api/v1/categories"
-          fieldKey="inCategoryID"
+          fieldKey="txCategoryID"
           targetFieldKey="txCategoryName"
         />
       );

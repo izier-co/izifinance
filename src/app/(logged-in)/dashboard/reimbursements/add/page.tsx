@@ -186,7 +186,7 @@ export default function Page() {
 
             <FormField
               control={reimbursementForm.control}
-              name="inCategoryID"
+              name="txCategoryID"
               render={({ field }) => {
                 return (
                   <FormItem className="my-3">

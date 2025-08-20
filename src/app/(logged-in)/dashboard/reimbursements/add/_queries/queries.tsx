@@ -75,7 +75,7 @@ export function useCategoryQuery() {
       return fetchCombobox({
         url: "/api/v1/categories",
         labelProperty: "txCategoryName",
-        valueProperty: "inCategoryID",
+        valueProperty: "txCategoryID",
       });
     },
   });

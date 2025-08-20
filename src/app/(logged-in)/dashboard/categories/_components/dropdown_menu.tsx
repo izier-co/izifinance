@@ -56,7 +56,7 @@ export function CategoryDropdownMenu({
   async function _deleteCategory() {
     await fetchJSONAPI(
       "DELETE",
-      `/api/v1/categories/${row.getValue("inCategoryID")}`
+      `/api/v1/categories/${row.getValue("txCategoryID")}`
     );
   }
 

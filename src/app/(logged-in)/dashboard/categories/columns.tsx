@@ -29,7 +29,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "inCategoryID",
+    accessorKey: "txCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category ID" />;
     },
