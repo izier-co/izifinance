@@ -60,13 +60,18 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "boActive", // and boStatus
+    id: "status",
+    accessorFn: (row) => [row.boActive, row.boStatus],
     header: ({ column }) => {
       return <SortableHeader column={column} title="Employment Status" />;
     },
-    cell: ({ row }) => {
-      const booleanData = row.getValue("boActive") as boolean;
-      return booleanToString(booleanData, "Active", "Inactive");
+    cell: (info) => {
+      const arr = info.getValue() as Array<boolean>;
+      if (arr[0] !== arr[1]) {
+        return <>Error</>;
+      }
+
+      return booleanToString(arr[0], "Active", "Inactive");
     },
   },
   {
