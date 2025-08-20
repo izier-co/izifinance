@@ -50,11 +50,15 @@ function ReimbursementTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
-          <TableCell>{data["daCreatedAt"]}</TableCell>
+          <TableCell>
+            {new Date(data["daCreatedAt"]).toLocaleString()}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Updated At</TableCell>
-          <TableCell>{data["daUpdatedAt"]}</TableCell>
+          <TableCell>
+            {new Date(data["daUpdatedAt"]).toLocaleString()}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Currency</TableCell>
