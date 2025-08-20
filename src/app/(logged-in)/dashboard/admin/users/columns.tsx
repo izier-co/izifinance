@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
 import { UserDropdownMenu } from "./_components/dropdown_menu";
+import { DateCell } from "@/components/date-cell";
 
 type RowWithMetadata = {
   user_metadata?: {
@@ -23,9 +24,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("created_at"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="created_at" />;
     },
   },
   {
@@ -34,9 +33,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("updated_at"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="updated_at" />;
     },
   },
   {

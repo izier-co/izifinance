@@ -7,6 +7,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeDropdownMenu } from "./_components/dropdown_menu";
 import { booleanToString } from "@/lib/lib";
+import { DateCell } from "@/components/date-cell";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -15,9 +16,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daCreatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daCreatedAt" />;
     },
   },
   {
@@ -26,9 +25,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daUpdatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daUpdatedAt" />;
     },
   },
   {
@@ -37,9 +34,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Joined At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daJoinDate"));
-      const localTime = dateFromISO.toDateString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daJoinDate" />;
     },
   },
   {
