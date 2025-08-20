@@ -135,8 +135,8 @@ export function ReimbursementDropdownMenu({
     mutationFn: _void,
     onSuccess: () => {
       setVoidModalOpen(false);
-      table.options.meta?.triggerRefetch();
       refreshAndRevalidatePage("/dashboard");
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       voidForm.setError("changeReason", {
@@ -174,7 +174,7 @@ export function ReimbursementDropdownMenu({
   function changeDescription(data: ChangeDescriptionSchema) {
     changeDescriptionQuery.mutate(data);
   }
-  // refactor merge
+
   function _approvalModalCleanup(open: boolean) {
     if (!open) {
       setApprovalModalOpen(false);

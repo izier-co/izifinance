@@ -14,7 +14,6 @@ import { use } from "react";
 async function getData(id: string) {
   const data = await fetchJSONAPI("GET", `/api/v1/employees/${id}`);
   const json = await data.json();
-  console.log(json["data"][0]);
   return json["data"][0];
 }
 

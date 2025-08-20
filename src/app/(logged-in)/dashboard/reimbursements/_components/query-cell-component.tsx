@@ -21,7 +21,7 @@ export function QueryCell({
 }): ReactNode {
   const query = useQuery({
     queryKey: queryKey,
-    queryFn: async (): Promise<Array<Record<string, string | number>>> => {
+    queryFn: async (): Promise<CommonRow[]> => {
       const res = await fetchJSONAPI("GET", queryUrl);
       const json = await res.json();
       return json.data;
@@ -36,7 +36,7 @@ export function QueryCell({
   if (foreignFieldKey) accessorKey = foreignFieldKey;
 
   const name = query.data?.find(
-    (obj: Record<string, string | number>) => obj[accessorKey] === rowValue
+    (obj: CommonRow) => obj[accessorKey] === rowValue
   );
   if (name === undefined) {
     return "Unavailable";
