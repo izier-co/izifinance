@@ -52,88 +52,6 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
-  async function _changeEmail(data: EmailFormSchema) {
-    await fetchJSONAPI(
-      "POST",
-      `/api/v1/auth/admin/${row.getValue("id")}`,
-      data
-    );
-  }
-  async function _changePassword(data: PasswordFormSchema) {
-    await fetchJSONAPI(
-      "POST",
-      `/api/v1/auth/admin/${row.getValue("id")}`,
-      data
-    );
-  }
-  const emailForm = useForm<EmailFormSchema>({
-    resolver: zodResolver(emailFormSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  const emailMutation = useMutation({
-    mutationKey: ["change-email"],
-    mutationFn: _changeEmail,
-    onSuccess: () => {
-      emailForm.reset();
-      setEmailOpen(false);
-    },
-    onError: (error) => {
-      emailForm.setError("root", {
-        message: error.message,
-      });
-    },
-  });
-
-  function submitEmail(data: EmailFormSchema) {
-    emailMutation.mutate(data);
-  }
-
-  const passwordForm = useForm<PasswordFormSchema>({
-    resolver: zodResolver(passwordFormSchema),
-    defaultValues: {
-      password: "",
-    },
-  });
-
-  const passwordMutation = useMutation({
-    mutationKey: ["change-password"],
-    mutationFn: _changePassword,
-    onSuccess: () => {
-      passwordForm.reset();
-      setPasswordOpen(false);
-    },
-    onError: (error) => {
-      passwordForm.setError("root", {
-        message: error.message,
-      });
-    },
-  });
-
-  function submitPassword(data: PasswordFormSchema) {
-    passwordMutation.mutate(data);
-  }
-
-  function _emailModalCleanup(open: boolean) {
-    if (!open) {
-      setEmailOpen(false);
-    }
-    emailForm.clearErrors();
-  }
-  function _passwordModalCleanup(open: boolean) {
-    if (!open) {
-      setPasswordOpen(false);
-    }
-    passwordForm.clearErrors();
-  }
-  function _profileModalCleanup(open: boolean) {
-    if (!open) {
-      setProfileOpen(false);
-    }
-    imageUploadForm.clearErrors();
-  }
 
   async function uploadImage(data: { image: File[] }) {
     const formData = new FormData();
@@ -154,7 +72,72 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
     return response.json();
   }
 
+  async function _changeEmail(data: EmailFormSchema) {
+    const res = await fetchJSONAPI(
+      "POST",
+      `/api/v1/auth/admin/${row.getValue("id")}`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
+  }
+  async function _changePassword(data: PasswordFormSchema) {
+    const res = await fetchJSONAPI(
+      "POST",
+      `/api/v1/auth/admin/${row.getValue("id")}`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
+  }
+
   const imageUploadForm = useForm<ImageFormValues>();
+
+  const emailForm = useForm<EmailFormSchema>({
+    resolver: zodResolver(emailFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const passwordForm = useForm<PasswordFormSchema>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      password: "",
+    },
+  });
+
+  const emailMutation = useMutation({
+    mutationKey: ["change-email"],
+    mutationFn: _changeEmail,
+    onSuccess: () => {
+      emailForm.reset();
+      setEmailOpen(false);
+    },
+    onError: (error) => {
+      emailForm.setError("root", {
+        message: error.message,
+      });
+    },
+  });
+
+  const passwordMutation = useMutation({
+    mutationKey: ["change-password"],
+    mutationFn: _changePassword,
+    onSuccess: () => {
+      passwordForm.reset();
+      setPasswordOpen(false);
+    },
+    onError: (error) => {
+      passwordForm.setError("root", {
+        message: error.message,
+      });
+    },
+  });
 
   const imageUploadMutation = useMutation({
     mutationFn: uploadImage,
@@ -169,8 +152,37 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
     },
   });
 
-  function onImageSubmit(data: { image: File[] }) {
+  function submitEmail(data: EmailFormSchema) {
+    emailMutation.mutate(data);
+  }
+
+  function submitPassword(data: PasswordFormSchema) {
+    passwordMutation.mutate(data);
+  }
+
+  function submitImage(data: { image: File[] }) {
     imageUploadMutation.mutate(data);
+  }
+
+  function _emailModalCleanup(open: boolean) {
+    if (!open) {
+      setEmailOpen(false);
+    }
+    emailForm.clearErrors();
+  }
+
+  function _passwordModalCleanup(open: boolean) {
+    if (!open) {
+      setPasswordOpen(false);
+    }
+    passwordForm.clearErrors();
+  }
+
+  function _profileModalCleanup(open: boolean) {
+    if (!open) {
+      setProfileOpen(false);
+    }
+    imageUploadForm.clearErrors();
   }
 
   return (
@@ -202,7 +214,7 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
                 </DialogDescription>
               </DialogHeader>
               <Form {...imageUploadForm}>
-                <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
+                <form onSubmit={imageUploadForm.handleSubmit(submitImage)}>
                   <Input
                     type="file"
                     {...imageUploadForm.register("image")}

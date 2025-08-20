@@ -20,7 +20,7 @@ async function getDailyReimbursementData(): Promise<number> {
   const res = await fetchJSONAPI("GET", url + searchParams);
   if (!res.ok) {
     const json = await res.json();
-    throw new Error(json);
+    throw new Error(json.error);
   }
   const json: FetchData = await res.json();
   return json.data.length;
@@ -33,7 +33,7 @@ async function getPendingReimbursements(): Promise<number> {
   const res = await fetchJSONAPI("GET", url + searchParams);
   if (!res.ok) {
     const json = await res.json();
-    throw new Error(json);
+    throw new Error(json.error);
   }
   const json: FetchData = await res.json();
   return json.data.length;
@@ -47,7 +47,7 @@ async function getPendingReimbursementValue(): Promise<number> {
   const res = await fetchJSONAPI("GET", url + searchParams);
   if (!res.ok) {
     const json = await res.json();
-    throw new Error(json);
+    throw new Error(json.error);
   }
   const json: FetchData = await res.json();
   let totalPending = 0;

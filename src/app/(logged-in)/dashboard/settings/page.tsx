@@ -106,12 +106,12 @@ export default function Page() {
         body: formData,
       }
     );
-
+    const json = await response.json();
     if (!response.ok) {
-      throw new Error("Upload failed");
+      throw new Error(json.error);
     }
 
-    return response.json();
+    return json;
   }
 
   const imageUploadForm = useForm<ImageFormValues>();
@@ -170,10 +170,21 @@ export default function Page() {
               </DialogHeader>
               <Form {...imageUploadForm}>
                 <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
-                  <Input
-                    type="file"
-                    {...imageUploadForm.register("image")}
-                    accept="image/*"
+                  <FormField
+                    control={imageUploadForm.control}
+                    name="image"
+                    render={() => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            {...imageUploadForm.register("image")}
+                            accept="image/*"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                   <DialogFooter className="my-2">
                     <DialogClose asChild>

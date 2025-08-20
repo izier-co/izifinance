@@ -76,7 +76,11 @@ export default function Page() {
       return;
     }
 
-    await fetchJSONAPI("POST", "/api/v1/categories", categoryData);
+    const res = await fetchJSONAPI("POST", "/api/v1/categories", categoryData);
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
   return (
     <div className="flex  w-full items-center justify-center p-6 md:p-10">
