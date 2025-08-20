@@ -74,7 +74,7 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
 
   async function _changeEmail(data: EmailFormSchema) {
     const res = await fetchJSONAPI(
-      "POST",
+      "PUT",
       `/api/v1/auth/admin/${row.getValue("id")}`,
       data
     );
@@ -85,7 +85,7 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
   }
   async function _changePassword(data: PasswordFormSchema) {
     const res = await fetchJSONAPI(
-      "POST",
+      "PUT",
       `/api/v1/auth/admin/${row.getValue("id")}`,
       data
     );

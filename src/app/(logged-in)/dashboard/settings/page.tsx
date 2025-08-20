@@ -44,12 +44,12 @@ export default function Page() {
   const [profileOpen, setProfileOpen] = useState(false);
 
   async function _changeEmail(data: EmailFormSchema) {
-    await fetchJSONAPI("POST", "/api/v1/auth/update-credentials", data);
+    await fetchJSONAPI("PUT", "/api/v1/auth/update-credentials", data);
     await fetchJSONAPI("POST", "/api/v1/auth/logout");
     router.replace("/");
   }
   async function _changePassword(data: PasswordFormSchema) {
-    await fetchJSONAPI("POST", "/api/v1/auth/update-credentials", data);
+    await fetchJSONAPI("PUT", "/api/v1/auth/update-credentials", data);
     await fetchJSONAPI("POST", "/api/v1/auth/logout");
     router.replace("/");
   }
