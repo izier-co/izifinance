@@ -24,16 +24,8 @@ export const reimbursementItemsInDtDwhRelations = relations(
 
 export const reimbursementNotesInDtDwhRelations = relations(
   reimbursementNotesInDtDwh,
-  ({ one, many }) => ({
+  ({ many }) => ({
     reimbursementItemsInDtDwhs: many(reimbursementItemsInDtDwh),
-    mBankInDtDwh: one(mBankInDtDwh, {
-      fields: [reimbursementNotesInDtDwh.inBankTypeCode],
-      references: [mBankInDtDwh.inBankTypeCode],
-    }),
-    mCompanyInDtDwh: one(mCompanyInDtDwh, {
-      fields: [reimbursementNotesInDtDwh.inRecipientCompanyCode],
-      references: [mCompanyInDtDwh.inCompanyCode],
-    }),
   })
 );
 
