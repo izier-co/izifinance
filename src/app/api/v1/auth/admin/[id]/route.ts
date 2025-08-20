@@ -17,7 +17,7 @@ const schema = z
     }
   );
 
-export async function POST(
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
 ) {

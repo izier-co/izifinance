@@ -17,7 +17,7 @@ const schema = z
     }
   );
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const body = await req.json();
   const parsedBody = schema.safeParse(body);
   if (parsedBody.error) {
