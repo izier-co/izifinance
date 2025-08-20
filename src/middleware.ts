@@ -39,14 +39,13 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (error.name === "AuthSessionMissingError") {
+  } catch (error) {
+    if ((error as Error).name === "AuthSessionMissingError") {
       return NextResponse.redirect(new URL("/", req.url));
     } else {
       return NextResponse.json(
-        { error: error.message },
-        { status: error.status }
+        { error: (error as Error).message },
+        { status: 401 }
       );
     }
   }
