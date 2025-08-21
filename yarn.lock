@@ -3537,9 +3537,9 @@ dotenv@^16.5.0:
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.6.1.tgz"
   integrity sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==
 
-drizzle-kit@^0.31.1:
+drizzle-kit@^0.31.4:
   version "0.31.4"
-  resolved "https://registry.npmjs.org/drizzle-kit/-/drizzle-kit-0.31.4.tgz"
+  resolved "https://registry.yarnpkg.com/drizzle-kit/-/drizzle-kit-0.31.4.tgz#b4a23fae0ab8d64b262184aaf07f8cbdc2222751"
   integrity sha512-tCPWVZWZqWVx2XUsVpJRnH9Mx0ClVOf5YUHerZ5so1OKSlqww4zy1R5ksEdGRcO3tM3zj0PYN6V48TbQCL1RfA==
   dependencies:
     "@drizzle-team/brocli" "^0.10.2"
