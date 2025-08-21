@@ -21,5 +21,11 @@ export const passwordFormSchema = z.object({
   password: passwordSchema,
 });
 
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
 export type EmailFormSchema = z.infer<typeof emailFormSchema>;
 export type PasswordFormSchema = z.infer<typeof passwordFormSchema>;
+export type LoginSchema = z.infer<typeof loginSchema>;

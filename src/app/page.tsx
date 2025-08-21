@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { EyeOffIcon, EyeIcon, Loader2 } from "lucide-react";
 
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -22,14 +21,7 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import { emailSchema, passwordSchema } from "@/schemas/schema";
-
-const loginSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-});
-
-type LoginSchema = z.infer<typeof loginSchema>;
+import { LoginSchema, loginSchema } from "@/schemas/schema";
 
 export default function Home() {
   const form = useForm<LoginSchema>({
