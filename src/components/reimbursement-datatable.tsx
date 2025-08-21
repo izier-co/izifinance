@@ -41,7 +41,9 @@ export function ReimbursementDatatable<TData, TValue>({
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "daCreatedAt", desc: true },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -169,7 +171,7 @@ export function ReimbursementDatatable<TData, TValue>({
     <>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter employee ID..."
+          placeholder="Sort by admin ID that approved the note"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
           className="max-w-sm"
