@@ -96,7 +96,11 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Changed By</TableCell>
-          <TableCell>{data["admin_emp_data"]["txFullName"]}</TableCell>
+          <TableCell>
+            {data["admin_emp_data"]
+              ? data["admin_emp_data"]["txFullName"]
+              : "None"}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Total Reimbursement Value</TableCell>
