@@ -143,8 +143,8 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-row">
-      <div className="w-1/2">
+    <div className="flex flex-col sm:flex-row">
+      <div className="w-full sm:w-1/2">
         <h1 className="">Add Reimbursement</h1>
         <Form {...reimbursementForm}>
           <form
@@ -218,7 +218,8 @@ export default function Page() {
           </form>
         </Form>
       </div>
-      <div className="w-1/2 px-6">
+      <hr className="block sm:hidden my-4" />
+      <div className="w-full sm:w-1/2 px-6">
         <Dialog open={open} onOpenChange={handleDialogChange}>
           <DialogTrigger className="flex" asChild>
             <Button className="ml-auto mb-2">Add Items</Button>
