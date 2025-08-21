@@ -116,6 +116,7 @@ export function UserDropdownMenu({ row }: { row: Row<CommonRow> }) {
     mutationFn: _changeEmail,
     onSuccess: () => {
       emailForm.reset();
+      refreshAndRevalidatePage("/");
       setEmailOpen(false);
     },
     onError: (error) => {
