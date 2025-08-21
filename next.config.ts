@@ -1,4 +1,4 @@
-import MillionLint from "@million/lint";
+// import MillionLint from "@million/lint";
 import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
