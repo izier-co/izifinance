@@ -56,7 +56,7 @@ export default function Page() {
   }
 
   async function _addUser(newUserData: AddUserSchema) {
-    const res = await fetchJSONAPI("POST", "/api/v1/auth/admin/users", newUserData);
+    const res = await fetchJSONAPI("POST", "/api/v1/auth/admin", newUserData);
     if (!res.ok) {
       const json = await res.json();
       throw new Error(json.error);
