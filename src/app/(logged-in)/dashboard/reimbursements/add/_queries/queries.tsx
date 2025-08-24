@@ -1,7 +1,6 @@
 "use client";
 
-import { ComboboxItem } from "@/components/form-combobox";
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchCombobox } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { ReimbursementItemSchema, ReimbursementSchema } from "../schemas";
 import { getCookies } from "@/lib/server-lib";
@@ -31,41 +30,6 @@ export async function addReimbursement({
     body: JSON.stringify(payload),
   });
   return await res.json();
-}
-
-async function fetchCombobox(fetchParams: {
-  url: string;
-  labelProperty: string;
-  valueProperty: string;
-}): Promise<Array<ComboboxItem>> {
-  let data: Array<Record<string, string>> = [];
-  let pageNum = 1;
-  while (true) {
-    const searchParams = new URLSearchParams({
-      fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
-      paginationPage: pageNum.toString(),
-    }).toString();
-    const urlWithParams = fetchParams.url + "?" + searchParams;
-    const res = await fetchJSONAPI("GET", urlWithParams);
-    if (res.ok) {
-      const json = await res.json();
-      data = data.concat(json.data);
-      pageNum++;
-      if (json.pagination.isLastPage) {
-        break;
-      }
-    } else {
-      break;
-    }
-  }
-
-  return data.map(
-    (item: Record<string, string | number>) =>
-      ({
-        label: item[fetchParams.labelProperty],
-        value: item[fetchParams.valueProperty],
-      }) as ComboboxItem
-  );
 }
 
 export function useCategoryQuery() {
