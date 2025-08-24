@@ -18,7 +18,7 @@ export function useBankQuery() {
       return fetchCombobox({
         url: "/api/v1/banks",
         labelProperty: "txBankName",
-        valueProperty: "txBankID",
+        valueProperty: "txBankTypeCode",
       });
     },
   });
@@ -31,7 +31,7 @@ export function useCompanyQuery() {
       return fetchCombobox({
         url: "/api/v1/companies",
         labelProperty: "txCompanyName",
-        valueProperty: "txCompanyID",
+        valueProperty: "txCompanyTypeCode",
       });
     },
   });
@@ -44,7 +44,7 @@ export function useReligionQuery() {
       return fetchCombobox({
         url: "/api/v1/religions",
         labelProperty: "txReligionName",
-        valueProperty: "txReligionID",
+        valueProperty: "txReligionCode",
       });
     },
   });
@@ -56,8 +56,8 @@ export function useRoleQuery() {
     queryFn: () => {
       return fetchCombobox({
         url: "/api/v1/roles",
-        labelProperty: "txRoleName",
-        valueProperty: "txRoleID",
+        labelProperty: "txLongRoleName",
+        valueProperty: "txRoleCode",
       });
     },
   });
@@ -68,8 +68,8 @@ export function useEmploymentQuery() {
     queryFn: () => {
       return fetchCombobox({
         url: "/api/v1/employments",
-        labelProperty: "txEmploymentName",
-        valueProperty: "txEmploymentID",
+        labelProperty: "txEmploymentTypeName",
+        valueProperty: "txEmploymentCode",
       });
     },
   });
