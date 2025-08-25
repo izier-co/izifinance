@@ -29,8 +29,6 @@ const editEmployeeSchema = z.object({
     .string()
     .nonempty()
     .refine((num) => isValidInt(num)),
-  boActive: z.boolean(),
-  boStatus: z.boolean(),
 });
 
 export const GET = async (
