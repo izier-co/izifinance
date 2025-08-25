@@ -34,23 +34,28 @@ export default function Page() {
   const { id } = useParams();
   const editEmployeeForm = useForm({
     resolver: zodResolver(editEmployeeSchema),
-    defaultValues: {
-      txFullName: "",
-      daDateOfBirth: "",
-      txHomeAddress: "",
-      txReligionCode: "",
-      txTaxNumber: "",
-      boMarriageStatus: false,
-      inNumOfDeps: 0,
-      flSalary: 0,
-      txRoleCode: "",
-      txEmploymentTypeCode: "",
-      txCompanyCode: "",
-      txPhoneNumber: "",
-      txEmailAddress: "",
-      txBankTypeCode: "",
-      txBankAccountNumber: "",
+    defaultValues: async () => {
+      const res = await fetchJSONAPI("GET", `/api/v1/employees/${id}`);
+      const data = await res.json();
+      return data.data[0];
     },
+    // defaultValues: {
+    //   txFullName: "",
+    //   daDateOfBirth: "",
+    //   txHomeAddress: "",
+    //   txReligionCode: "",
+    //   txTaxNumber: "",
+    //   boMarriageStatus: false,
+    //   inNumOfDeps: 0,
+    //   flSalary: 0,
+    //   txRoleCode: "",
+    //   txEmploymentTypeCode: "",
+    //   txCompanyCode: "",
+    //   txPhoneNumber: "",
+    //   txEmailAddress: "",
+    //   txBankTypeCode: "",
+    //   txBankAccountNumber: "",
+    // },
   });
 
   async function editEmployee(employeeData: EditEmployeeSchema) {
@@ -88,6 +93,10 @@ export default function Page() {
 
   function submitForm(editEmployeeData: EditEmployeeSchema) {
     submitQuery.mutate(editEmployeeData);
+  }
+
+  if (editEmployeeForm.formState.isLoading) {
+    return <p>Loading...</p>;
   }
   return (
     <div className="">
