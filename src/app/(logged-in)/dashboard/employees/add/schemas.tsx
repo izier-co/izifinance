@@ -33,7 +33,7 @@ export const addEmployeeSchema = z
       .string()
       .nonempty("Input can't be empty")
       .refine((num) => isValidInt(num), "Must be numerical string"),
-    txEmailAddress: z.email(),
+    txEmailAddress: z.email("Must be valid email"),
     txBankTypeCode: z.string(),
     txBankAccountNumber: z
       .string()
@@ -43,8 +43,8 @@ export const addEmployeeSchema = z
   .transform((obj) => {
     return {
       ...obj,
-      inYear: obj.daJoinDate.getFullYear(),
-      inMonth: obj.daJoinDate.getMonth(),
+      inYear: String(obj.daJoinDate.getFullYear()),
+      inMonth: String(obj.daJoinDate.getMonth()).padStart(2, "0"), // pad to make 1 to 01
     };
   });
 
