@@ -69,7 +69,7 @@ export function useEmploymentQuery() {
       return fetchCombobox({
         url: "/api/v1/employments",
         labelProperty: "txEmploymentTypeName",
-        valueProperty: "txEmploymentCode",
+        valueProperty: "txEmploymentTypeCode",
       });
     },
   });
