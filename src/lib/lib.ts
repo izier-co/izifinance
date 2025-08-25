@@ -123,22 +123,7 @@ export function booleanToString(
 
 export function removeByKey(data: object): object {
   const jsonString = JSON.stringify(data, (key, value) => {
-    if (key === "uiReimbursementID") {
-      return undefined;
-    }
-    if (key === "uiBankId") {
-      return undefined;
-    }
-    if (key === "uiCompanyId") {
-      return undefined;
-    }
-    if (key === "uiEmployeeId") {
-      return undefined;
-    }
-    if (key === "uiReimbursementItemID") {
-      return undefined;
-    }
-    if (key === "uiCategoryID") {
+    if (key.startsWith("ui") && key !== "uiUserID") {
       return undefined;
     }
     return value;
