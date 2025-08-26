@@ -29,33 +29,18 @@ import {
 } from "../../add/queries";
 import { useParams } from "next/dist/client/components/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { id } = useParams();
+  const router = useRouter();
   const editEmployeeForm = useForm({
     resolver: zodResolver(editEmployeeSchema),
     defaultValues: async () => {
       const res = await fetchJSONAPI("GET", `/api/v1/employees/${id}`);
-      const data = await res.json();
-      return data.data[0];
+      const json = await res.json();
+      return json.data[0];
     },
-    // defaultValues: {
-    //   txFullName: "",
-    //   daDateOfBirth: "",
-    //   txHomeAddress: "",
-    //   txReligionCode: "",
-    //   txTaxNumber: "",
-    //   boMarriageStatus: false,
-    //   inNumOfDeps: 0,
-    //   flSalary: 0,
-    //   txRoleCode: "",
-    //   txEmploymentTypeCode: "",
-    //   txCompanyCode: "",
-    //   txPhoneNumber: "",
-    //   txEmailAddress: "",
-    //   txBankTypeCode: "",
-    //   txBankAccountNumber: "",
-    // },
   });
 
   async function editEmployee(employeeData: EditEmployeeSchema) {
@@ -76,7 +61,7 @@ export default function Page() {
     mutationFn: editEmployee,
     onSuccess: () => {
       refreshAndRevalidatePage("/dashboard/employees");
-      editEmployeeForm.reset();
+      router.push("/dashboard/employees");
     },
     onError: (error) => {
       editEmployeeForm.setError("root", {
@@ -169,7 +154,7 @@ export default function Page() {
             name="txTaxNumber"
             render={({ field }) => (
               <FormItem className="my-3">
-                <FormLabel className="capitalize">Description :</FormLabel>
+                <FormLabel className="capitalize">Tax Number :</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

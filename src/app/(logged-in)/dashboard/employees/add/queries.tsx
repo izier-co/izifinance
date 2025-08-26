@@ -31,7 +31,7 @@ export function useCompanyQuery() {
       return fetchCombobox({
         url: "/api/v1/companies",
         labelProperty: "txCompanyName",
-        valueProperty: "txCompanyTypeCode",
+        valueProperty: "txCompanyCode",
       });
     },
   });
