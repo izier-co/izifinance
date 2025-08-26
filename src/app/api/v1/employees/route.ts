@@ -198,13 +198,13 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   let newEmpIDNumber = Number(
-    `${employeeData.inYear.slice(2, 4)}${employeeData.inMonth}001`
+    `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}001`
   );
   if (count !== null && count > 0) {
     const empCount = Number(empIDCounter[0].txEmployeeNumber);
     const empNum = String(empCount + 1).padStart(3, "0");
     newEmpIDNumber = Number(
-      `${employeeData.inYear.slice(2, 4)}${employeeData.inMonth}${empNum}`
+      `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}${empNum}`
     );
   }
   const base64chars =
