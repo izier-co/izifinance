@@ -20,15 +20,15 @@ export const editEmployeeSchema = z.object({
   boMarriageStatus: z.boolean(),
   inNumOfDeps: z.number().int("Must be an integer"),
   flSalary: z.float32("Must be a number"),
-  txRoleCode: z.string(),
-  txEmploymentTypeCode: z.string(),
-  txCompanyCode: z.string(),
+  txRoleCode: z.string().nonempty("Input can't be empty"),
+  txEmploymentTypeCode: z.string().nonempty("Input can't be empty"),
+  txCompanyCode: z.string().nonempty("Input can't be empty"),
   txPhoneNumber: z
     .string()
     .nonempty("Input can't be empty")
     .refine((num) => isValidInt(num), "Must be numerical string"),
   txEmailAddress: z.email("Must be valid email"),
-  txBankTypeCode: z.string(),
+  txBankTypeCode: z.string().nonempty("Input can't be empty"),
   txBankAccountNumber: z
     .string()
     .nonempty("Input can't be empty")
