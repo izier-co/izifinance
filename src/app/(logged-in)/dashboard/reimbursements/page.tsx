@@ -12,12 +12,8 @@ export default function Page() {
 
   return (
     <>
-      <h1 className="text-bold mb-4">Reimbursements</h1>
-      <ReimbursementDatatable
-        columns={columns}
-        refetchIndex={refetchIndex}
-        triggerRefetch={triggerRefetch}
-      />
+      <h1 className="font-bold mb-4">Reimbursements</h1>
+      <ReimbursementDatatable columns={columns} refetchIndex={refetchIndex} triggerRefetch={triggerRefetch} />
     </>
   );
 }
