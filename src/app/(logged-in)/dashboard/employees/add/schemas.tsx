@@ -4,7 +4,7 @@ import z from "zod";
 
 export const addEmployeeSchema = z
   .object({
-    daJoinDate: z.date(),
+    daJoinDate: z.iso.date(),
     txFullName: z
       .string()
       .nonempty("Input can't be empty")
@@ -24,27 +24,28 @@ export const addEmployeeSchema = z
       .nonempty("Input can't be empty")
       .refine((num) => isValidInt(num), "Must be numerical string"),
     boMarriageStatus: z.boolean().default(false),
-    inNumOfDeps: z.number().int("Must be valid Integer"),
-    flSalary: z.float32("Must be a number"),
-    txRoleCode: z.string(),
-    txEmploymentTypeCode: z.string(),
-    txCompanyCode: z.string(),
+    inNumOfDeps: z.transform(Number).pipe(z.number()),
+    flSalary: z.transform(Number).pipe(z.float32()),
+    txRoleCode: z.string().nonempty("Input can't be empty"),
+    txEmploymentTypeCode: z.string().nonempty("Input can't be empty"),
+    txCompanyCode: z.string().nonempty("Input can't be empty"),
     txPhoneNumber: z
       .string()
       .nonempty("Input can't be empty")
       .refine((num) => isValidInt(num), "Must be numerical string"),
     txEmailAddress: z.email("Must be valid email"),
-    txBankTypeCode: z.string(),
+    txBankTypeCode: z.string().nonempty("Input can't be empty"),
     txBankAccountNumber: z
       .string()
       .nonempty("Input can't be empty")
       .refine((num) => isValidInt(num), "Must be numerical string"),
   })
   .transform((obj) => {
+    const splitISODate = obj.daJoinDate.split("-");
     return {
       ...obj,
-      inYear: String(obj.daJoinDate.getFullYear()),
-      inMonth: String(obj.daJoinDate.getMonth()).padStart(2, "0"), // pad to make 1 to 01
+      inYear: splitISODate[0],
+      inMonth: splitISODate[1],
     };
   });
 

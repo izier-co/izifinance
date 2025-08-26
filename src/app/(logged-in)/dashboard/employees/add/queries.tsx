@@ -3,6 +3,7 @@ import { AddEmployeeSchema } from "./schemas";
 import { useQuery } from "@tanstack/react-query";
 
 export async function addEmployee(employee: AddEmployeeSchema) {
+  console.log("hi");
   const res = await fetchJSONAPI("POST", "/api/v1/employees", employee);
   const json = await res.json();
   if (!res.ok) {

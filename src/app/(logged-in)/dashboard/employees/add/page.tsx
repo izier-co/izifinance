@@ -34,6 +34,7 @@ export default function Page() {
     defaultValues: {
       txFullName: "",
       daDateOfBirth: "",
+      daJoinDate: "",
       txHomeAddress: "",
       txNationalIdNumber: "",
       txReligionCode: "",
@@ -90,6 +91,19 @@ export default function Page() {
                 <FormLabel className="capitalize">Full Name :</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={addEmployeeForm.control}
+            name="daJoinDate"
+            render={({ field }) => (
+              <FormItem className="my-3">
+                <FormLabel className="capitalize">Join Date :</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -158,7 +172,7 @@ export default function Page() {
             name="txTaxNumber"
             render={({ field }) => (
               <FormItem className="my-3">
-                <FormLabel className="capitalize">Description :</FormLabel>
+                <FormLabel className="capitalize">Tax Number :</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
