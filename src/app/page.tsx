@@ -111,7 +111,7 @@ export default function Home() {
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">Email</FormLabel>
+                              <FormLabel className="capitalize">Email</FormLabel>
                               <FormControl>
                                 <Input placeholder="john.doe@example.com" {...field} />
                               </FormControl>
@@ -127,7 +127,7 @@ export default function Home() {
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">Password</FormLabel>
+                              <FormLabel className="capitalize">Password</FormLabel>
                               <div className="flex flex-row gap-1 justify-center item-center">
                                 <FormControl>
                                   <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
