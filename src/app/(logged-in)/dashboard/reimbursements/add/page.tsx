@@ -177,7 +177,7 @@ export default function Page() {
       <div className="w-full sm:w-1/2 px-6">
         <Dialog open={open} onOpenChange={handleDialogChange}>
           <DialogTrigger className="flex" asChild>
-            <Button className="ml-auto mb-2 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+            <Button className="ml-auto mb-2" variant="default">
               <CirclePlus />
               Add Items
             </Button>
@@ -243,11 +243,11 @@ export default function Page() {
                 />
                 <DialogFooter className="my-2">
                   <DialogClose asChild>
-                    <Button variant="secondary" type="button" className="xl:mt-4 bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
+                    <Button variant="secondary" type="button" className="xl:mt-4 ">
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit" className="mt-4 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+                  <Button type="submit" className="mt-4" variant="default">
                     Add Items
                   </Button>
                 </DialogFooter>
