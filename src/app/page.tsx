@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2, Lock, Mail } from "lucide-react";
 
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -18,6 +17,7 @@ import { supabase } from "./api/supabase.config";
 import { emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
 import Link from "next/link";
+import { z } from "zod";
 
 const loginSchema = z.object({
   email: emailSchema,
