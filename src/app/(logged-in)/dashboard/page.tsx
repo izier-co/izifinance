@@ -79,7 +79,11 @@ export default function Page() {
       return <FetchErrorMessage message={"Something went wrong"} />;
     }
     if (dailyReimbursementQuery.data === 0) {
-      return <>No more notes since last 24 hours</>;
+      return (
+        <>
+          <span className="italic">No more notes since last 24 hours</span>
+        </>
+      );
     }
     return <>{dailyReimbursementQuery.data} more notes since last 24 hours</>;
   }
@@ -110,11 +114,7 @@ export default function Page() {
       console.error(pendingValueQuery.error.message);
       return <FetchErrorMessage message={"Something went wrong"} />;
     }
-    return (
-      <>
-        IDR {pendingValueQuery.data} worth of reimbursements are still pending
-      </>
-    );
+    return <>IDR {pendingValueQuery.data} worth of reimbursements are still pending</>;
   }
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

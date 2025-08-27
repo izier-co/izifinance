@@ -123,7 +123,7 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-extrabold text-lg">Izifinance</span>
-                  <span className="italic">v1.0.0</span>
+                  <span>v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
