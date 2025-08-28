@@ -4,6 +4,7 @@ import { JSONValue } from "postgres";
 import { getCookies, getDomain } from "./server-lib";
 import constValues from "./constants";
 import { Database } from "../database.types";
+import { ComboboxItem } from "@/components/form-combobox";
 
 export async function verifyAuthentication(
   supabase: SupabaseClient<Database, "dt_dwh">
@@ -65,6 +66,41 @@ export function sortArray(str?: string) {
   }
 }
 
+export async function fetchCombobox(fetchParams: {
+  url: string;
+  labelProperty: string;
+  valueProperty: string;
+}): Promise<Array<ComboboxItem>> {
+  let data: Array<Record<string, string>> = [];
+  let pageNum = 1;
+  while (true) {
+    const searchParams = new URLSearchParams({
+      fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
+      paginationPage: pageNum.toString(),
+    }).toString();
+    const urlWithParams = fetchParams.url + "?" + searchParams;
+    const res = await fetchJSONAPI("GET", urlWithParams);
+    if (res.ok) {
+      const json = await res.json();
+      data = data.concat(json.data);
+      pageNum++;
+      if (json.pagination.isLastPage) {
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+
+  return data.map(
+    (item: Record<string, string | number>) =>
+      ({
+        label: item[fetchParams.labelProperty],
+        value: item[fetchParams.valueProperty],
+      }) as ComboboxItem
+  );
+}
+
 export function booleanToString(
   bool: boolean,
   trueValue?: string,
@@ -87,22 +123,7 @@ export function booleanToString(
 
 export function removeByKey(data: object): object {
   const jsonString = JSON.stringify(data, (key, value) => {
-    if (key === "uiReimbursementID") {
-      return undefined;
-    }
-    if (key === "uiBankId") {
-      return undefined;
-    }
-    if (key === "uiCompanyId") {
-      return undefined;
-    }
-    if (key === "uiEmployeeId") {
-      return undefined;
-    }
-    if (key === "uiReimbursementItemID") {
-      return undefined;
-    }
-    if (key === "uiCategoryID") {
+    if (key.startsWith("ui") && key !== "uiUserID") {
       return undefined;
     }
     return value;
