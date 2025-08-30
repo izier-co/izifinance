@@ -7,7 +7,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
   reimbursement: {
-    label: "Reimbursements",
+    label: "Reimbursements:",
     color: "#ae93fa",
   },
 } satisfies ChartConfig;
@@ -53,14 +53,24 @@ export function ReimbursementChart() {
     return <>Loading</>;
   }
 
+  // ambil bulan & tahun di komponen (simple)
+  const now = new Date();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const year = now.getFullYear();
+
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart data={chartDataQuery.data}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey="day" tickLine={false} tickMargin={5} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
-      </BarChart>
-    </ChartContainer>
+    <div>
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <BarChart data={chartDataQuery.data}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="day" tickLine={false} tickMargin={5} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
+        </BarChart>
+      </ChartContainer>
+      <p className="text-center text-sm text-[var(--sidebar-accent-foreground)]">
+        {monthName} {year}
+      </p>
+    </div>
   );
 }
