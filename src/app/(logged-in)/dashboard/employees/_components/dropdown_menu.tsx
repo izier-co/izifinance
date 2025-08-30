@@ -55,10 +55,14 @@ function GrantAdminDialog({
   const grantAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
-      await fetchJSONAPI(
+      const res = await fetchJSONAPI(
         "PUT",
         `/api/v1/employees/${row.getValue("txEmployeeCode")}/grant-admin`
       );
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -123,10 +127,14 @@ function RevokeAdminDialog({
   const revokeAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
-      await fetchJSONAPI(
+      const res = await fetchJSONAPI(
         "PUT",
         `/api/v1/employees/${row.getValue("txEmployeeCode")}/revoke-admin`
       );
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -191,10 +199,14 @@ function ActivateEmployeeDialog({
   const query = useMutation({
     mutationKey: ["activate-employee"],
     mutationFn: async () => {
-      await fetchJSONAPI(
+      const res = await fetchJSONAPI(
         "PUT",
         `/api/v1/employees/${row.getValue("txEmployeeCode")}/activate-employee`
       );
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -260,10 +272,14 @@ function DeactivateEmployeeDialog({
   const query = useMutation({
     mutationKey: ["deactivate-employee"],
     mutationFn: async () => {
-      await fetchJSONAPI(
+      const res = await fetchJSONAPI(
         "PUT",
         `/api/v1/employees/${row.getValue("txEmployeeCode")}/deactivate-employee`
       );
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error);
+      }
     },
     onError: (error) => {
       console.error(error);
