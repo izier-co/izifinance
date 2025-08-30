@@ -201,7 +201,7 @@ function ActivateEmployeeDialog({
     mutationFn: async () => {
       const res = await fetchJSONAPI(
         "PUT",
-        `/api/v1/employees/${row.getValue("txEmployeeCode")}/activate-employee`
+        `/api/v1/employees/${row.getValue("txEmployeeCode")}/enable`
       );
       if (!res.ok) {
         const json = await res.json();
@@ -274,7 +274,7 @@ function DeactivateEmployeeDialog({
     mutationFn: async () => {
       const res = await fetchJSONAPI(
         "PUT",
-        `/api/v1/employees/${row.getValue("txEmployeeCode")}/deactivate-employee`
+        `/api/v1/employees/${row.getValue("txEmployeeCode")}/disable`
       );
       if (!res.ok) {
         const json = await res.json();
@@ -434,7 +434,7 @@ function SetUUIDDialog({
   async function setUUIDUpdate(data: UserUUIDSchema) {
     const res = await fetchJSONAPI(
       "PUT",
-      `/api/v1/users/${row.getValue("txEmployeeCode")}/set-uuid`,
+      `/api/v1/employees/${row.getValue("txEmployeeCode")}/set-uuid`,
       data
     );
     if (!res.ok) {
