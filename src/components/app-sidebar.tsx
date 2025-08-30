@@ -1,25 +1,8 @@
 import * as React from "react";
-import { LayoutDashboard, Minus, Plus } from "lucide-react";
+import { FilePlus, FolderCog, LayoutDashboard, Minus, Plus, ReceiptText, Tag, Tv, Wallet } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarRail,
-} from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { getEmpInfo, getUser } from "@/queries/server-queries";
 import { NavUser } from "./nav-user";
@@ -29,42 +12,51 @@ const adminSidebarData = {
     {
       title: "Reimbursements",
       url: "#",
+      icon: Tv,
       items: [
         {
           title: "Manage Reimbursements",
           url: "/dashboard/reimbursements",
+          icon: ReceiptText,
         },
         {
           title: "Add Reimbursements",
           url: "/dashboard/reimbursements/add",
+          icon: FilePlus,
         },
       ],
     },
     {
       title: "Categories",
       url: "#",
+      icon: Tv,
       items: [
         {
           title: "Manage Categories",
           url: "/dashboard/categories",
+          icon: FolderCog,
         },
         {
           title: "Add Categories",
           url: "/dashboard/categories/add",
+          icon: Tv,
         },
       ],
     },
     {
       title: "Admin",
       url: "#",
+      icon: Tv,
       items: [
         {
           title: "Manage Users",
           url: "/dashboard/admin/users",
+          icon: Tv,
         },
         {
           title: "Manage Employees",
           url: "/dashboard/employees",
+          icon: Tv,
         },
       ],
     },
@@ -76,33 +68,36 @@ const userSidebarData = {
     {
       title: "Reimbursements",
       url: "#",
+      icon: Wallet,
       items: [
         {
           title: "Manage Reimbursements",
           url: "/dashboard/reimbursements",
+          icon: ReceiptText,
         },
         {
           title: "Add Reimbursements",
           url: "/dashboard/reimbursements/add",
+          icon: FilePlus,
         },
       ],
     },
     {
       title: "Categories",
       url: "#",
+      icon: Tag,
       items: [
         {
           title: "Manage Categories",
           url: "/dashboard/categories",
+          icon: FolderCog,
         },
       ],
     },
   ],
 };
 
-export async function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const empData = await getEmpInfo();
   const supabaseUser = await getUser();
   const user = {
@@ -123,12 +118,12 @@ export async function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
                   <LayoutDashboard className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Izifinance</span>
-                  <span className="">v1.0.0</span>
+                  <span className="font-extrabold text-lg">Izifinance</span>
+                  <span className="italic">v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -139,15 +134,12 @@ export async function AppSidebar({
         <SidebarGroup>
           <SidebarMenu>
             {sidebarData.navMain.map((item, index) => (
-              <Collapsible
-                key={item.title}
-                defaultOpen={index === 1}
-                className="group/collapsible"
-              >
+              <Collapsible key={item.title} defaultOpen={index === 1} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title}
+                      {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                      <span className="font-semibold">{item.title}</span>
                       <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
@@ -158,7 +150,10 @@ export async function AppSidebar({
                         {item.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild>
-                              <Link href={item.url}>{item.title}</Link>
+                              <Link href={item.url}>
+                                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                                {item.title}
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}

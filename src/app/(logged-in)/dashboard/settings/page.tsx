@@ -1,32 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
-import {
-  emailFormSchema,
-  EmailFormSchema,
-  passwordFormSchema,
-  PasswordFormSchema,
-} from "@/schemas/schema";
+import { emailFormSchema, EmailFormSchema, passwordFormSchema, PasswordFormSchema } from "@/schemas/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
@@ -99,13 +78,10 @@ export default function Page() {
     const formData = new FormData();
     formData.append("image", data.image[0]);
 
-    const response = await fetch(
-      "/api/v1/auth/update-credentials/update-avatar",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch("/api/v1/auth/update-credentials/update-avatar", {
+      method: "POST",
+      body: formData,
+    });
     const json = await response.json();
     if (!response.ok) {
       throw new Error(json.error);
@@ -143,12 +119,12 @@ export default function Page() {
   return (
     <>
       <div className="w-auto">
-        <h1 className="mb-2">Settings Page</h1>
+        <h1 className="mb-2 font-bold">Settings Page</h1>
         <hr className="my-2" />
-        <div className="flex">
+        <div className="flex ">
           <div>
             <h2>Profile Picture</h2>
-            <p className="text-sm">Update Profile Picture</p>
+            <p className="text-sm font-light">Update Profile Picture</p>
           </div>
           <Dialog open={profileOpen} onOpenChange={_profileModalCleanup}>
             <DialogTrigger asChild>
@@ -156,7 +132,7 @@ export default function Page() {
                 onClick={() => {
                   setProfileOpen(true);
                 }}
-                className="ml-auto my-auto"
+                className="w-36 ml-auto my-auto bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]"
               >
                 Upload
               </Button>
@@ -164,9 +140,7 @@ export default function Page() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Confirmation</DialogTitle>
-                <DialogDescription>
-                  Upload your new profile picture
-                </DialogDescription>
+                <DialogDescription>Upload your new profile picture</DialogDescription>
               </DialogHeader>
               <Form {...imageUploadForm}>
                 <form onSubmit={imageUploadForm.handleSubmit(onImageSubmit)}>
@@ -176,11 +150,7 @@ export default function Page() {
                     render={() => (
                       <FormItem>
                         <FormControl>
-                          <Input
-                            type="file"
-                            {...imageUploadForm.register("image")}
-                            accept="image/*"
-                          />
+                          <Input type="file" {...imageUploadForm.register("image")} accept="image/*" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -188,16 +158,12 @@ export default function Page() {
                   />
                   <DialogFooter className="my-2">
                     <DialogClose asChild>
-                      <Button variant="secondary" type="button">
+                      <Button variant="secondary" type="button" className="bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
                         Cancel
                       </Button>
                     </DialogClose>
-                    <Button type="submit">
-                      {imageUploadMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        "Confirm"
-                      )}
+                    <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+                      {imageUploadMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -209,27 +175,20 @@ export default function Page() {
         <div className="flex">
           <div>
             <h2>Change Email</h2>
-            <p className="text-sm">You will be given a confirmation email</p>
-            <p className="text-sm text-destructive">
-              Danger Zone : This change would log you out
-            </p>
+            <p className="text-sm  font-light">You will be given a confirmation email</p>
+            <p className="text-sm text-destructive font-light">Danger Zone : This change would log you out</p>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="ml-auto my-auto">Change Email</Button>
+              <Button className="w-36 ml-auto my-auto bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">Change Email</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Input new Email</DialogTitle>
-                <DialogDescription>
-                  This action can&apos;t be undone, you would be logged off
-                </DialogDescription>
+                <DialogDescription>This action can&apos;t be undone, you would be logged off</DialogDescription>
               </DialogHeader>
               <Form {...emailForm}>
-                <form
-                  id="change-description-form"
-                  onSubmit={emailForm.handleSubmit(submitEmail)}
-                >
+                <form id="change-description-form" onSubmit={emailForm.handleSubmit(submitEmail)}>
                   <FormField
                     control={emailForm.control}
                     name="email"
@@ -245,16 +204,12 @@ export default function Page() {
                   />
                   <DialogFooter className="my-2">
                     <DialogClose asChild>
-                      <Button variant="secondary" type="button">
+                      <Button variant="secondary" type="button" className="bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
                         Cancel
                       </Button>
                     </DialogClose>
-                    <Button type="submit">
-                      {emailMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        "Confirm"
-                      )}
+                    <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+                      {emailMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -266,26 +221,19 @@ export default function Page() {
         <div className="flex">
           <div>
             <h2>Change Password</h2>
-            <p className="text-sm text-destructive">
-              Danger Zone : This change would log you out
-            </p>
+            <p className="text-sm text-destructive  font-light">Danger Zone : This change would log you out</p>
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="ml-auto">Change Password</Button>
+              <Button className="w-36 ml-auto my-auto bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">Change Password</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Input new Password</DialogTitle>
-                <DialogDescription>
-                  This action can&apos;t be undone, you would be logged off
-                </DialogDescription>
+                <DialogDescription>This action can&apos;t be undone, you would be logged off</DialogDescription>
               </DialogHeader>
               <Form {...passwordForm}>
-                <form
-                  id="change-description-form"
-                  onSubmit={passwordForm.handleSubmit(submitPassword)}
-                >
+                <form id="change-description-form" onSubmit={passwordForm.handleSubmit(submitPassword)}>
                   <FormField
                     control={passwordForm.control}
                     name="password"
@@ -294,24 +242,10 @@ export default function Page() {
                         <FormLabel className="capitalize">Password :</FormLabel>
                         <div className="flex flex-row gap-1 justify-center item-center">
                           <FormControl>
-                            <Input
-                              type={showPassword ? "text" : "password"}
-                              autoComplete="new-password"
-                              {...field}
-                            />
+                            <Input type={showPassword ? "text" : "password"} autoComplete="new-password" {...field} />
                           </FormControl>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            className="size-8"
-                            onClick={() => setShowPassword((prev) => !prev)}
-                          >
-                            {showPassword ? (
-                              <EyeIcon className="w-4 h-4" />
-                            ) : (
-                              <EyeOffIcon className="w-4 h-4" />
-                            )}
+                          <Button type="button" variant="outline" size="icon" className="size-8" onClick={() => setShowPassword((prev) => !prev)}>
+                            {showPassword ? <EyeIcon className="w-4 h-4" /> : <EyeOffIcon className="w-4 h-4" />}
                           </Button>
                         </div>
                         <FormMessage />
@@ -320,16 +254,12 @@ export default function Page() {
                   />
                   <DialogFooter className="my-2">
                     <DialogClose asChild>
-                      <Button variant="secondary" type="button">
+                      <Button variant="secondary" type="button" className="bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
                         Cancel
                       </Button>
                     </DialogClose>
-                    <Button type="submit">
-                      {passwordMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        "Confirm"
-                      )}
+                    <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+                      {passwordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
                     </Button>
                   </DialogFooter>
                 </form>
