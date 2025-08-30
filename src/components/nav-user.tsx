@@ -20,6 +20,7 @@ export function NavUser({
     name: string;
     email: string;
     avatar: string;
+    boHasAdminAccess: boolean;
   };
 }) {
   const { isMobile } = useSidebar();
@@ -56,6 +57,7 @@ export function NavUser({
                   <span className="truncate font-medium">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
+                <div className="text-xs font-semibold px-2 py-1 rounded bg-[var(--accent)]">{user.boHasAdminAccess ? "Admin" : "User"}</div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
