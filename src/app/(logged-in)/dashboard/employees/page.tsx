@@ -11,13 +11,8 @@ export default function Page() {
   };
   return (
     <>
-      <h1 className="text-bold mb-4">Employees</h1>
-      <ServerDataTable
-        columns={columns}
-        rowName="employees"
-        refetchIndex={refetchIndex}
-        triggerRefetch={triggerRefetch}
-      />
+      <h1 className="font-bold mb-6">Employees</h1>
+      <ServerDataTable columns={columns} rowName="employees" refetchIndex={refetchIndex} triggerRefetch={triggerRefetch} />
     </>
   );
 }
