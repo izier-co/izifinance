@@ -3,6 +3,8 @@ import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
+import { DollarSign, ListTodo, LucideClipboardPlus } from "lucide-react";
+import Link from "next/link";
 
 const url = "/api/v1/reimbursements?";
 
@@ -119,29 +121,59 @@ export default function Page() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>New Reimbursements</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DailyReimbursementMessage />
-          </CardContent>
+        <Card className="pr-6">
+          <div className="flex flex-row items-center justify-between">
+            <div>
+              <CardHeader>
+                <CardTitle>New Reimbursements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DailyReimbursementMessage />
+              </CardContent>
+            </div>
+
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+              <Link href="/dashboard/reimbursements">
+                <LucideClipboardPlus size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+              </Link>
+            </div>
+          </div>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Pending Approval Notes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PendingReimbursementMessage />
-          </CardContent>
+
+        <Card className="pr-6">
+          <div className="flex flex-row items-center justify-between">
+            <div>
+              <CardHeader>
+                <CardTitle>Pending Approval Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PendingReimbursementMessage />
+              </CardContent>
+            </div>
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+              <Link href="/dashboard/reimbursements">
+                <ListTodo size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+              </Link>
+            </div>
+          </div>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Reimbursement Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PendingReimbursementValue />
-          </CardContent>
+
+        <Card className="pr-6">
+          <div className="flex flex-row items-center justify-between">
+            <div>
+              <CardHeader>
+                <CardTitle>Reimbursement Value</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PendingReimbursementValue />
+              </CardContent>
+            </div>
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+              <Link href="/dashboard/reimbursements">
+                <DollarSign size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+              </Link>
+            </div>
+          </div>
         </Card>
       </div>
       <Card>
