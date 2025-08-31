@@ -116,7 +116,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row">
+    <div className="flex flex-col-reverse sm:flex-row">
       <div className="w-full sm:w-1/2">
         <h1 className="font-bold pb-6">Add Reimbursement</h1>
         <Form {...reimbursementForm}>
@@ -166,7 +166,7 @@ export default function Page() {
               }}
             />
             {reimbursementForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{reimbursementForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="mt-6 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
+            <Button type="submit" className="mt-6 w-50 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Reimbursement"}
             </Button>
