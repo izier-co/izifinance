@@ -1,6 +1,7 @@
 "use client";
 import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSidebar } from "@/components/ui/sidebar";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign, ListTodo, LucideClipboardPlus } from "lucide-react";
@@ -118,11 +119,14 @@ export default function Page() {
     }
     return <>IDR {pendingValueQuery.data} worth of reimbursements are still pending</>;
   }
+
+  const { open } = useSidebar();
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <Card className="pr-6">
-          <div className="flex flex-row items-center justify-between">
+      <div className={`grid auto-rows-min gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}>
+        <Card className="pr-6 ">
+          <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>
               <CardHeader>
                 <CardTitle>New Reimbursements</CardTitle>
@@ -132,7 +136,7 @@ export default function Page() {
               </CardContent>
             </div>
 
-            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start  md:mb-4 md:ml-6 self-start justify-center">
               <Link href="/dashboard/reimbursements">
                 <LucideClipboardPlus size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
               </Link>
@@ -141,7 +145,7 @@ export default function Page() {
         </Card>
 
         <Card className="pr-6">
-          <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>
               <CardHeader>
                 <CardTitle>Pending Approval Notes</CardTitle>
@@ -150,7 +154,7 @@ export default function Page() {
                 <PendingReimbursementMessage />
               </CardContent>
             </div>
-            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
                 <ListTodo size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
               </Link>
@@ -159,7 +163,7 @@ export default function Page() {
         </Card>
 
         <Card className="pr-6">
-          <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>
               <CardHeader>
                 <CardTitle>Reimbursement Value</CardTitle>
@@ -168,7 +172,7 @@ export default function Page() {
                 <PendingReimbursementValue />
               </CardContent>
             </div>
-            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start self-start justify-center">
+            <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
                 <DollarSign size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
               </Link>
