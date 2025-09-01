@@ -40,3 +40,15 @@ export function useEmployeeIDQuery() {
     refetchOnReconnect: false,
   });
 }
+
+export function useEmployeeIDToogleQuery(toogle: boolean) {
+  return useQuery({
+    queryKey: ["emp-id"],
+    queryFn: getEmpID,
+    enabled: toogle,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+}

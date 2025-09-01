@@ -25,6 +25,7 @@ import { emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
 import Link from "next/link";
 import z from "zod";
+import { useEmployeeIDToogleQuery } from "@/queries/queries";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -45,6 +46,7 @@ export default function Home() {
   const router = useRouter();
   const [showPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   async function onSubmit(loginData: LoginSchema) {
     setLoading(true);
@@ -76,8 +78,8 @@ export default function Home() {
     if (json.data.length === 0) {
       throw new Error("Unregistered account, please contact your adminstrator");
     }
-    if (json.data[0].boActive === false || json.data[0].boStatus === false){
-      throw new Error("Deactivated Account, please contact your administrator")
+    if (json.data[0].boActive === false || json.data[0].boStatus === false) {
+      throw new Error("Deactivated Account, please contact your administrator");
     }
     const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginData);
 
@@ -86,10 +88,14 @@ export default function Home() {
       throw new Error(body.error || "Something went wrong in our end");
     }
   }
+  // initial loading query
+  useEmployeeIDToogleQuery(enabled);
+
   const loginQuery = useMutation({
     mutationKey: ["login-query"],
     mutationFn: _onSubmit,
     onSuccess: () => {
+      setEnabled(true);
       router.push("/dashboard");
     },
     onError: (error) => {
