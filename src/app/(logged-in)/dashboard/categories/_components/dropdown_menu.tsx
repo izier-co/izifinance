@@ -2,35 +2,15 @@ import { Button } from "@/components/ui/button";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { useEmployeeIDQuery } from "@/queries/queries";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
-import { MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal, Loader2, Trash } from "lucide-react";
 import { useState } from "react";
 import { Row, Table } from "@tanstack/react-table";
 import { CommonRow } from "@/components/sorting-datatable-header";
 
-export function CategoryDropdownMenu({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+export function CategoryDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const deleteQuery = useMutation({
@@ -47,17 +27,13 @@ export function CategoryDropdownMenu({
 
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
 
   function deleteCategory() {
     deleteQuery.mutate();
   }
   async function _deleteCategory() {
-    await fetchJSONAPI(
-      "DELETE",
-      `/api/v1/categories/${row.getValue("txCategoryID")}`
-    );
+    await fetchJSONAPI("DELETE", `/api/v1/categories/${row.getValue("txCategoryID")}`);
   }
 
   // don't show the menu if not admin
@@ -80,21 +56,16 @@ export function CategoryDropdownMenu({
                 e.preventDefault();
               }}
             >
+              <Trash className="text-[var(--sidebar-accent-foreground)]" />
               Delete
             </DropdownMenuItem>
           </DialogTrigger>
           <DialogContent onInteractOutside={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>Confirmation</DialogTitle>
-              <DialogDescription>
-                Are you sure that you wanted to delete this?
-              </DialogDescription>
+              <DialogDescription>Are you sure that you wanted to delete this?</DialogDescription>
             </DialogHeader>
-            {errorMessage && (
-              <p className="text-sm font-medium text-destructive mb-2">
-                {errorMessage}
-              </p>
-            )}
+            {errorMessage && <p className="text-sm font-medium text-destructive mb-2">{errorMessage}</p>}
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="secondary" type="button">
@@ -102,11 +73,7 @@ export function CategoryDropdownMenu({
                 </Button>
               </DialogClose>
               <Button type="button" onClick={deleteCategory}>
-                {deleteQuery.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Confirm"
-                )}
+                {deleteQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
               </Button>
             </DialogFooter>
           </DialogContent>

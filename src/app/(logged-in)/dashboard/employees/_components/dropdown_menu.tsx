@@ -1,27 +1,14 @@
 "use client";
 import { CommonRow } from "@/components/sorting-datatable-header";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { useEmployeeIDQuery } from "@/queries/queries";
 import { useMutation } from "@tanstack/react-query";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
-import { Loader2, MoreHorizontal } from "lucide-react";
+import { Loader2, MoreHorizontal, Star, StarOff, View } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -32,21 +19,12 @@ declare module "@tanstack/table-core" {
   }
 }
 
-function GrantAdminDialog({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+function GrantAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
   const grantAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
-      await fetchJSONAPI(
-        "PUT",
-        `/api/v1/employees/${row.getValue("txEmployeeCode")}/grant-admin`
-      );
+      await fetchJSONAPI("PUT", `/api/v1/employees/${row.getValue("txEmployeeCode")}/grant-admin`);
     },
     onError: (error) => {
       console.error(error);
@@ -65,17 +43,14 @@ function GrantAdminDialog({
             e.preventDefault();
           }}
         >
+          <Star className="text-[var(--sidebar-accent-foreground)]" />
           Grant Admin Access
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>
-          Are you sure to grant admin access to {row.getValue("txFullName")}
-        </DialogDescription>
-        {error && (
-          <p className="text-sm font-medium text-destructive mb-2">{error}</p>
-        )}
+        <DialogDescription>Are you sure to grant admin access to {row.getValue("txFullName")}</DialogDescription>
+        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary" type="button">
@@ -88,11 +63,7 @@ function GrantAdminDialog({
               grantAdminQuery.mutate();
             }}
           >
-            {grantAdminQuery.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Grant"
-            )}
+            {grantAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Grant"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -100,21 +71,12 @@ function GrantAdminDialog({
   );
 }
 
-function RevokeAdminDialog({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+function RevokeAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
   const revokeAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
-      await fetchJSONAPI(
-        "PUT",
-        `/api/v1/employees/${row.getValue("txEmployeeCode")}/revoke-admin`
-      );
+      await fetchJSONAPI("PUT", `/api/v1/employees/${row.getValue("txEmployeeCode")}/revoke-admin`);
     },
     onError: (error) => {
       console.error(error);
@@ -133,17 +95,14 @@ function RevokeAdminDialog({
             e.preventDefault();
           }}
         >
+          <StarOff className="text-[var(--sidebar-accent-foreground)]" />
           Revoke Admin Access
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>
-          Are you sure to revoke admin access to {row.getValue("txFullName")}
-        </DialogDescription>
-        {error && (
-          <p className="text-sm font-medium text-destructive mb-2">{error}</p>
-        )}
+        <DialogDescription>Are you sure to revoke admin access to {row.getValue("txFullName")}</DialogDescription>
+        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary" type="button">
@@ -156,11 +115,7 @@ function RevokeAdminDialog({
               revokeAdminQuery.mutate();
             }}
           >
-            {revokeAdminQuery.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Revoke"
-            )}
+            {revokeAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Revoke"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -168,16 +123,9 @@ function RevokeAdminDialog({
   );
 }
 
-function GrantRevokeDialogMenu({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+function GrantRevokeDialogMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const checkAdminQuery = useEmployeeIDQuery();
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   if (!isAdmin) {
     return;
   }
@@ -192,13 +140,7 @@ function GrantRevokeDialogMenu({
   }
 }
 
-export function EmployeeDropdownMenu({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+export function EmployeeDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -211,11 +153,10 @@ export function EmployeeDropdownMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => {
-            router.push(
-              `/dashboard/employees/${row.getValue("txEmployeeCode")}`
-            );
+            router.push(`/dashboard/employees/${row.getValue("txEmployeeCode")}`);
           }}
         >
+          <View className="text-[var(--sidebar-accent-foreground)]" />
           View Details
         </DropdownMenuItem>
         <GrantRevokeDialogMenu row={row} table={table} />

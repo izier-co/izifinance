@@ -68,7 +68,7 @@ export function ReimbursementChart() {
           <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
         </BarChart>
       </ChartContainer>
-      <p className="text-center text-sm text-[var(--sidebar-accent-foreground)]">
+      <p className="text-center text-sm">
         {monthName} {year}
       </p>
     </div>
