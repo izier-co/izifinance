@@ -143,7 +143,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row">
+    <div className="flex flex-col-reverse sm:flex-row">
       <div className="w-full sm:w-1/2">
         <h1 className="font-bold pb-6">Add Reimbursement</h1>
         <Form {...reimbursementForm}>
@@ -227,7 +227,7 @@ export default function Page() {
       <div className="w-full sm:w-1/2 px-6">
         <Dialog open={open} onOpenChange={handleDialogChange}>
           <DialogTrigger className="flex" asChild>
-            <Button className="ml-auto mb-2 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+            <Button className="ml-auto mb-2" variant="default">
               <CirclePlus />
               Add Items
             </Button>

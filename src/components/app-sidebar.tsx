@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FilePlus, FolderCog, LayoutDashboard, Minus, Plus, ReceiptText, Tag, Tv, Wallet } from "lucide-react";
+import { FilePlus, FolderCog, IdCardLanyard, LayoutDashboard, ListPlus, Minus, Plus, ReceiptText, Tag, UserPen, UserStar, Wallet } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
@@ -12,7 +12,7 @@ const adminSidebarData = {
     {
       title: "Reimbursements",
       url: "#",
-      icon: Tv,
+      icon: Wallet,
       items: [
         {
           title: "Manage Reimbursements",
@@ -29,7 +29,7 @@ const adminSidebarData = {
     {
       title: "Categories",
       url: "#",
-      icon: Tv,
+      icon: Tag,
       items: [
         {
           title: "Manage Categories",
@@ -39,24 +39,24 @@ const adminSidebarData = {
         {
           title: "Add Categories",
           url: "/dashboard/categories/add",
-          icon: Tv,
+          icon: ListPlus,
         },
       ],
     },
     {
       title: "Admin",
       url: "#",
-      icon: Tv,
+      icon: UserStar,
       items: [
         {
           title: "Manage Users",
           url: "/dashboard/admin/users",
-          icon: Tv,
+          icon: UserPen,
         },
         {
           title: "Manage Employees",
           url: "/dashboard/employees",
-          icon: Tv,
+          icon: IdCardLanyard,
         },
       ],
     },
@@ -123,7 +123,7 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-extrabold text-lg">Izifinance</span>
-                  <span className="italic">v1.0.0</span>
+                  <span>v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
