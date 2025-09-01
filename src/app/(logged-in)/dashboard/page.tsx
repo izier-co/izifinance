@@ -124,7 +124,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <div className={`grid auto-rows-min gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}>
+      <div className={`grid auto-rows-min xl:grid-cols-3 gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}>
         <Card className="pr-6 ">
           <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>
