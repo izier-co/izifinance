@@ -54,10 +54,14 @@ export function CategoryDropdownMenu({
     deleteQuery.mutate();
   }
   async function _deleteCategory() {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "DELETE",
       `/api/v1/categories/${row.getValue("txCategoryID")}`
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   // don't show the menu if not admin

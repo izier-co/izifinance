@@ -202,35 +202,51 @@ export function ReimbursementDropdownMenu({
     changeDescriptionForm.clearErrors();
   }
   async function _approve(data: ApprovalSchema) {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "PUT",
       `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
       data
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _reject(data: RejectSchema) {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "PUT",
       `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`,
       data
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _void(data: VoidSchema) {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "PUT",
       `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`,
       data
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _setDescription(data: ChangeDescriptionSchema) {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "PUT",
       `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`,
       data
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   return (
