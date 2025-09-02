@@ -138,7 +138,9 @@ export default function Home() {
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize">Email</FormLabel>
+                              <FormLabel className="capitalize not-italic">
+                                Email
+                              </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="john.doe@example.com"
@@ -157,7 +159,9 @@ export default function Home() {
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize">Password</FormLabel>
+                              <FormLabel className="capitalize not-italic">
+                                Password
+                              </FormLabel>
                               <div className="flex flex-row gap-1 justify-center item-center">
                                 <FormControl>
                                   <Input

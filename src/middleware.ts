@@ -28,9 +28,18 @@ export async function middleware(req: NextRequest) {
   const isRootRoute = req.nextUrl.pathname === "/";
   const isApiRoute = req.nextUrl.pathname.startsWith("/api");
   const isAuthRoute = req.nextUrl.pathname.startsWith("/api/v1/auth");
+  const isForgotPasswordRoute =
+    req.nextUrl.pathname.startsWith("/forgot-password");
+
+  const hasRecoveryParams =
+    req.nextUrl.searchParams.has("token_hash") &&
+    req.nextUrl.searchParams.get("type") === "recovery";
 
   try {
     if (!user && !isAuthRoute && !isRootRoute) {
+      if (isForgotPasswordRoute && hasRecoveryParams) {
+        return NextResponse.next();
+      }
       if (isApiRoute) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       } else {
@@ -48,6 +57,9 @@ export async function middleware(req: NextRequest) {
         { status: 401 }
       );
     }
+  }
+  if (isForgotPasswordRoute) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
   return NextResponse.next();
 }
