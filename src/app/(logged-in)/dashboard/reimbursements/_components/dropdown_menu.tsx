@@ -168,19 +168,51 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
     changeDescriptionForm.clearErrors();
   }
   async function _approve(data: ApprovalSchema) {
-    await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`, data);
+    const res = await fetchJSONAPI(
+      "PUT",
+      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _reject(data: RejectSchema) {
-    await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`, data);
+    const res = await fetchJSONAPI(
+      "PUT",
+      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _void(data: VoidSchema) {
-    await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`, data);
+    const res = await fetchJSONAPI(
+      "PUT",
+      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   async function _setDescription(data: ChangeDescriptionSchema) {
-    await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`, data);
+    const res = await fetchJSONAPI(
+      "PUT",
+      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`,
+      data
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   return (

@@ -39,6 +39,9 @@ export default function Page() {
     defaultValues: async () => {
       const res = await fetchJSONAPI("GET", `/api/v1/employees/${id}`);
       const json = await res.json();
+      if (!res.ok) {
+        return;
+      }
       return json.data[0];
     },
   });

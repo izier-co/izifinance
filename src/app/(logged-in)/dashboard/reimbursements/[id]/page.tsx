@@ -21,6 +21,9 @@ async function getData(id: string) {
     `/api/v1/reimbursements/${id}/full-data`
   );
   const json = await data.json();
+  if (!data.ok) {
+    throw new Error(json.error);
+  }
   return json["data"][0];
 }
 

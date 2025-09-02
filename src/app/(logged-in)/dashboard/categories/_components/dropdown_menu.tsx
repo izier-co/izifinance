@@ -33,7 +33,14 @@ export function CategoryDropdownMenu({ row, table }: { row: Row<CommonRow>; tabl
     deleteQuery.mutate();
   }
   async function _deleteCategory() {
-    await fetchJSONAPI("DELETE", `/api/v1/categories/${row.getValue("txCategoryID")}`);
+    const res = await fetchJSONAPI(
+      "DELETE",
+      `/api/v1/categories/${row.getValue("txCategoryID")}`
+    );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   // don't show the menu if not admin

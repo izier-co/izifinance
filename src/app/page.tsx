@@ -66,6 +66,9 @@ export default function Home() {
     if (json.data.length === 0) {
       throw new Error("Unregistered account, please contact your adminstrator");
     }
+    if (json.data[0].boActive === false || json.data[0].boStatus === false){
+      throw new Error("Deactivated Account, please contact your administrator")
+    }
     const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginData);
 
     if (!res.ok) {

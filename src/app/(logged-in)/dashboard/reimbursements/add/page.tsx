@@ -1,21 +1,48 @@
 "use client";
 
-import { Form, FormItem, FormLabel, FormControl, FormMessage, FormField } from "@/components/ui/form";
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormField,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardAction, CardDescription } from "@/components/ui/card";
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardAction,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
 import { CirclePlus, ClipboardPlus, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { addReimbursement, useCategoryQuery } from "./_queries/queries";
 import { QueryCombobox } from "./_components/query-combobox";
-import { reimbursementSchema, reimbursementItemSchema, type ReimbursementItemSchema, type ReimbursementSchema } from "./schemas";
+import {
+  reimbursementSchema,
+  reimbursementItemSchema,
+  type ReimbursementItemSchema,
+  type ReimbursementSchema,
+} from "./schemas";
 import { useEmployeeIDQuery } from "@/queries/queries";
 
 const currencies: Array<ComboboxItem> = [
@@ -120,7 +147,10 @@ export default function Page() {
       <div className="w-full sm:w-1/2">
         <h1 className="font-bold pb-6">Add Reimbursement</h1>
         <Form {...reimbursementForm}>
-          <form id="reimbursement-form" onSubmit={reimbursementForm.handleSubmit(submitReimbursement)}>
+          <form
+            id="reimbursement-form"
+            onSubmit={reimbursementForm.handleSubmit(submitReimbursement)}
+          >
             <FormField
               control={reimbursementForm.control}
               name="txDescriptionDetails"
@@ -142,7 +172,11 @@ export default function Page() {
                   <FormItem className="my-5 gap-3">
                     <FormLabel className="capitalize">Currency :</FormLabel>
                     <FormControl>
-                      <FormCombobox value={field.value} onChange={field.onChange} items={currencies} />
+                      <FormCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        items={currencies}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -158,17 +192,33 @@ export default function Page() {
                   <FormItem className="my-5 gap-3">
                     <FormLabel className="capitalize">Category :</FormLabel>
                     <FormControl>
-                      <QueryCombobox value={field.value as string} onChange={field.onChange} query={categoryComboboxQuery} />
+                      <QueryCombobox
+                        value={field.value as string}
+                        onChange={field.onChange}
+                        query={categoryComboboxQuery}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 );
               }}
             />
-            {reimbursementForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{reimbursementForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="mt-6 w-50 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
+            {reimbursementForm.formState.errors.root?.message && (
+              <p className="text-sm font-medium text-destructive mb-2">
+                {reimbursementForm.formState.errors.root.message}
+              </p>
+            )}
+            <Button
+              type="submit"
+              className="mt-6 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]"
+              disabled={submitQuery.isPending}
+            >
               <ClipboardPlus />
-              {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Reimbursement"}
+              {submitQuery.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Add Reimbursement"
+              )}
             </Button>
           </form>
         </Form>
@@ -187,7 +237,12 @@ export default function Page() {
               <DialogTitle>Add Items</DialogTitle>
             </DialogHeader>
             <Form {...reimbursementItemForm}>
-              <form id="reimbursement-item-form" onSubmit={reimbursementItemForm.handleSubmit(addReimbursementItem)}>
+              <form
+                id="reimbursement-item-form"
+                onSubmit={reimbursementItemForm.handleSubmit(
+                  addReimbursementItem
+                )}
+              >
                 <FormField
                   control={reimbursementItemForm.control}
                   name="txName"
@@ -226,7 +281,9 @@ export default function Page() {
                   name="deIndividualPrice"
                   render={({ field }) => (
                     <FormItem className="my-3">
-                      <FormLabel className="capitalize">Price per item :</FormLabel>
+                      <FormLabel className="capitalize">
+                        Price per item :
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -243,11 +300,18 @@ export default function Page() {
                 />
                 <DialogFooter className="my-2">
                   <DialogClose asChild>
-                    <Button variant="secondary" type="button" className="xl:mt-4 ">
+                    <Button
+                      variant="secondary"
+                      type="button"
+                      className="xl:mt-4 bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]"
+                    >
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit" className="mt-4" variant="default">
+                  <Button
+                    type="submit"
+                    className="mt-4 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]"
+                  >
                     Add Items
                   </Button>
                 </DialogFooter>
@@ -260,7 +324,9 @@ export default function Page() {
             <Card key={item.uid}>
               <CardHeader>
                 <CardTitle>{item.txName}</CardTitle>
-                <CardDescription>{item.deIndividualPrice} / item</CardDescription>
+                <CardDescription>
+                  {item.deIndividualPrice} / item
+                </CardDescription>
                 <CardAction>Qty : {item.inQuantity}</CardAction>
               </CardHeader>
               <CardContent className="text-xl text-bold">

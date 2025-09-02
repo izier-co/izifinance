@@ -29,7 +29,11 @@ export async function addReimbursement({
     },
     body: JSON.stringify(payload),
   });
-  return await res.json();
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error);
+  }
+  return json;
 }
 
 export function useCategoryQuery() {
