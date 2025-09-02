@@ -8,7 +8,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 const chartConfig = {
   reimbursement: {
     label: "Reimbursements:",
-    color: "#ae93fa",
+    color: "#00DE8F",
   },
 } satisfies ChartConfig;
 
