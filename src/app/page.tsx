@@ -66,8 +66,8 @@ export default function Home() {
     if (json.data.length === 0) {
       throw new Error("Unregistered account, please contact your adminstrator");
     }
-    if (json.data[0].boActive === false || json.data[0].boStatus === false){
-      throw new Error("Deactivated Account, please contact your administrator")
+    if (json.data[0].boActive === false || json.data[0].boStatus === false) {
+      throw new Error("Deactivated Account, please contact your administrator");
     }
     const res = await fetchJSONAPI("POST", "/api/v1/auth/signin", loginData);
 
@@ -96,7 +96,9 @@ export default function Home() {
         <div className={cn("flex flex-col gap-6")}>
           <div className="flex flex-col xl:flex-row items-center gap-16">
             <div className="flex flex-col items-center justify-center md:justify-end w-full md:w-1/3">
-              <Image src="/images/logo.jpg" alt="Logo" width={150} height={150} className="xl:w-200  object-contain" />
+              {/* <Image src="/images/logo.jpg" alt="Logo" width={150} height={150} className="xl:w-200  object-contain" /> */}
+              <Image src="/images/logolight.jpg" alt="logo light mode" width={150} height={150} className="xl:w-200 object-contain dark:hidden" />
+              <Image src="/images/logodark.jpg" alt="logo dark mode" width={150} height={150} className="xl:w-200 object-contain hidden dark:block " />
               <h1 className="font-bold text-2xl xl:text-3xl mt-2">Izifinance</h1>
             </div>
             <div className="w-full xl:w-2/3">

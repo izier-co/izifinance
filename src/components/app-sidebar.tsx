@@ -1,9 +1,10 @@
 import * as React from "react";
-import { FilePlus, FolderCog, IdCardLanyard, LayoutDashboard, ListPlus, Minus, Plus, ReceiptText, Tag, UserPen, UserStar, Wallet } from "lucide-react";
+import { FilePlus, FolderCog, IdCardLanyard, ListPlus, Minus, Plus, ReceiptText, Tag, UserPen, UserStar, Wallet } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
 import Link from "next/link";
+import Image from "next/image";
 import { getEmpInfo, getUser } from "@/queries/server-queries";
 import { NavUser } from "./nav-user";
 
@@ -119,7 +120,8 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
-                  <LayoutDashboard className="size-4" />
+                  <Image src="/images/logolight-removedbg.jpg" alt="logo light mode" width={150} height={150} className="xl:w-200 object-contain dark:hidden" />
+                  <Image src="/images/logodark-removedbg.jpg" alt="logo dark mode" width={150} height={150} className="xl:w-200 object-contain hidden dark:block " />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-extrabold text-lg">Izifinance</span>
