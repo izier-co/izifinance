@@ -126,9 +126,10 @@ export default function Home() {
 
   async function sendForgetPassword(data: EmailFormSchema) {
     setResetPasswordLoading(true);
-    await supabase.auth.resetPasswordForEmail(data.email, {
-      redirectTo: "localhost:3000/forgot-password",
+    const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+      redirectTo: "http://localhost:3000/forgot-password",
     });
+    console.log(error);
     setResetPasswordLoading(false);
   }
 

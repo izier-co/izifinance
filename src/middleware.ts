@@ -1,6 +1,7 @@
 // import { Ratelimit } from "@upstash/ratelimit";
 import { NextRequest, NextResponse } from "next/server";
 import { handleSession } from "./app/api/supabase_middleware.config";
+import { EmailOtpType } from "@supabase/supabase-js";
 
 // const ratelimiter = new Ratelimit({
 //   redis: kv,
@@ -31,15 +32,8 @@ export async function middleware(req: NextRequest) {
   const isForgotPasswordRoute =
     req.nextUrl.pathname.startsWith("/forgot-password");
 
-  const hasRecoveryParams =
-    req.nextUrl.searchParams.has("token_hash") &&
-    req.nextUrl.searchParams.get("type") === "recovery";
-
   try {
     if (!user && !isAuthRoute && !isRootRoute) {
-      if (isForgotPasswordRoute && hasRecoveryParams) {
-        return NextResponse.next();
-      }
       if (isApiRoute) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       } else {
@@ -59,7 +53,20 @@ export async function middleware(req: NextRequest) {
     }
   }
   if (isForgotPasswordRoute) {
-    return NextResponse.redirect(new URL("/", req.url));
+    const searchParams = req.nextUrl.searchParams;
+    const token_hash = searchParams.get("token_hash");
+    const type = searchParams.get("type") as EmailOtpType | null;
+    if (token_hash && type) {
+      const { error } = await supabase.auth.verifyOtp({
+        type,
+        token_hash,
+      });
+      if (error) return NextResponse.redirect(new URL("/", req.url));
+
+      return NextResponse.next();
+    } else {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
   return NextResponse.next();
 }
