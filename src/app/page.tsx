@@ -14,10 +14,25 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import { emailSchema, passwordSchema } from "@/schemas/schema";
+import {
+  emailFormSchema,
+  EmailFormSchema,
+  emailSchema,
+  passwordSchema,
+} from "@/schemas/schema";
 import Image from "next/image";
 // import Link from "next/link";
 import { z } from "zod";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -35,9 +50,18 @@ export default function Home() {
     },
   });
 
+  const emailForm = useForm<EmailFormSchema>({
+    resolver: zodResolver(emailFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
   const router = useRouter();
   const [showPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   async function onSubmit(loginData: LoginSchema) {
     setLoading(true);
@@ -90,6 +114,15 @@ export default function Home() {
     },
   });
 
+  async function sendForgetPassword(data: EmailFormSchema) {
+    setResetPasswordLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+      redirectTo: "http://localhost:3000/forgot-password",
+    });
+    console.log(error);
+    setResetPasswordLoading(false);
+  }
+
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-md xl:max-w-3xl">
@@ -116,7 +149,9 @@ export default function Home() {
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize">Email</FormLabel>
+                              <FormLabel className="capitalize not-italic">
+                                Email
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="john.doe@example.com" {...field} />
                               </FormControl>
@@ -132,7 +167,9 @@ export default function Home() {
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize">Password</FormLabel>
+                              <FormLabel className="capitalize not-italic">
+                                Password
+                              </FormLabel>
                               <div className="flex flex-row gap-1 justify-center item-center">
                                 <FormControl>
                                   <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
@@ -152,12 +189,60 @@ export default function Home() {
                   </Form>
                 </CardContent>
               </Card>
-              {/* <Link
-                href="forgotPassword.tsx"
-                className="flex justify-end font-light text-[var(--sidebar-accent-foreground)] hover:underline"
-              >
-                Forgot Password?
-              </Link> */}
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <div className="flex justify-end w-full">
+                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">
+                      Forgot Password
+                    </button>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Reset Password</DialogTitle>
+                    <DialogDescription>
+                      Insert the email of the account to be sent confirmation
+                      email for
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Form {...emailForm}>
+                    <form
+                      id="change-description-form"
+                      onSubmit={emailForm.handleSubmit(sendForgetPassword)}
+                    >
+                      <FormField
+                        control={emailForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="capitalize">
+                              Email :
+                            </FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <DialogFooter className="my-2">
+                        <DialogClose asChild>
+                          <Button variant="secondary" type="button">
+                            Cancel
+                          </Button>
+                        </DialogClose>
+                        <Button type="submit">
+                          {resetPasswordLoading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Submit"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
