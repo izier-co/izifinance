@@ -5,6 +5,7 @@ import "./globals.css";
 import { QueryProvider } from "@/components/query-client";
 
 import { ThemeProvider } from "next-themes";
+import { NavigationLoader } from "@/components/navigation-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,9 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <NavigationLoader />
           <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
