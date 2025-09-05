@@ -44,7 +44,6 @@ function EmployeeTable({ id }: { id: string }) {
     return <>Error : {dataQuery.error.message} </>;
   }
   const data = dataQuery.data;
-  console.log(data);
   if (data.data.length === 0) {
     notFound();
   }
