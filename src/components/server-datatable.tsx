@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { StepBack, StepForward } from "lucide-react";
+import { TableSkeleton } from "./skeletons";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -126,7 +127,7 @@ export function ServerDataTable<TData, TValue>({ rowName, columns, refetchIndex,
             {error ? (
               <PlaceholderRow colSpan={columns.length} text={error} />
             ) : loading ? (
-              <PlaceholderRow colSpan={columns.length} text="Loading..." />
+              <TableSkeleton colSpan={columns.length} rows={5} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} className="even:bg-[var(--filltable)]" data-state={row.getIsSelected() && "selected"}>

@@ -102,7 +102,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: #eefcf3;
   --sidebar-foreground: #0d1012;
-  --sidebar-primary: #00de8f;
+  --sidebar-primary: #eefcf3;
   --sidebar-primary-foreground: #f3f0ff;
   --sidebar-accent: #c0f7d6;
   --sidebar-accent-foreground: #21201b;
@@ -143,7 +143,7 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: #122d1f;
   --sidebar-foreground: #fffef9;
-  --sidebar-primary: #206947;
+  --sidebar-primary: #122d1f;
   --sidebar-primary-foreground: #efeee9;
   --sidebar-accent: #206947;
   --sidebar-accent-foreground: #efeee9;
@@ -165,4 +165,23 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes shimmerPulse {
+  0% {
+    opacity: 0.6;
+    background-position: -200% 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+    background-position: 200% 0;
+  }
+}
+.animate-shimmer-pulse {
+  background: linear-gradient(90deg, #c0f7d6 25%, #f6fef9 50%, #c0f7d6 75%);
+  background-size: 200% 100%;
+  animation: shimmerPulse 1.5s infinite ease-in-out;
 }

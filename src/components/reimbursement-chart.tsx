@@ -4,6 +4,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { BarChartSkeleton } from "./skeletons";
 
 const chartConfig = {
   reimbursement: {
@@ -50,7 +51,7 @@ export function ReimbursementChart() {
   }
 
   if (chartDataQuery.isLoading) {
-    return <>Loading</>;
+    return <BarChartSkeleton />;
   }
 
   // ambil bulan & tahun di komponen (simple)

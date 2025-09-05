@@ -1,12 +1,6 @@
 "use client";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+import { DetailViewSkeleton } from "@/components/skeletons";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { booleanToString, fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
@@ -28,7 +22,7 @@ function EmployeeTable({ id }: { id: string }) {
     },
   });
   if (dataQuery.isLoading) {
-    return <>Loading</>;
+    return <DetailViewSkeleton />;
   }
   if (dataQuery.isError) {
     console.error(dataQuery.error.message);
@@ -90,9 +84,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Marriage Status</TableCell>
-          <TableCell>
-            {booleanToString(data["boMarriageStatus"], "Married", "Unmarried")}
-          </TableCell>
+          <TableCell>{booleanToString(data["boMarriageStatus"], "Married", "Unmarried")}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Number of Departments</TableCell>
@@ -108,9 +100,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Active Status</TableCell>
-          <TableCell>
-            {booleanToString(data["boActive"], "Active", "Inactive")}
-          </TableCell>
+          <TableCell>{booleanToString(data["boActive"], "Active", "Inactive")}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Employment Type</TableCell>
