@@ -3,9 +3,11 @@ import { ReimbursementChart } from "@/components/reimbursement-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { fetchJSONAPI } from "@/lib/lib";
+import { useEmployeeIDQuery } from "@/queries/queries";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign, ListTodo, LucideClipboardPlus } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const url = "/api/v1/reimbursements?";
 
@@ -117,14 +119,22 @@ export default function Page() {
       console.error(pendingValueQuery.error.message);
       return <FetchErrorMessage message={"Something went wrong"} />;
     }
-    return <>IDR {pendingValueQuery.data} worth of reimbursements are still pending</>;
+    return (
+      <>
+        IDR {pendingValueQuery.data} worth of reimbursements are still pending
+      </>
+    );
   }
 
   const { open } = useSidebar();
+  // initial call for cache fill
+  useEmployeeIDQuery();
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <div className={`grid auto-rows-min gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}>
+      <div
+        className={`grid auto-rows-min gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}
+      >
         <Card className="pr-6 ">
           <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>
@@ -138,7 +148,10 @@ export default function Page() {
 
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start  md:mb-4 md:ml-6 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <LucideClipboardPlus size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <LucideClipboardPlus
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>
@@ -156,7 +169,10 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <ListTodo size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <ListTodo
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>
@@ -174,7 +190,10 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <DollarSign size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <DollarSign
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>
