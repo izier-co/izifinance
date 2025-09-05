@@ -9,8 +9,14 @@ import {
 } from "@/components/ui/table";
 import { booleanToString, fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 import { use } from "react";
+import z from "zod";
 
+const employeeIDSchema = z
+  .string()
+  .length(9)
+  .refine((str) => ["F", "I", "P"].some((letter) => str.startsWith(letter)));
 async function getData(id: string) {
   const data = await fetchJSONAPI("GET", `/api/v1/employees/${id}`);
   const json = await data.json();
@@ -31,10 +37,17 @@ function EmployeeTable({ id }: { id: string }) {
     return <>Loading</>;
   }
   if (dataQuery.isError) {
+    if (dataQuery.error.message.includes("data is undefined")) {
+      notFound();
+    }
     console.error(dataQuery.error.message);
     return <>Error : {dataQuery.error.message} </>;
   }
   const data = dataQuery.data;
+  console.log(data);
+  if (data.data.length === 0) {
+    notFound();
+  }
   return (
     <Table className="mb-6 max-w-[80%] mx-auto">
       <TableHeader>
@@ -154,5 +167,9 @@ function EmployeeTable({ id }: { id: string }) {
 }
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  return <EmployeeTable id={id} />;
+  const validatedID = employeeIDSchema.safeParse(id);
+  if (validatedID.error) {
+    throw new Error(validatedID.error.message);
+  }
+  return <EmployeeTable id={validatedID.data} />;
 }
