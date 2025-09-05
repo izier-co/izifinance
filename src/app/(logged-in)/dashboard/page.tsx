@@ -1,5 +1,6 @@
 "use client";
 import { ReimbursementChart } from "@/components/reimbursement-chart";
+import { DashboardCardSkeleton } from "@/components/skeletons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { fetchJSONAPI } from "@/lib/lib";
@@ -61,9 +62,10 @@ async function getPendingReimbursementValue(): Promise<number> {
   return totalPending;
 }
 
-function LoadingMessage() {
-  return <>Loading Data...</>;
-}
+//unused function
+// function LoadingMessage() {
+//   return <>Loading Data...</>;
+// }
 
 function FetchErrorMessage({ message }: { message: string }) {
   return <>Error : {message}</>;
@@ -76,7 +78,8 @@ export default function Page() {
       queryFn: getDailyReimbursementData,
     });
     if (dailyReimbursementQuery.isLoading) {
-      return <LoadingMessage />;
+      return <DashboardCardSkeleton />;
+      // return <LoadingMessage />;
     }
     if (dailyReimbursementQuery.isError) {
       console.error(dailyReimbursementQuery.error.message);
@@ -97,7 +100,8 @@ export default function Page() {
       queryFn: getPendingReimbursements,
     });
     if (pendingQuery.isLoading) {
-      return <LoadingMessage />;
+      return <DashboardCardSkeleton />;
+      // return <LoadingMessage />;
     }
     if (pendingQuery.isError) {
       console.error(pendingQuery.error.message);
@@ -112,7 +116,8 @@ export default function Page() {
       queryFn: getPendingReimbursementValue,
     });
     if (pendingValueQuery.isLoading) {
-      return <LoadingMessage />;
+      return <DashboardCardSkeleton />;
+      // return <LoadingMessage />;
     }
     if (pendingValueQuery.isError) {
       console.error(pendingValueQuery.error.message);
@@ -131,9 +136,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <div
-        className={`grid auto-rows-min gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}
-      >
+      <div className={`grid auto-rows-min xl:grid-cols-3 gap-4 ${open ? "md:grid-rows-auto" : "md:grid-cols-3"}`}>
         <Card className="pr-6 ">
           <div className="flex flex-row md:flex-col-reverse xl:flex-row items-center md:items-start justify-between">
             <div>

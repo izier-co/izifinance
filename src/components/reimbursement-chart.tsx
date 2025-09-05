@@ -4,11 +4,12 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { BarChartSkeleton } from "./skeletons";
 
 const chartConfig = {
   reimbursement: {
     label: "Reimbursements:",
-    color: "#ae93fa",
+    color: "#00DE8F",
   },
 } satisfies ChartConfig;
 
@@ -50,7 +51,7 @@ export function ReimbursementChart() {
   }
 
   if (chartDataQuery.isLoading) {
-    return <>Loading</>;
+    return <BarChartSkeleton />;
   }
 
   // ambil bulan & tahun di komponen (simple)
@@ -68,7 +69,7 @@ export function ReimbursementChart() {
           <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
         </BarChart>
       </ChartContainer>
-      <p className="text-center text-sm text-[var(--sidebar-accent-foreground)]">
+      <p className="text-center text-sm">
         {monthName} {year}
       </p>
     </div>
