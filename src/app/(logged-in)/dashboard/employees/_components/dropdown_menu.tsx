@@ -342,11 +342,6 @@ function GrantRevokeDialogMenu({
   table: Table<CommonRow>;
 }) {
   const checkAdminQuery = useEmployeeIDQuery();
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
-  if (!isAdmin) {
-    return;
-  }
   if (checkAdminQuery.data === row.getValue("txEmployeeCode")) {
     return; // to avoid bugs after setting self not being admin
   }
@@ -366,11 +361,6 @@ function ActivateDeactivateDialogMenu({
   table: Table<CommonRow>;
 }) {
   const checkAdminQuery = useEmployeeIDQuery();
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
-  if (!isAdmin) {
-    return;
-  }
   if (checkAdminQuery.data === row.getValue("txEmployeeCode")) {
     return; // to avoid bugs after setting self not being admin
   }
@@ -443,13 +433,6 @@ function SetUUIDDialog({
     }
   }
 
-  const checkAdminQuery = useEmployeeIDQuery();
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
-
-  if (!isAdmin) {
-    return;
-  }
   return (
     <Dialog open={modalOpen} onOpenChange={_setUUIDCleanup}>
       <DialogTrigger asChild>
@@ -515,6 +498,9 @@ export function EmployeeDropdownMenu({
   table: Table<CommonRow>;
 }) {
   const router = useRouter();
+  const checkAdminQuery = useEmployeeIDQuery();
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
 
   return (
     <DropdownMenu>
@@ -534,9 +520,23 @@ export function EmployeeDropdownMenu({
         >
           View Details
         </DropdownMenuItem>
-        <GrantRevokeDialogMenu row={row} table={table} />
-        <ActivateDeactivateDialogMenu row={row} table={table} />
-        <SetUUIDDialog row={row} table={table} />
+        {isAdmin && (
+          <>
+            {" "}
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(
+                  `/dashboard/employees/${row.getValue("txEmployeeCode")}/edit`
+                );
+              }}
+            >
+              Edit Employee
+            </DropdownMenuItem>
+            <GrantRevokeDialogMenu row={row} table={table} />
+            <ActivateDeactivateDialogMenu row={row} table={table} />
+            <SetUUIDDialog row={row} table={table} />
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
