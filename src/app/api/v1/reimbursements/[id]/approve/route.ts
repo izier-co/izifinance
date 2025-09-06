@@ -3,10 +3,10 @@ import constValues from "@/lib/constants";
 import { authorizeAdmin, removeByKey } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
-) => {
+) {
   const supabase = await createClient();
   const unauthorizedResponse = await authorizeAdmin(supabase);
   if (unauthorizedResponse) return unauthorizedResponse;
@@ -89,4 +89,4 @@ export const PUT = async (
     message: "Note Approved!",
     data: sanitizedData,
   });
-};
+}

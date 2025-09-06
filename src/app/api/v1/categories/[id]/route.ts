@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/api/supabase_server.config";
 import { authorizeAdmin, removeByKey } from "@/lib/lib";
 
-export const GET = async (
+export async function GET(
   req: NextRequest,
   props: { params: Promise<{ id: number }> }
-) => {
+) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const params = await props.params;
@@ -33,12 +33,12 @@ export const GET = async (
     },
     { status: 200 }
   );
-};
+}
 
-export const DELETE = async (
+export async function DELETE(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
-) => {
+) {
   const supabase = await createClient();
   const unauthorizedResponse = await authorizeAdmin(supabase);
   if (unauthorizedResponse) return unauthorizedResponse;
@@ -61,4 +61,4 @@ export const DELETE = async (
     message: "Data Successfully Deleted!",
     data: sanitizedData,
   });
-};
+}

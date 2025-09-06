@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import constValues from "@/lib/constants";
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
-) => {
+) {
   const supabase = await createClient();
   const params = await props.params;
   const id = params.id;
@@ -80,4 +80,4 @@ export const PUT = async (
     message: "Note Voided!",
     data: sanitizedData,
   });
-};
+}

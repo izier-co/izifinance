@@ -7,10 +7,10 @@ const uuidSchema = z.object({
   uuid: z.uuid().nullable(),
 });
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ empID: string }> }
-) => {
+) {
   const supabase = await createClient();
 
   let body: Record<string, string> = {};
@@ -57,4 +57,4 @@ export const PUT = async (
     message: "Employee User Set!",
     data: sanitizedData,
   });
-};
+}

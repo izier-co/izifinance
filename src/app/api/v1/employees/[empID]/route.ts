@@ -31,10 +31,10 @@ const editEmployeeSchema = z.object({
     .refine((num) => isValidInt(num)),
 });
 
-export const GET = async (
+export async function GET(
   req: NextRequest,
   props: { params: Promise<{ empID: string }> }
-) => {
+) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const params = await props.params;
@@ -61,7 +61,7 @@ export const GET = async (
     },
     { status: 200 }
   );
-};
+}
 
 export async function PUT(
   req: NextRequest,
