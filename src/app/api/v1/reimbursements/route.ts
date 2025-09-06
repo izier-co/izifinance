@@ -89,7 +89,7 @@ type ReimbursementItems = {
 
 type ReturnedData = Record<string, number | string>;
 
-export const GET = async (req: NextRequest) => {
+export async function GET(req: NextRequest) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
@@ -198,9 +198,9 @@ export const GET = async (req: NextRequest) => {
     },
     { status: 200 }
   );
-};
+}
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   // Expects JSON payload for reimbursement_notes table
   // with reimbursement_items field that contains the payload
   // of reimbursement_items in an array
@@ -344,4 +344,4 @@ export const POST = async (req: NextRequest) => {
     },
     { status: 201 }
   );
-};
+}

@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/api/supabase_server.config";
 import { removeByKey } from "@/lib/lib";
 
-export const GET = async (
+export async function GET(
   req: NextRequest,
   props: { params: Promise<{ userUID: string }> }
-) => {
+) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const params = await props.params;
@@ -32,4 +32,4 @@ export const GET = async (
     },
     { status: 200 }
   );
-};
+}
