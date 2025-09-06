@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function Page() {
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-160 content-center">
+      <div className="flex flex-col items-center justify-center pt-25">
         <div className="mb-4 ">
           <TriangleAlert className="size-30 mb-8 text-[var(--destructive)]" />
           <p className="font-bold mb-2">Opss..</p>

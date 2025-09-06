@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 export function DashboardCardSkeleton() {
   return (
     <div className="space-y-2 mt-2 ">
-      <Skeleton className="h-5 w-50" />
+      <Skeleton className="h-5 w-45 xl:w-38" />
       <Skeleton className="h-4 w-30" />
     </div>
   );
