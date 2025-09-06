@@ -4,13 +4,30 @@ import { fetchJSONAPI } from "@/lib/lib";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
 import { DetailViewSkeleton } from "@/components/skeletons";
+import { notFound } from "next/navigation";
+import z from "zod";
+
+const randomUUIDStringSchema = z
+  .string()
+  .length(7)
+  .refine((str) => !isNaN(Number.parseInt(str, 16)));
 
 async function getData(id: string) {
-  const data = await fetchJSONAPI("GET", `/api/v1/reimbursements/${id}/full-data`);
+  const data = await fetchJSONAPI(
+    "GET",
+    `/api/v1/reimbursements/${id}/full-data`
+  );
   const json = await data.json();
   if (!data.ok) {
     throw new Error(json.error);
@@ -50,11 +67,15 @@ function ReimbursementTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
-          <TableCell>{new Date(data["daCreatedAt"]).toLocaleString()}</TableCell>
+          <TableCell>
+            {new Date(data["daCreatedAt"]).toLocaleString()}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Updated At</TableCell>
-          <TableCell>{new Date(data["daUpdatedAt"]).toLocaleString()}</TableCell>
+          <TableCell>
+            {new Date(data["daUpdatedAt"]).toLocaleString()}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Currency</TableCell>
@@ -74,7 +95,9 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Bank Name</TableCell>
-          <TableCell>{data["issuer_emp_data"]["m_bank"]["txBankName"]}</TableCell>
+          <TableCell>
+            {data["issuer_emp_data"]["m_bank"]["txBankName"]}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Account Code</TableCell>
@@ -90,7 +113,11 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Changed By</TableCell>
-          <TableCell>{data["admin_emp_data"] ? data["admin_emp_data"]["txFullName"] : "None"}</TableCell>
+          <TableCell>
+            {data["admin_emp_data"]
+              ? data["admin_emp_data"]["txFullName"]
+              : "None"}
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Total Reimbursement Value</TableCell>
@@ -136,7 +163,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <>
       <ReimbursementTable id={id} />
-      <DataTable columns={columns} data={dataQuery.data["reimbursement_items"]} />
+      <DataTable
+        columns={columns}
+        data={dataQuery.data["reimbursement_items"]}
+      />
     </>
   );
 }
