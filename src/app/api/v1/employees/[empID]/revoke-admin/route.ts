@@ -20,7 +20,6 @@ export async function PUT(
     })
     .eq("txEmployeeCode", id)
     .select();
-  console.log(id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });

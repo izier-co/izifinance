@@ -5,7 +5,7 @@ async function _createClient(URL?: string, KEY?: string) {
   const cookieStore = await cookies();
   return createServerClient(URL!, KEY!, {
     db: {
-      schema: "dt_dwh",
+      schema: "dt_vma",
     },
     cookies: {
       getAll() {

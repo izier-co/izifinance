@@ -15,7 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
-export const dtDwh = pgSchema("dt_dwh");
+export const dtDwh = pgSchema("dt_vma");
 
 export const mCompanyInCompanyCodeSeqInDtDwh = dtDwh.sequence(
   "m_company_txCompanyCode_seq",
@@ -106,7 +106,7 @@ export const mReligionInDtDwh = dtDwh.table(
       .default(sql`(now() AT TIME ZONE 'utc'::text)`)
       .notNull(),
     txReligionCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_religion_txReligionCode_seq",
+      name: "dt_vma.m_religion_txReligionCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -134,7 +134,7 @@ export const mRolesInDtDwh = dtDwh.table(
       .default(sql`(now() AT TIME ZONE 'utc'::text)`)
       .notNull(),
     txRoleCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_roles_txRoleCode_seq",
+      name: "dt_vma.m_roles_txRoleCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -162,7 +162,7 @@ export const mBankInDtDwh = dtDwh.table(
       .default(sql`(now() AT TIME ZONE 'utc'::text)`)
       .notNull(),
     txBankTypeCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_bank_txBankTypeCode_seq",
+      name: "dt_vma.m_bank_txBankTypeCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -191,7 +191,7 @@ export const mPositionInDtDwh = dtDwh.table(
       .default(sql`(now() AT TIME ZONE 'utc'::text)`)
       .notNull(),
     txPositionCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_position_txPositionCode_seq",
+      name: "dt_vma.m_position_txPositionCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -259,7 +259,7 @@ export const mEmploymentInDtDwh = dtDwh.table(
     daCreatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     daUpdatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     txEmploymentTypeCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_employment_txEmploymentTypeCode_seq",
+      name: "dt_vma.m_employment_txEmploymentTypeCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -290,7 +290,7 @@ export const mCompanyTypeInDtDwh = dtDwh.table(
       .default(sql`(now() AT TIME ZONE 'utc'::text)`)
       .notNull(),
     txCompanyTypeCode: smallint().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_company_type_txCompanyTypeCode_seq",
+      name: "dt_vma.m_company_type_txCompanyTypeCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
@@ -450,7 +450,7 @@ export const mCompanyInDtDwh = dtDwh.table(
     daCreatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     daUpdatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     txCompanyCode: integer().generatedByDefaultAsIdentity({
-      name: "dt_dwh.m_company_txCompanyCode_seq",
+      name: "dt_vma.m_company_txCompanyCode_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,

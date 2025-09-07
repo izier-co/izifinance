@@ -2,7 +2,7 @@ import { createBrowserClient } from "@supabase/ssr";
 
 const options = {
   db: {
-    schema: "dt_dwh",
+    schema: "dt_vma",
   },
 };
 

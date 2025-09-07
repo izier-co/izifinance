@@ -26,7 +26,7 @@ export type Database = {
   };
 };
 
-type DefaultSchema = Database[Extract<keyof Database, "dt_dwh" | "public">];
+type DefaultSchema = Database[Extract<keyof Database, "dt_vma" | "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends

@@ -7,7 +7,7 @@ import { Database } from "../database.types";
 import { ComboboxItem } from "@/components/form-combobox";
 
 export async function verifyAuthentication(
-  supabase: SupabaseClient<Database, "dt_dwh">
+  supabase: SupabaseClient<Database, "dt_vma">
 ): Promise<NextResponse<unknown> | null> {
   const {
     data: { user },
@@ -19,7 +19,7 @@ export async function verifyAuthentication(
 }
 
 export async function authorizeAdmin(
-  supabase: SupabaseClient<Database, "dt_dwh">
+  supabase: SupabaseClient<Database, "dt_vma">
 ): Promise<NextResponse<JSONValue> | null> {
   const {
     data: { user },
