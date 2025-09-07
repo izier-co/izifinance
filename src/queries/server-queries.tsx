@@ -17,7 +17,6 @@ export async function getEmpInfo() {
     `/api/v1/employees/get-id/${data.user.id}`
   );
   const json = await res.json();
-  console.log(json);
   if (!res.ok) {
     throw new Error("Something went wrong");
   }
