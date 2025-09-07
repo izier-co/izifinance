@@ -2,10 +2,10 @@ import { createClient } from "@/app/api/supabase_server.config";
 import { authorizeAdmin, removeByKey } from "@/lib/lib";
 import { NextRequest, NextResponse } from "next/server";
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ empID: string }> }
-) => {
+) {
   const supabase = await createClient();
   const unauthorizedResponse = await authorizeAdmin(supabase);
   if (unauthorizedResponse) return unauthorizedResponse;
@@ -20,7 +20,6 @@ export const PUT = async (
     })
     .eq("txEmployeeCode", id)
     .select();
-  console.log(id);
 
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -31,4 +30,4 @@ export const PUT = async (
     message: "Admin Revoked!",
     data: sanitizedData,
   });
-};
+}

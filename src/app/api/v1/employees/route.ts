@@ -54,7 +54,7 @@ const getRequestParams = z.object({
   updatedAfter: z.iso.datetime().optional(),
 });
 
-export const GET = async (req: NextRequest) => {
+export async function GET(req: NextRequest) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
@@ -134,7 +134,7 @@ export const GET = async (req: NextRequest) => {
     },
     { status: 200 }
   );
-};
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();

@@ -2,43 +2,16 @@ import { Button } from "@/components/ui/button";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { useEmployeeIDQuery } from "@/queries/queries";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
-import { MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal, Loader2, View, FilePenLine, FileCheck, FileX, CircleOff } from "lucide-react";
 import { useState } from "react";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import {
-  ChangeDescriptionSchema,
-  changeDescriptionSchema,
-  ApprovalSchema,
-  processSchema,
-  VoidSchema,
-  RejectSchema,
-} from "../schemas";
+import { ChangeDescriptionSchema, changeDescriptionSchema, ApprovalSchema, processSchema, VoidSchema, RejectSchema } from "../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { CommonRow } from "@/components/sorting-datatable-header";
@@ -50,13 +23,7 @@ declare module "@tanstack/table-core" {
   }
 }
 
-export function ReimbursementDropdownMenu({
-  row,
-  table,
-}: {
-  row: Row<CommonRow>;
-  table: Table<CommonRow>;
-}) {
+export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const changeDescriptionForm = useForm<ChangeDescriptionSchema>({
     resolver: zodResolver(changeDescriptionSchema),
     defaultValues: {
@@ -93,8 +60,7 @@ export function ReimbursementDropdownMenu({
 
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean =
-    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
   const isApproved: boolean = row.getValue("txStatus") === "Approved";
   const isRejected: boolean = row.getValue("txStatus") === "Rejected";
   const isVoid: boolean = row.getValue("txStatus") === "Void";
@@ -260,17 +226,13 @@ export function ReimbursementDropdownMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => {
-            router.push(
-              `/dashboard/reimbursements/${row.getValue("txReimbursementNoteID")}`
-            );
+            router.push(`/dashboard/reimbursements/${row.getValue("txReimbursementNoteID")}`);
           }}
         >
+          <View className="text-[var(--sidebar-accent-foreground)]" />
           View Details
         </DropdownMenuItem>
-        <Dialog
-          open={descriptionModalOpen}
-          onOpenChange={_descriptionModalCleanup}
-        >
+        <Dialog open={descriptionModalOpen} onOpenChange={_descriptionModalCleanup}>
           <DropdownMenuItem
             className={isChanged ? "pointer-events-none opacity-50" : ""}
             // prevents weird closing bug when opening
@@ -279,6 +241,7 @@ export function ReimbursementDropdownMenu({
               setDescriptionModalOpen(true);
             }}
           >
+            <FilePenLine className="text-[var(--sidebar-accent-foreground)]" />
             Edit Description
           </DropdownMenuItem>
           <DialogContent onInteractOutside={(e) => e.preventDefault()}>
@@ -288,20 +251,13 @@ export function ReimbursementDropdownMenu({
             <div className="flex items-center gap-2">
               <div className="grid flex-1 gap-2">
                 <Form {...changeDescriptionForm}>
-                  <form
-                    id="change-description-form"
-                    onSubmit={changeDescriptionForm.handleSubmit(
-                      changeDescription
-                    )}
-                  >
+                  <form id="change-description-form" onSubmit={changeDescriptionForm.handleSubmit(changeDescription)}>
                     <FormField
                       control={changeDescriptionForm.control}
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="capitalize">
-                            Description :
-                          </FormLabel>
+                          <FormLabel className="capitalize">Description :</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -315,13 +271,7 @@ export function ReimbursementDropdownMenu({
                           Cancel
                         </Button>
                       </DialogClose>
-                      <Button type="submit">
-                        {changeDescriptionQuery.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "Confirm"
-                        )}
-                      </Button>
+                      <Button type="submit">{changeDescriptionQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}</Button>
                     </DialogFooter>
                   </form>
                 </Form>
@@ -332,10 +282,7 @@ export function ReimbursementDropdownMenu({
         {/* admin only block */}
         {isAdmin && (
           <>
-            <Dialog
-              open={approvalModalOpen}
-              onOpenChange={_approvalModalCleanup}
-            >
+            <Dialog open={approvalModalOpen} onOpenChange={_approvalModalCleanup}>
               <DropdownMenuItem
                 className={isChanged ? "pointer-events-none opacity-50" : ""}
                 onSelect={(e) => {
@@ -343,30 +290,24 @@ export function ReimbursementDropdownMenu({
                   setApprovalModalOpen(true);
                 }}
               >
+                <FileCheck className="text-[var(--sidebar-accent-foreground)]" />
                 Approve
               </DropdownMenuItem>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Confirmation</DialogTitle>
-                  <DialogDescription>
-                    Are you sure to Approve this note?
-                  </DialogDescription>
+                  <DialogDescription>Are you sure to Approve this note?</DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-2">
                   <div className="grid flex-1 gap-2">
                     <Form {...approveForm}>
-                      <form
-                        id="approval-form"
-                        onSubmit={approveForm.handleSubmit(approve)}
-                      >
+                      <form id="approval-form" onSubmit={approveForm.handleSubmit(approve)}>
                         <FormField
                           control={approveForm.control}
                           name="changeReason"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="capitalize">
-                                Change Reason :
-                              </FormLabel>
+                              <FormLabel className="capitalize">Change Reason :</FormLabel>
                               <FormControl>
                                 <Input {...field} />
                               </FormControl>
@@ -380,13 +321,7 @@ export function ReimbursementDropdownMenu({
                               Cancel
                             </Button>
                           </DialogClose>
-                          <Button type="submit">
-                            {approvalQuery.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              "Approve"
-                            )}
-                          </Button>
+                          <Button type="submit">{approvalQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}</Button>
                         </DialogFooter>
                       </form>
                     </Form>
@@ -402,30 +337,24 @@ export function ReimbursementDropdownMenu({
                   setRejectModalOpen(true);
                 }}
               >
+                <FileX className="text-[var(--sidebar-accent-foreground)]" />
                 Reject
               </DropdownMenuItem>
               <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                   <DialogTitle>Confirmation</DialogTitle>
-                  <DialogDescription>
-                    Are you sure to Reject this note?
-                  </DialogDescription>
+                  <DialogDescription>Are you sure to Reject this note?</DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-2">
                   <div className="grid flex-1 gap-2">
                     <Form {...rejectForm}>
-                      <form
-                        id="reject-form"
-                        onSubmit={rejectForm.handleSubmit(rejectNote)}
-                      >
+                      <form id="reject-form" onSubmit={rejectForm.handleSubmit(rejectNote)}>
                         <FormField
                           control={rejectForm.control}
                           name="changeReason"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="capitalize">
-                                Change Reason :
-                              </FormLabel>
+                              <FormLabel className="capitalize">Change Reason :</FormLabel>
                               <FormControl>
                                 <Input {...field} />
                               </FormControl>
@@ -439,13 +368,7 @@ export function ReimbursementDropdownMenu({
                               Cancel
                             </Button>
                           </DialogClose>
-                          <Button type="submit">
-                            {rejectQuery.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              "Reject"
-                            )}
-                          </Button>
+                          <Button type="submit">{rejectQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reject"}</Button>
                         </DialogFooter>
                       </form>
                     </Form>
@@ -463,30 +386,24 @@ export function ReimbursementDropdownMenu({
               setVoidModalOpen(true);
             }}
           >
+            <CircleOff className="text-[var(--sidebar-accent-foreground)]" />
             Void
           </DropdownMenuItem>
           <DialogContent onInteractOutside={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>Confirmation</DialogTitle>
-              <DialogDescription>
-                Are you sure to Void this note?
-              </DialogDescription>
+              <DialogDescription>Are you sure to Void this note?</DialogDescription>
             </DialogHeader>
             <div className="flex items-center gap-2">
               <div className="grid flex-1 gap-2">
                 <Form {...voidForm}>
-                  <form
-                    id="void-form"
-                    onSubmit={voidForm.handleSubmit(voidNote)}
-                  >
+                  <form id="void-form" onSubmit={voidForm.handleSubmit(voidNote)}>
                     <FormField
                       control={voidForm.control}
                       name="changeReason"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="capitalize">
-                            Change Reason :
-                          </FormLabel>
+                          <FormLabel className="capitalize">Change Reason :</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -500,13 +417,7 @@ export function ReimbursementDropdownMenu({
                           Cancel
                         </Button>
                       </DialogClose>
-                      <Button type="submit">
-                        {voidQuery.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "Void"
-                        )}
-                      </Button>
+                      <Button type="submit">{voidQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Void"}</Button>
                     </DialogFooter>
                   </form>
                 </Form>

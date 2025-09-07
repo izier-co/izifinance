@@ -12,7 +12,7 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)";
   };
-  dt_dwh: {
+  dt_vma: {
     Tables: {
       _debug_test: {
         Row: {
@@ -701,7 +701,7 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  dt_dwh: {
+  dt_vma: {
     Enums: {},
   },
 } as const;

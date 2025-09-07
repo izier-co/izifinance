@@ -14,6 +14,14 @@ import {
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
+import { DetailViewSkeleton } from "@/components/skeletons";
+import { notFound } from "next/navigation";
+import z from "zod";
+
+const randomUUIDStringSchema = z
+  .string()
+  .length(7)
+  .refine((str) => !isNaN(Number.parseInt(str, 16)));
 
 async function getData(id: string) {
   const data = await fetchJSONAPI(
@@ -38,10 +46,16 @@ function ReimbursementTable({ id }: { id: string }) {
     return <>Loading</>;
   }
   if (dataQuery.isError) {
+    if (dataQuery.error.message.includes("data is undefined")) {
+      notFound();
+    }
     console.error(dataQuery.error.message);
     return <>Error : {dataQuery.error.message} </>;
   }
   const data = dataQuery.data;
+  if (data.length === 0) {
+    notFound();
+  }
   return (
     <Table className="mb-6 max-w-[80%] mx-auto">
       <TableHeader>
@@ -121,6 +135,10 @@ function ReimbursementTable({ id }: { id: string }) {
 }
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const validatedID = randomUUIDStringSchema.safeParse(id);
+  if (validatedID.error) {
+    throw new Error(validatedID.error.message);
+  }
   const dataQuery = useQuery({
     queryKey: ["reimbursement-item-query", id],
     queryFn: () => {
@@ -128,11 +146,19 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     },
   });
   if (dataQuery.isLoading) {
-    return <>Loading</>;
+    return <DetailViewSkeleton />;
   }
   if (dataQuery.isError) {
+    if (dataQuery.error.message.includes("data is undefined")) {
+      notFound();
+    }
     console.error(dataQuery.error.message);
     return <>Error : {dataQuery.error.message} </>;
+  }
+
+  const data = dataQuery.data;
+  if (data.length === 0) {
+    notFound();
   }
   return (
     <>
