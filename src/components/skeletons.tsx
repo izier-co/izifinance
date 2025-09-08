@@ -4,9 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 
 export function DashboardCardSkeleton() {
   return (
-    <div className="space-y-2 mt-2">
-      <Skeleton className="h-5 w-70" />
-      <Skeleton className="h-4 w-50" />
+    <div className="space-y-2 mt-2 ">
+      <Skeleton className="h-5 w-45 xl:w-38" />
+      <Skeleton className="h-4 w-30" />
     </div>
   );
 }
@@ -15,7 +15,7 @@ export function BarChartSkeleton() {
   const heights = [88, 112, 100, 136, 104, 152, 120, 96, 130, 118, 92, 144, 88, 112, 100, 136, 104, 88, 112, 100, 136, 104, 152, 120, 96, 130, 118, 92, 144];
   return (
     <div className="flex flex-col items-center justify-center ">
-      <div className="w-full px-4 py-2 flex items-end gap-2 mb-2">
+      <div className="w-full px-4 py-2 flex items-end justify-center gap-2 mb-2">
         {heights.map((h, i) => (
           <Skeleton key={i} className="w-4 rounded-sm" style={{ height: h }} />
         ))}
