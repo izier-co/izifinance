@@ -17,16 +17,13 @@ import { useForm } from "react-hook-form";
 
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { LoginSchema, loginSchema } from "@/schemas/schema";
+import { UserCreationSchema, userCreationSchema } from "@/schemas/schema";
 import { useState } from "react";
-
-const addUserSchema = loginSchema;
-type AddUserSchema = LoginSchema;
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
   const addUserForm = useForm({
-    resolver: zodResolver(addUserSchema),
+    resolver: zodResolver(userCreationSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -51,11 +48,11 @@ export default function Page() {
     });
   }
 
-  function addUser(newUserData: AddUserSchema) {
+  function addUser(newUserData: UserCreationSchema) {
     submitQuery.mutate(newUserData);
   }
 
-  async function _addUser(newUserData: AddUserSchema) {
+  async function _addUser(newUserData: UserCreationSchema) {
     const res = await fetchJSONAPI("POST", "/api/v1/auth/admin", newUserData);
     if (!res.ok) {
       const json = await res.json();
