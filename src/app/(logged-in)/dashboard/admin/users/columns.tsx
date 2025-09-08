@@ -1,8 +1,5 @@
 "use client";
-import {
-  CommonRow,
-  SortableHeader,
-} from "@/components/sorting-datatable-header";
+import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";

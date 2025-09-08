@@ -14,25 +14,11 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import {
-  emailFormSchema,
-  EmailFormSchema,
-  emailSchema,
-  passwordSchema,
-} from "@/schemas/schema";
+import { emailFormSchema, EmailFormSchema, emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
 // import Link from "next/link";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -142,16 +128,14 @@ export default function Home() {
                 <CardContent>
                   <Form {...form}>
                     <form id="login-form" className="flex flex-col gap-4 " onSubmit={form.handleSubmit(onSubmit)}>
-                      <div className="flex flex-row items-center gap-2">
+                      <div className="flex flex-row items-center justify-center gap-2">
                         <Mail className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">
-                                Email
-                              </FormLabel>
+                              <FormLabel className="capitalize not-italic">Email</FormLabel>
                               <FormControl>
                                 <Input placeholder="john.doe@example.com" {...field} />
                               </FormControl>
@@ -160,16 +144,14 @@ export default function Home() {
                           )}
                         />
                       </div>
-                      <div className="flex flex-row items-center gap-2">
+                      <div className="flex flex-row items-center justify-center gap-2">
                         <Lock className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">
-                                Password
-                              </FormLabel>
+                              <FormLabel className="capitalize not-italic">Password</FormLabel>
                               <div className="flex flex-row gap-1 justify-center item-center">
                                 <FormControl>
                                   <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
@@ -192,32 +174,22 @@ export default function Home() {
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <div className="flex justify-end w-full">
-                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">
-                      Forgot Password
-                    </button>
+                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">Forgot Password</button>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Reset Password</DialogTitle>
-                    <DialogDescription>
-                      Insert the email of the account to be sent confirmation
-                      email for
-                    </DialogDescription>
+                    <DialogDescription>Insert the email of the account to be sent confirmation email for</DialogDescription>
                   </DialogHeader>
                   <Form {...emailForm}>
-                    <form
-                      id="change-description-form"
-                      onSubmit={emailForm.handleSubmit(sendForgetPassword)}
-                    >
+                    <form id="change-description-form" onSubmit={emailForm.handleSubmit(sendForgetPassword)}>
                       <FormField
                         control={emailForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="capitalize">
-                              Email :
-                            </FormLabel>
+                            <FormLabel className="capitalize">Email :</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -231,13 +203,7 @@ export default function Home() {
                             Cancel
                           </Button>
                         </DialogClose>
-                        <Button type="submit">
-                          {resetPasswordLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            "Submit"
-                          )}
-                        </Button>
+                        <Button type="submit">{resetPasswordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit"}</Button>
                       </DialogFooter>
                     </form>
                   </Form>
