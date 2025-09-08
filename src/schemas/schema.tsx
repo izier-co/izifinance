@@ -8,8 +8,6 @@ export const emailSchema = z
   .nonempty("Please provide an email");
 
 export const passwordSchema = z.string().nonempty("Please provide a password");
-// .min(MIN_PASSWORD_LENGTH, "Password must be at least 8 characters")
-// .max(MAX_PASSWORD_LENGTH, "Password must be at most 200 characters");
 
 export const passwordCreationSchema = z
   .string()

@@ -204,8 +204,7 @@ export function ReimbursementDatatable<TData, TValue>({
               <PlaceholderRow colSpan={columns.length} text={error} />
             ) : loading ? (
               <TableSkeleton colSpan={columns.length} rows={5} />
-            ) : // <PlaceholderRow colSpan={columns.length} text="Loading..." />
-            table.getRowModel().rows?.length ? (
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -249,6 +248,5 @@ export function ReimbursementDatatable<TData, TValue>({
         </Button>
       </div>
     </>
-    // </div>
   );
 }
