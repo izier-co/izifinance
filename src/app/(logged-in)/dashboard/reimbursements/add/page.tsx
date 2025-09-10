@@ -209,7 +209,6 @@ export default function Page() {
                       <FormLabel className="capitalize">Quantity :</FormLabel>
                       <FormControl>
                         <Input
-                          className="font-numeric"
                           type="number"
                           value={field.value === 0 ? "" : field.value}
                           onChange={(e) => {
