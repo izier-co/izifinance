@@ -1,6 +1,17 @@
-"use client";
 import * as React from "react";
-import { LayoutDashboard, Minus, Plus } from "lucide-react";
+import {
+  FilePlus,
+  FolderCog,
+  IdCardLanyard,
+  ListPlus,
+  Minus,
+  Plus,
+  ReceiptText,
+  Tag,
+  UserPen,
+  UserStar,
+  Wallet,
+} from "lucide-react";
 
 import {
   Collapsible,
@@ -21,39 +32,61 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LogoutButton } from "./logout-button";
-import { fetchJSONAPI } from "@/lib/lib";
-import { supabase } from "@/app/api/supabase.config";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import Image from "next/image";
+import { getEmpInfo, getUser } from "@/queries/server-queries";
+import { NavUser } from "./nav-user";
 
 const adminSidebarData = {
   navMain: [
     {
       title: "Reimbursements",
       url: "#",
+      icon: Wallet,
       items: [
         {
           title: "Manage Reimbursements",
           url: "/dashboard/reimbursements",
+          icon: ReceiptText,
         },
         {
           title: "Add Reimbursements",
           url: "/dashboard/reimbursements/add",
+          icon: FilePlus,
         },
       ],
     },
     {
       title: "Categories",
       url: "#",
+      icon: Tag,
       items: [
         {
           title: "Manage Categories",
           url: "/dashboard/categories",
+          icon: FolderCog,
         },
         {
           title: "Add Categories",
           url: "/dashboard/categories/add",
+          icon: ListPlus,
+        },
+      ],
+    },
+    {
+      title: "Admin",
+      url: "#",
+      icon: UserStar,
+      items: [
+        {
+          title: "Manage Users",
+          url: "/dashboard/admin/users",
+          icon: UserPen,
+        },
+        {
+          title: "Manage Employees",
+          url: "/dashboard/employees",
+          icon: IdCardLanyard,
         },
       ],
     },
@@ -65,64 +98,50 @@ const userSidebarData = {
     {
       title: "Reimbursements",
       url: "#",
+      icon: Wallet,
       items: [
         {
           title: "Manage Reimbursements",
           url: "/dashboard/reimbursements",
+          icon: ReceiptText,
         },
         {
           title: "Add Reimbursements",
           url: "/dashboard/reimbursements/add",
+          icon: FilePlus,
         },
       ],
     },
     {
       title: "Categories",
       url: "#",
+      icon: Tag,
       items: [
         {
           title: "Manage Categories",
           url: "/dashboard/categories",
+          icon: FolderCog,
         },
       ],
     },
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  async function getEmpID() {
-    const { data, error } = await supabase.auth.getUser();
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const empData = await getEmpInfo();
+  const supabaseUser = await getUser();
+  const user = {
+    name: empData.txFullName,
+    email: supabaseUser.email || "example@mail.com",
+    avatar: supabaseUser.user_metadata.profile_picture,
+    boHasAdminAccess: empData.boHasAdminAccess,
+  };
 
-    if (error) {
-      throw new Error(error.message);
-    }
-    if (data.user === null) {
-      throw new Error("Unauthorized User");
-    }
-
-    const empRes = await fetchJSONAPI(
-      "GET",
-      `/api/v1/employees/${data.user.id}`
-    );
-    const json = await empRes.json();
-    if (json.data.length === 0) {
-      throw new Error("Unauthorized User");
-    }
-    return json.data[0].txEmployeeCode;
-  }
-
-  const checkAdminQuery = useQuery({
-    queryKey: ["check-admin"],
-    queryFn: getEmpID,
-    staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
   let sidebarData = userSidebarData;
-  if (isAdmin) {
+
+  if (empData.boHasAdminAccess === true) {
     sidebarData = adminSidebarData;
   }
   return (
@@ -132,12 +151,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <LayoutDashboard className="size-4" />
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
+                  <Image
+                    src="/images/logolight-removedbg.jpg"
+                    alt="logo light mode"
+                    width={150}
+                    height={150}
+                    className="xl:w-200 object-contain dark:hidden"
+                  />
+                  <Image
+                    src="/images/logodark-removedbg.jpg"
+                    alt="logo dark mode"
+                    width={150}
+                    height={150}
+                    className="xl:w-200 object-contain hidden dark:block "
+                  />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Izifinance</span>
-                  <span className="">v1.0.0</span>
+                  <span className="font-extrabold text-lg">Izifinance</span>
+                  <span>v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -156,7 +188,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title}
+                      {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                      <span className="font-semibold">{item.title}</span>
                       <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
@@ -167,7 +200,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild>
-                              <Link href={item.url}>{item.title}</Link>
+                              <Link href={item.url}>
+                                {item.icon && (
+                                  <item.icon className="mr-2 h-4 w-4" />
+                                )}
+                                {item.title}
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
@@ -182,7 +220,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
-        <LogoutButton />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

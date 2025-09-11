@@ -8,6 +8,7 @@ import {
 } from "@/components/sorting-datatable-header";
 import { QueryCell } from "./_components/query-cell-component";
 import { ReimbursementDropdownMenu } from "./_components/dropdown_menu";
+import { DateCell } from "@/components/date-cell";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -16,9 +17,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daCreatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daCreatedAt" />;
     },
   },
   {
@@ -27,9 +26,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daUpdatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daUpdatedAt" />;
     },
   },
   {
@@ -63,53 +60,6 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "txRecipientAccount",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Recipient Account" />;
-    },
-  },
-  {
-    accessorKey: "inBankTypeCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Bank Type" />;
-    },
-    cell: ({ row }) => {
-      return (
-        <QueryCell
-          row={row}
-          queryKey={["get-banks"]}
-          queryUrl="/api/v1/banks"
-          fieldKey="inBankTypeCode"
-          targetFieldKey="txBankName"
-        />
-      );
-    },
-  },
-  {
-    accessorKey: "inRecipientCompanyCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Recipient Company" />;
-    },
-    cell: ({ row }) => {
-      return (
-        <QueryCell
-          row={row}
-          queryKey={["get-companies"]}
-          queryUrl="/api/v1/companies"
-          fieldKey="inRecipientCompanyCode"
-          foreignFieldKey="inCompanyCode"
-          targetFieldKey="txCompanyName"
-        />
-      );
-    },
-  },
-  {
-    accessorKey: "txBankAccountCode",
-    header: ({ column }) => {
-      return <SortableHeader column={column} title="Bank Account Code" />;
-    },
-  },
-  {
     accessorKey: "txChangeReason",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Change Reason" />;
@@ -122,7 +72,7 @@ export const columns: ColumnDef<CommonRow>[] = [
     },
   },
   {
-    accessorKey: "inCategoryID",
+    accessorKey: "txCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category" />;
     },
@@ -132,7 +82,7 @@ export const columns: ColumnDef<CommonRow>[] = [
           row={row}
           queryKey={["get-categories"]}
           queryUrl="/api/v1/categories"
-          fieldKey="inCategoryID"
+          fieldKey="txCategoryID"
           targetFieldKey="txCategoryName"
         />
       );
@@ -146,8 +96,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <ReimbursementDropdownMenu row={row} />;
+    cell: ({ row, table }) => {
+      return <ReimbursementDropdownMenu row={row} table={table} />;
     },
   },
 ];

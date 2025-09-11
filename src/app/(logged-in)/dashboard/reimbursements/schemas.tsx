@@ -9,12 +9,12 @@ export const payloadSchema = z.object({
   txDescriptionDetails: z.string(),
   txRecipientAccount: z.string(),
   txApprovedBy: z.string(),
-  inBankTypeCode: z.number(),
+  txBankTypeCode: z.number(),
   inRecipientCompanyCode: z.number(),
   txBankAccountCode: z.string(),
   txChangeReason: z.string(),
   txEmployeeCode: z.string(),
-  inCategoryID: z.number(),
+  txCategoryID: z.number(),
   dcNominalReimbursement: z.number(),
 });
 

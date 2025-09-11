@@ -1,7 +1,6 @@
 "use client";
 
-import { ComboboxItem } from "@/components/form-combobox";
-import { fetchJSONAPI } from "@/lib/lib";
+import { fetchCombobox } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { ReimbursementItemSchema, ReimbursementSchema } from "../schemas";
 import { getCookies } from "@/lib/server-lib";
@@ -30,42 +29,11 @@ export async function addReimbursement({
     },
     body: JSON.stringify(payload),
   });
-  return await res.json();
-}
-
-async function fetchCombobox(fetchParams: {
-  url: string;
-  labelProperty: string;
-  valueProperty: string;
-}): Promise<Array<ComboboxItem>> {
-  let data: Array<Record<string, string>> = [];
-  let pageNum = 1;
-  while (true) {
-    const searchParams = new URLSearchParams({
-      fields: `${fetchParams.labelProperty},${fetchParams.valueProperty}`,
-      paginationPage: pageNum.toString(),
-    }).toString();
-    const urlWithParams = fetchParams.url + "?" + searchParams;
-    const res = await fetchJSONAPI("GET", urlWithParams);
-    if (res.ok) {
-      const json = await res.json();
-      data = data.concat(json.data);
-      pageNum++;
-      if (json.pagination.isLastPage) {
-        break;
-      }
-    } else {
-      break;
-    }
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error);
   }
-
-  return data.map(
-    (item: Record<string, string | number>) =>
-      ({
-        label: item[fetchParams.labelProperty],
-        value: item[fetchParams.valueProperty],
-      }) as ComboboxItem
-  );
+  return json;
 }
 
 export function useCategoryQuery() {
@@ -75,33 +43,7 @@ export function useCategoryQuery() {
       return fetchCombobox({
         url: "/api/v1/categories",
         labelProperty: "txCategoryName",
-        valueProperty: "inCategoryID",
-      });
-    },
-  });
-}
-
-export function useBankQuery() {
-  return useQuery({
-    queryKey: ["bank-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/banks",
-        labelProperty: "txBankName",
-        valueProperty: "inBankTypeCode",
-      });
-    },
-  });
-}
-
-export function useCompanyQuery() {
-  return useQuery({
-    queryKey: ["company-combobox"],
-    queryFn: () => {
-      return fetchCombobox({
-        url: "/api/v1/companies",
-        labelProperty: "txCompanyName",
-        valueProperty: "inCompanyCode",
+        valueProperty: "txCategoryID",
       });
     },
   });

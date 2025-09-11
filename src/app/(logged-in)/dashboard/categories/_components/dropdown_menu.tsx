@@ -2,29 +2,15 @@ import { Button } from "@/components/ui/button";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { useEmployeeIDQuery } from "@/queries/queries";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
-import { MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal, Loader2, Trash } from "lucide-react";
 import { useState } from "react";
-import { Row } from "@tanstack/react-table";
+import { Row, Table } from "@tanstack/react-table";
 import { CommonRow } from "@/components/sorting-datatable-header";
 
-export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
+export function CategoryDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const deleteQuery = useMutation({
@@ -32,6 +18,7 @@ export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
     mutationFn: _deleteCategory,
     onSuccess: () => {
       refreshAndRevalidatePage("/categories");
+      table.options.meta?.triggerRefetch();
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -40,16 +27,20 @@ export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
 
   const checkAdminQuery = useEmployeeIDQuery();
 
-  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data;
+  const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
 
   function deleteCategory() {
     deleteQuery.mutate();
   }
   async function _deleteCategory() {
-    await fetchJSONAPI(
+    const res = await fetchJSONAPI(
       "DELETE",
-      `/api/v1/categories/${row.getValue("inCategoryID")}`
+      `/api/v1/categories/${row.getValue("txCategoryID")}`
     );
+    if (!res.ok) {
+      const json = await res.json();
+      throw new Error(json.error);
+    }
   }
 
   // don't show the menu if not admin
@@ -72,21 +63,16 @@ export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
                 e.preventDefault();
               }}
             >
+              <Trash className="text-[var(--sidebar-accent-foreground)]" />
               Delete
             </DropdownMenuItem>
           </DialogTrigger>
           <DialogContent onInteractOutside={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>Confirmation</DialogTitle>
-              <DialogDescription>
-                Are you sure that you wanted to delete this?
-              </DialogDescription>
+              <DialogDescription>Are you sure that you wanted to delete this?</DialogDescription>
             </DialogHeader>
-            {errorMessage && (
-              <p className="text-sm font-medium text-destructive mb-2">
-                {errorMessage}
-              </p>
-            )}
+            {errorMessage && <p className="text-sm font-medium text-destructive mb-2">{errorMessage}</p>}
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="secondary" type="button">
@@ -94,11 +80,7 @@ export function CategoryDropdownMenu({ row }: { row: Row<CommonRow> }) {
                 </Button>
               </DialogClose>
               <Button type="button" onClick={deleteCategory}>
-                {deleteQuery.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Confirm"
-                )}
+                {deleteQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}
               </Button>
             </DialogFooter>
           </DialogContent>

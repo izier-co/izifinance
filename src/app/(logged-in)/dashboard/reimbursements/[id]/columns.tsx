@@ -1,5 +1,6 @@
 "use client";
 
+import { DateCell } from "@/components/date-cell";
 import {
   CommonRow,
   SortableHeader,
@@ -23,9 +24,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daCreatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daCreatedAt" />;
     },
   },
   {
@@ -34,9 +33,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daUpdatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daUpdatedAt" />;
     },
   },
   {

@@ -3,10 +3,10 @@ import { removeByKey } from "@/lib/lib";
 import { createClient } from "@/app/api/supabase_server.config";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
+export async function GET(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
-) => {
+) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const fields = searchParams.get("fields");
@@ -35,12 +35,12 @@ export const GET = async (
     },
     { status: 200 }
   );
-};
+}
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
-) => {
+) {
   const supabase = await createClient();
   const urlParams = await props.params;
   let description = "";
@@ -81,4 +81,4 @@ export const PUT = async (
     },
     { status: 200 }
   );
-};
+}

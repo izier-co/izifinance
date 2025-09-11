@@ -12,7 +12,7 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)";
   };
-  dt_dwh: {
+  dt_vma: {
     Tables: {
       _debug_test: {
         Row: {
@@ -37,7 +37,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inBankTypeCode: number;
+          txBankTypeCode: number;
           txBankName: string;
           uiBankId: string;
         };
@@ -48,7 +48,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inBankTypeCode?: number;
+          txBankTypeCode?: number;
           txBankName: string;
           uiBankId?: string;
         };
@@ -59,7 +59,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inBankTypeCode?: number;
+          txBankTypeCode?: number;
           txBankName?: string;
           uiBankId?: string;
         };
@@ -71,7 +71,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inCategoryID: number;
+          txCategoryID: number;
           txCategoryDescription: string | null;
           txCategoryName: string;
           uiCategoryID: string;
@@ -81,7 +81,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCategoryID?: number;
+          txCategoryID?: number;
           txCategoryDescription?: string | null;
           txCategoryName: string;
           uiCategoryID?: string;
@@ -91,7 +91,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCategoryID?: number;
+          txCategoryID?: number;
           txCategoryDescription?: string | null;
           txCategoryName?: string;
           uiCategoryID?: string;
@@ -104,8 +104,8 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inCompanyCode: number;
-          inCompanyTypeCode: number;
+          txCompanyCode: number;
+          txCompanyTypeCode: number;
           txCompanyDetails: string | null;
           txCompanyName: string;
           uiCompanyId: string;
@@ -115,8 +115,8 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCompanyCode?: number;
-          inCompanyTypeCode: number;
+          txCompanyCode?: number;
+          txCompanyTypeCode: number;
           txCompanyDetails?: string | null;
           txCompanyName: string;
           uiCompanyId?: string;
@@ -126,19 +126,19 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCompanyCode?: number;
-          inCompanyTypeCode?: number;
+          txCompanyCode?: number;
+          txCompanyTypeCode?: number;
           txCompanyDetails?: string | null;
           txCompanyName?: string;
           uiCompanyId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "m_company_inCompanyTypeCode_fkey";
-            columns: ["inCompanyTypeCode"];
+            foreignKeyName: "m_company_txCompanyTypeCode_fkey";
+            columns: ["txCompanyTypeCode"];
             isOneToOne: false;
             referencedRelation: "m_company_type";
-            referencedColumns: ["inCompanyTypeCode"];
+            referencedColumns: ["txCompanyTypeCode"];
           },
         ];
       };
@@ -148,7 +148,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inCompanyTypeCode: number;
+          txCompanyTypeCode: number;
           txLongCompanyTypeName: string;
           txShortCompanyTypeName: string;
           uiCompanyTypeId: string;
@@ -158,7 +158,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCompanyTypeCode?: number;
+          txCompanyTypeCode?: number;
           txLongCompanyTypeName: string;
           txShortCompanyTypeName: string;
           uiCompanyTypeId?: string;
@@ -168,7 +168,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inCompanyTypeCode?: number;
+          txCompanyTypeCode?: number;
           txLongCompanyTypeName?: string;
           txShortCompanyTypeName?: string;
           uiCompanyTypeId?: string;
@@ -186,13 +186,13 @@ export type Database = {
           daJoinDate: string;
           daUpdatedAt: string;
           flSalary: number;
-          inBankTypeCode: number;
-          inCompanyCode: number;
-          inEmploymentTypeCode: number;
+          txBankTypeCode: number;
+          txCompanyCode: number;
+          txEmploymentTypeCode: number;
           inMonth: number;
           inNumOfDeps: number;
-          inReligionCode: number;
-          inRoleCode: number;
+          txReligionCode: number;
+          txRoleCode: number;
           inYear: number;
           txBankAccountNumber: string;
           txEmailAddress: string;
@@ -215,13 +215,13 @@ export type Database = {
           daJoinDate: string;
           daUpdatedAt?: string;
           flSalary: number;
-          inBankTypeCode: number;
-          inCompanyCode: number;
-          inEmploymentTypeCode: number;
+          txBankTypeCode: number;
+          txCompanyCode: number;
+          txEmploymentTypeCode: number;
           inMonth: number;
           inNumOfDeps: number;
-          inReligionCode: number;
-          inRoleCode: number;
+          txReligionCode: number;
+          txRoleCode: number;
           inYear: number;
           txBankAccountNumber: string;
           txEmailAddress: string;
@@ -244,13 +244,13 @@ export type Database = {
           daJoinDate?: string;
           daUpdatedAt?: string;
           flSalary?: number;
-          inBankTypeCode?: number;
-          inCompanyCode?: number;
-          inEmploymentTypeCode?: number;
+          txBankTypeCode?: number;
+          txCompanyCode?: number;
+          txEmploymentTypeCode?: number;
           inMonth?: number;
           inNumOfDeps?: number;
-          inReligionCode?: number;
-          inRoleCode?: number;
+          txReligionCode?: number;
+          txRoleCode?: number;
           inYear?: number;
           txBankAccountNumber?: string;
           txEmailAddress?: string;
@@ -265,39 +265,39 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "m_employees_inBankTypeCode_fkey";
-            columns: ["inBankTypeCode"];
+            foreignKeyName: "m_employees_txBankTypeCode_fkey";
+            columns: ["txBankTypeCode"];
             isOneToOne: false;
             referencedRelation: "m_bank";
-            referencedColumns: ["inBankTypeCode"];
+            referencedColumns: ["txBankTypeCode"];
           },
           {
-            foreignKeyName: "m_employees_inCompanyCode_fkey";
-            columns: ["inCompanyCode"];
+            foreignKeyName: "m_employees_txCompanyCode_fkey";
+            columns: ["txCompanyCode"];
             isOneToOne: false;
             referencedRelation: "m_company";
-            referencedColumns: ["inCompanyCode"];
+            referencedColumns: ["txCompanyCode"];
           },
           {
-            foreignKeyName: "m_employees_inEmploymentTypeCode_fkey";
-            columns: ["inEmploymentTypeCode"];
+            foreignKeyName: "m_employees_txEmploymentTypeCode_fkey";
+            columns: ["txEmploymentTypeCode"];
             isOneToOne: false;
             referencedRelation: "m_employment";
-            referencedColumns: ["inEmploymentTypeCode"];
+            referencedColumns: ["txEmploymentTypeCode"];
           },
           {
-            foreignKeyName: "m_employees_inReligionCode_fkey";
-            columns: ["inReligionCode"];
+            foreignKeyName: "m_employees_txReligionCode_fkey";
+            columns: ["txReligionCode"];
             isOneToOne: false;
             referencedRelation: "m_religion";
-            referencedColumns: ["inReligionCode"];
+            referencedColumns: ["txReligionCode"];
           },
           {
-            foreignKeyName: "m_employees_inRoleCode_fkey";
-            columns: ["inRoleCode"];
+            foreignKeyName: "m_employees_txRoleCode_fkey";
+            columns: ["txRoleCode"];
             isOneToOne: false;
             referencedRelation: "m_roles";
-            referencedColumns: ["inRoleCode"];
+            referencedColumns: ["txRoleCode"];
           },
         ];
       };
@@ -307,7 +307,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inEmploymentTypeCode: number;
+          txEmploymentTypeCode: number;
           txEmploymentTypeName: string;
           uiEmploymentId: string;
         };
@@ -316,7 +316,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inEmploymentTypeCode?: number;
+          txEmploymentTypeCode?: number;
           txEmploymentTypeName: string;
           uiEmploymentId?: string;
         };
@@ -325,7 +325,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inEmploymentTypeCode?: number;
+          txEmploymentTypeCode?: number;
           txEmploymentTypeName?: string;
           uiEmploymentId?: string;
         };
@@ -337,7 +337,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inPositionCode: number;
+          txPositionCode: number;
           txPositionDetails: string | null;
           txPositionName: string;
           uiPositionId: string;
@@ -347,7 +347,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inPositionCode?: number;
+          txPositionCode?: number;
           txPositionDetails?: string | null;
           txPositionName: string;
           uiPositionId?: string;
@@ -357,7 +357,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inPositionCode?: number;
+          txPositionCode?: number;
           txPositionDetails?: string | null;
           txPositionName?: string;
           uiPositionId?: string;
@@ -370,7 +370,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt: string;
           daUpdatedAt: string;
-          inReligionCode: number;
+          txReligionCode: number;
           txReligionName: string;
           uiReligionId: string;
         };
@@ -379,7 +379,7 @@ export type Database = {
           boStatus: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inReligionCode?: number;
+          txReligionCode?: number;
           txReligionName: string;
           uiReligionId?: string;
         };
@@ -388,7 +388,7 @@ export type Database = {
           boStatus?: boolean;
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inReligionCode?: number;
+          txReligionCode?: number;
           txReligionName?: string;
           uiReligionId?: string;
         };
@@ -398,7 +398,7 @@ export type Database = {
         Row: {
           daCreatedAt: string;
           daUpdatedAt: string;
-          inRoleCode: number;
+          txRoleCode: number;
           txLongRoleName: string;
           txRoleDescription: string | null;
           txShortRoleName: string | null;
@@ -407,7 +407,7 @@ export type Database = {
         Insert: {
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inRoleCode?: number;
+          txRoleCode?: number;
           txLongRoleName: string;
           txRoleDescription?: string | null;
           txShortRoleName?: string | null;
@@ -416,7 +416,7 @@ export type Database = {
         Update: {
           daCreatedAt?: string;
           daUpdatedAt?: string;
-          inRoleCode?: number;
+          txRoleCode?: number;
           txLongRoleName?: string;
           txRoleDescription?: string | null;
           txShortRoleName?: string | null;
@@ -470,8 +470,8 @@ export type Database = {
           daCreatedAt: string;
           daUpdatedAt: string;
           dcNominalReimbursement: number;
-          inBankTypeCode: number;
-          inCategoryID: number;
+          txBankTypeCode: number;
+          txCategoryID: number;
           inRecipientCompanyCode: number;
           txBankAccountCode: string;
           txChangedBy: string | null;
@@ -489,8 +489,8 @@ export type Database = {
           daCreatedAt?: string;
           daUpdatedAt?: string;
           dcNominalReimbursement?: number;
-          inBankTypeCode: number;
-          inCategoryID: number;
+          txBankTypeCode: number;
+          txCategoryID: number;
           inRecipientCompanyCode: number;
           txBankAccountCode: string;
           txChangedBy?: string | null;
@@ -508,8 +508,8 @@ export type Database = {
           daCreatedAt?: string;
           daUpdatedAt?: string;
           dcNominalReimbursement?: number;
-          inBankTypeCode?: number;
-          inCategoryID?: number;
+          txBankTypeCode?: number;
+          txCategoryID?: number;
           inRecipientCompanyCode?: number;
           txBankAccountCode?: string;
           txChangedBy?: string | null;
@@ -525,11 +525,11 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "reimbursement_notes_inCategoryID_fkey";
-            columns: ["inCategoryID"];
+            foreignKeyName: "reimbursement_notes_txCategoryID_fkey";
+            columns: ["txCategoryID"];
             isOneToOne: false;
             referencedRelation: "m_category";
-            referencedColumns: ["inCategoryID"];
+            referencedColumns: ["txCategoryID"];
           },
           {
             foreignKeyName: "reimbursement_notes_txChangedBy_fkey";
@@ -546,18 +546,18 @@ export type Database = {
             referencedColumns: ["txEmployeeCode"];
           },
           {
-            foreignKeyName: "reinbursement_notes_inBankTypeCode_fkey";
-            columns: ["inBankTypeCode"];
+            foreignKeyName: "reinbursement_notes_txBankTypeCode_fkey";
+            columns: ["txBankTypeCode"];
             isOneToOne: false;
             referencedRelation: "m_bank";
-            referencedColumns: ["inBankTypeCode"];
+            referencedColumns: ["txBankTypeCode"];
           },
           {
             foreignKeyName: "reinbursement_notes_inRecipientCompanyCode_fkey";
             columns: ["inRecipientCompanyCode"];
             isOneToOne: false;
             referencedRelation: "m_company";
-            referencedColumns: ["inCompanyCode"];
+            referencedColumns: ["txCompanyCode"];
           },
         ];
       };
@@ -701,7 +701,7 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  dt_dwh: {
+  dt_vma: {
     Enums: {},
   },
 } as const;

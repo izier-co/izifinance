@@ -1,19 +1,15 @@
 "use client";
 
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { BarChartSkeleton } from "./skeletons";
 
 const chartConfig = {
   reimbursement: {
-    label: "Reimbursements",
-    color: "#2563eb",
+    label: "Reimbursements:",
+    color: "#00DE8F",
   },
 } satisfies ChartConfig;
 
@@ -55,27 +51,27 @@ export function ReimbursementChart() {
   }
 
   if (chartDataQuery.isLoading) {
-    return <>Loading</>;
+    return <BarChartSkeleton />;
   }
 
+  // ambil bulan & tahun di komponen (simple)
+  const now = new Date();
+  const monthName = now.toLocaleString("default", { month: "long" });
+  const year = now.getFullYear();
+
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart data={chartDataQuery.data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="day"
-          tickLine={false}
-          tickMargin={5}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar
-          dataKey="reimbursement"
-          fill="var(--color-reimbursement)"
-          radius={2}
-        />
-      </BarChart>
-    </ChartContainer>
+    <div>
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <BarChart data={chartDataQuery.data}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="day" tickLine={false} tickMargin={5} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
+        </BarChart>
+      </ChartContainer>
+      <p className="text-center text-sm">
+        {monthName} {year}
+      </p>
+    </div>
   );
 }

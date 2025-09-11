@@ -25,10 +25,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
+import { StepBack, StepForward } from "lucide-react";
+import { TableSkeleton } from "./skeletons";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   rowName: string;
+  refetchIndex: number;
+  triggerRefetch: () => void;
 }
 
 function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
@@ -44,11 +48,15 @@ function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
 export function ServerDataTable<TData, TValue>({
   rowName,
   columns,
+  refetchIndex,
+  triggerRefetch,
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "daCreatedAt", desc: true },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -106,6 +114,9 @@ export function ServerDataTable<TData, TValue>({
     pageCount: pagination.isLastPage
       ? pagination.pageNumber
       : pagination.pageNumber + 1,
+    meta: {
+      triggerRefetch,
+    },
   });
 
   function handlePrev() {
@@ -128,14 +139,14 @@ export function ServerDataTable<TData, TValue>({
 
   useEffect(() => {
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting, pagination.pageNumber, pagination.paginationSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorting, pagination.pageNumber, pagination.paginationSize, refetchIndex]);
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="border">
         <Table>
-          <TableHeader className="bg-gray-200">
+          <TableHeader className="bg-[var(--headertable)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -157,12 +168,12 @@ export function ServerDataTable<TData, TValue>({
             {error ? (
               <PlaceholderRow colSpan={columns.length} text={error} />
             ) : loading ? (
-              <PlaceholderRow colSpan={columns.length} text="Loading..." />
+              <TableSkeleton colSpan={columns.length} rows={5} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="even:bg-gray-100"
+                  className="even:bg-[var(--filltable)]"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -188,6 +199,7 @@ export function ServerDataTable<TData, TValue>({
           onClick={() => handlePrev()}
           disabled={!table.getCanPreviousPage()}
         >
+          <StepBack />
           Previous
         </Button>
         <Button
@@ -197,9 +209,9 @@ export function ServerDataTable<TData, TValue>({
           disabled={!table.getCanNextPage()}
         >
           Next
+          <StepForward />
         </Button>
       </div>
     </>
-    // </div>
   );
 }

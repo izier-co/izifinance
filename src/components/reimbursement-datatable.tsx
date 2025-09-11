@@ -26,18 +26,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { Input } from "./ui/input";
+import { StepBack, StepForward } from "lucide-react";
+import { TableSkeleton } from "./skeletons";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  refetchIndex: number;
+  triggerRefetch: () => void;
 }
 
 export function ReimbursementDatatable<TData, TValue>({
   columns,
+  refetchIndex,
+  triggerRefetch,
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "daCreatedAt", desc: true },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -115,6 +123,9 @@ export function ReimbursementDatatable<TData, TValue>({
     pageCount: pagination.isLastPage
       ? pagination.pageNumber
       : pagination.pageNumber + 1,
+    meta: {
+      triggerRefetch,
+    },
   });
 
   function handlePrev() {
@@ -143,28 +154,34 @@ export function ReimbursementDatatable<TData, TValue>({
     pagination.pageNumber,
     pagination.paginationSize,
     columnFilters,
+    refetchIndex,
   ]);
 
+  const initialFilterValue =
+    (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
+
+  const [filterValue, setFilterValue] = React.useState(initialFilterValue);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      table.getColumn("txEmployeeCode")?.setFilterValue(filterValue);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [filterValue, table]);
   return (
     <>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter employee ID..."
-          value={
-            (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("txEmployeeCode")
-              ?.setFilterValue(event.target.value)
-          }
+          placeholder="Sort by admin ID that approved the note"
+          value={filterValue}
+          onChange={(event) => setFilterValue(event.target.value)}
           className="max-w-sm"
         />
       </div>
-      <div className="rounded-md border">
+      <div className="border">
         <Table>
-          <TableHeader className="bg-gray-200">
+          <TableHeader className="bg-[var(--headertable)] ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -186,12 +203,12 @@ export function ReimbursementDatatable<TData, TValue>({
             {error ? (
               <PlaceholderRow colSpan={columns.length} text={error} />
             ) : loading ? (
-              <PlaceholderRow colSpan={columns.length} text="Loading..." />
+              <TableSkeleton colSpan={columns.length} rows={5} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="even:bg-gray-100"
+                  className="even:bg-[var(--filltable)]"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -217,6 +234,7 @@ export function ReimbursementDatatable<TData, TValue>({
           onClick={() => handlePrev()}
           disabled={!table.getCanPreviousPage()}
         >
+          <StepBack />
           Previous
         </Button>
         <Button
@@ -226,9 +244,9 @@ export function ReimbursementDatatable<TData, TValue>({
           disabled={!table.getCanNextPage()}
         >
           Next
+          <StepForward />
         </Button>
       </div>
     </>
-    // </div>
   );
 }

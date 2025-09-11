@@ -12,7 +12,10 @@ async function getEmpID() {
     throw new Error("Unauthorized User");
   }
 
-  const res = await fetchJSONAPI("GET", `/api/v1/employees/${data.user.id}`);
+  const res = await fetchJSONAPI(
+    "GET",
+    `/api/v1/employees/get-id/${data.user.id}`
+  );
   const json = await res.json();
   if (!res.ok) {
     throw new Error(json.error);
@@ -20,7 +23,11 @@ async function getEmpID() {
   if (json.data.length === 0) {
     throw new Error("Unauthorized User");
   }
-  return json.data[0].txEmployeeCode;
+  const returnData = {
+    empID: json.data[0].txEmployeeCode,
+    adminStatus: json.data[0].boHasAdminAccess,
+  };
+  return returnData;
 }
 
 export function useEmployeeIDQuery() {

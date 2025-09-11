@@ -47,17 +47,14 @@ const getRequestParams = z.object({
     .transform((str) => {
       return str?.replace(constValues.allowOnlyAlphabeticAndCommaPattern, "");
     }),
-  sortArray: z
-    .string()
-    .optional()
-    .transform(sortArray),
+  sortArray: z.string().optional().transform(sortArray),
   createdBefore: z.iso.datetime().optional(),
   createdAfter: z.iso.datetime().optional(),
   updatedBefore: z.iso.datetime().optional(),
   updatedAfter: z.iso.datetime().optional(),
 });
 
-export const GET = async (req: NextRequest) => {
+export async function GET(req: NextRequest) {
   const supabase = await createClient();
   const searchParams = req.nextUrl.searchParams;
   const urlParams = Object.fromEntries(searchParams.entries());
@@ -146,9 +143,9 @@ export const GET = async (req: NextRequest) => {
     },
     { status: 200 }
   );
-};
+}
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   const supabase = await createClient();
   let body: Record<string, string> = {};
   try {
@@ -187,4 +184,4 @@ export const POST = async (req: NextRequest) => {
     },
     { status: 201 }
   );
-};
+}

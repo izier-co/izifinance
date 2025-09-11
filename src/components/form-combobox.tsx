@@ -1,40 +1,22 @@
 import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from "./ui/command";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "./ui/command";
 import { ChevronsUpDownIcon, CheckIcon } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Skeleton } from "./ui/skeleton";
 
 export type ComboboxItem = {
   value: string | number;
   label: string;
 };
 
-export function FormCombobox({
-  value,
-  onChange,
-  items,
-  loading,
-  error,
-}: {
-  value: string;
-  onChange: (_: string) => void;
-  items: Array<ComboboxItem>;
-  loading?: boolean;
-  error?: boolean;
-}) {
+export function FormCombobox({ value, onChange, items, loading, error }: { value: string; onChange: (_: string) => void; items: Array<ComboboxItem>; loading?: boolean; error?: boolean }) {
   const [open, setOpen] = React.useState(false);
 
   function renderComboboxLabel() {
     if (error) return "Something Went Wrong";
-    if (loading) return "Loading...";
+    if (loading) return <Skeleton className="h-4 w-1/2" />;
     if (value) return items.find((item) => String(item.value) === value)?.label;
     return "Select Value...";
   }
@@ -42,13 +24,7 @@ export function FormCombobox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-          disabled={loading || error}
-        >
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between" disabled={loading || error}>
           {/* {loading
             ? "Loading..."
             : value
@@ -73,12 +49,7 @@ export function FormCombobox({
                     setOpen(false);
                   }}
                 >
-                  <CheckIcon
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === String(item.value) ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                  <CheckIcon className={cn("mr-2 h-4 w-4", value === String(item.value) ? "opacity-100" : "opacity-0")} />
                   {item.label}
                 </CommandItem>
               ))}

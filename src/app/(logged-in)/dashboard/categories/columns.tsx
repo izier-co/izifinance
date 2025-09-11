@@ -6,8 +6,8 @@ import {
   CommonRow,
   SortableHeader,
 } from "@/components/sorting-datatable-header";
-// import { Categories } from "./schemas";
 import { CategoryDropdownMenu } from "./_components/dropdown_menu";
+import { DateCell } from "@/components/date-cell";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -16,9 +16,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Created At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daCreatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daCreatedAt" />;
     },
   },
   {
@@ -27,9 +25,13 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Updated At" />;
     },
     cell: ({ row }) => {
-      const dateFromISO = new Date(row.getValue("daUpdatedAt"));
-      const localTime = dateFromISO.toLocaleString();
-      return <div>{localTime}</div>;
+      return <DateCell row={row} valueSource="daUpdatedAt" />;
+    },
+  },
+  {
+    accessorKey: "txCategoryID",
+    header: ({ column }) => {
+      return <SortableHeader column={column} title="Category ID" />;
     },
   },
   {
@@ -46,8 +48,8 @@ export const columns: ColumnDef<CommonRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <CategoryDropdownMenu row={row} />;
+    cell: ({ row, table }) => {
+      return <CategoryDropdownMenu row={row} table={table} />;
     },
   },
 ];
