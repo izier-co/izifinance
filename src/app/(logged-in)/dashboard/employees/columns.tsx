@@ -1,11 +1,21 @@
 "use client";
 
+<<<<<<< HEAD
 import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
+=======
+import {
+  CommonRow,
+  SortableHeader,
+} from "@/components/sorting-datatable-header";
+>>>>>>> 3dca31a (Add employees admin page (#3))
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeDropdownMenu } from "./_components/dropdown_menu";
 import { booleanToString } from "@/lib/lib";
 import { DateCell } from "@/components/date-cell";
+<<<<<<< HEAD
 import { MixedText } from "@/components/mixed-text";
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -56,9 +66,12 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Role Code" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txRoleCode")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     id: "status",
@@ -80,45 +93,60 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Employee Code" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txEmployeeCode")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "txPhoneNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Phone Number" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <div className="font-numeric">{row.getValue("txPhoneNumber")}</div>;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "txEmailAddress",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Email Address" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txEmailAddress")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "txBankTypeCode",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Type" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txBankTypeCode")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "txBankAccountNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Account Number" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <div className="font-numeric">{row.getValue("txBankAccountNumber")}</div>;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "boHasAdminAccess",

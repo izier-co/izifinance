@@ -10,7 +10,10 @@ import { use } from "react";
 import { DetailViewSkeleton } from "@/components/skeletons";
 import { notFound } from "next/navigation";
 import z from "zod";
+<<<<<<< HEAD
 import { MixedText } from "@/components/mixed-text";
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
 
 const randomUUIDStringSchema = z
   .string()
@@ -58,6 +61,7 @@ function ReimbursementTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={new Date(data["daCreatedAt"]).toLocaleString()} />
           </TableCell>
@@ -67,6 +71,13 @@ function ReimbursementTable({ id }: { id: string }) {
           <TableCell>
             <MixedText value={new Date(data["daUpdatedAt"]).toLocaleString()} />
           </TableCell>
+=======
+          <TableCell>{new Date(data["daCreatedAt"]).toLocaleString()}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Updated At</TableCell>
+          <TableCell>{new Date(data["daUpdatedAt"]).toLocaleString()}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Currency</TableCell>
@@ -113,7 +124,11 @@ function ReimbursementTable({ id }: { id: string }) {
         <TableRow>
           <TableCell>Total Reimbursement Value</TableCell>
           <TableCell>
+<<<<<<< HEAD
             <span>{data["txCurrency"]}</span> <MixedText value={String(data["dcNominalReimbursement"])} />
+=======
+            {data["txCurrency"]} {data["dcNominalReimbursement"]}
+>>>>>>> 3dca31a (Add employees admin page (#3))
           </TableCell>
         </TableRow>
         <TableRow>

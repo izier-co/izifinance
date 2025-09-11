@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
 import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
@@ -20,4 +21,8 @@ export default function Page() {
       </div>
     </>
   );
+=======
+export default function Page() {
+  return <>Something Went Wrong</>;
+>>>>>>> 3dca31a (Add employees admin page (#3))
 }

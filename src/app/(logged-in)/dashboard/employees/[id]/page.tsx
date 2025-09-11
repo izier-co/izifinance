@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import { MixedText } from "@/components/mixed-text";
 import { DetailViewSkeleton } from "@/components/skeletons";
 import {
@@ -9,6 +10,10 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+=======
+import { DetailViewSkeleton } from "@/components/skeletons";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+>>>>>>> 3dca31a (Add employees admin page (#3))
 import { booleanToString, fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
@@ -46,7 +51,11 @@ function EmployeeTable({ id }: { id: string }) {
     return <>Error : {dataQuery.error.message} </>;
   }
   const data = dataQuery.data;
+<<<<<<< HEAD
   if (data.length === 0) {
+=======
+  if (data.data.length === 0) {
+>>>>>>> 3dca31a (Add employees admin page (#3))
     notFound();
   }
   return (
@@ -60,6 +69,7 @@ function EmployeeTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["daCreatedAt"]} />
           </TableCell>
@@ -87,6 +97,25 @@ function EmployeeTable({ id }: { id: string }) {
           <TableCell>
             <MixedText value={data["inMonth"]} />
           </TableCell>
+=======
+          <TableCell>{data["daCreatedAt"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Updated At</TableCell>
+          <TableCell>{data["daUpdatedAt"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Joined At</TableCell>
+          <TableCell>{data["daJoinDate"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Join Year</TableCell>
+          <TableCell>{data["inYear"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Join Month</TableCell>
+          <TableCell>{data["inMonth"]}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Full Name</TableCell>
@@ -94,6 +123,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Date of Birth</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["daDateOfBirth"]} />
           </TableCell>
@@ -103,6 +133,13 @@ function EmployeeTable({ id }: { id: string }) {
           <TableCell>
             <MixedText value={data["txHomeAddress"]} />
           </TableCell>
+=======
+          <TableCell>{data["daDateOfBirth"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Home Address</TableCell>
+          <TableCell>{data["txHomeAddress"]}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>National ID Number</TableCell>
@@ -118,9 +155,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Marriage Status</TableCell>
+<<<<<<< HEAD
           <TableCell>
             {booleanToString(data["boMarriageStatus"], "Married", "Unmarried")}
           </TableCell>
+=======
+          <TableCell>{booleanToString(data["boMarriageStatus"], "Married", "Unmarried")}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Number of Departments</TableCell>
@@ -132,6 +173,7 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Role Code</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["txRoleCode"]} />
           </TableCell>
@@ -141,6 +183,13 @@ function EmployeeTable({ id }: { id: string }) {
           <TableCell>
             {booleanToString(data["boActive"], "Active", "Inactive")}
           </TableCell>
+=======
+          <TableCell>{data["txRoleCode"]}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Active Status</TableCell>
+          <TableCell>{booleanToString(data["boActive"], "Active", "Inactive")}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Employment Type</TableCell>
@@ -148,9 +197,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Employee Code</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["txEmployeeCode"]} />
           </TableCell>
+=======
+          <TableCell>{data["txEmployeeCode"]}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Company Name</TableCell>
@@ -162,9 +215,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Email Address</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["txEmailAddress"]} />
           </TableCell>
+=======
+          <TableCell>{data["txEmailAddress"]}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
         <TableRow>
           <TableCell>Bank Type</TableCell>
@@ -180,9 +237,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>User ID</TableCell>
+<<<<<<< HEAD
           <TableCell>
             <MixedText value={data["uiUserID"]} />
           </TableCell>
+=======
+          <TableCell>{data["uiUserID"]}</TableCell>
+>>>>>>> 3dca31a (Add employees admin page (#3))
         </TableRow>
       </TableBody>
     </Table>

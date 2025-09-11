@@ -18,12 +18,29 @@ interface DataTableProps<TData, TValue> {
   triggerRefetch: () => void;
 }
 
+<<<<<<< HEAD
 export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, triggerRefetch }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([{ id: "daCreatedAt", desc: true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+=======
+export function ReimbursementDatatable<TData, TValue>({
+  columns,
+  refetchIndex,
+  triggerRefetch,
+}: DataTableProps<TData, TValue>) {
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "daCreatedAt", desc: true },
+  ]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+>>>>>>> 3dca31a (Add employees admin page (#3))
   const [pagination, setPagination] = React.useState({
     isFirstPage: true,
     isLastPage: false,
@@ -85,7 +102,13 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
         pageSize: pagination.paginationSize,
       },
     },
+<<<<<<< HEAD
     pageCount: pagination.isLastPage ? pagination.pageNumber : pagination.pageNumber + 1,
+=======
+    pageCount: pagination.isLastPage
+      ? pagination.pageNumber
+      : pagination.pageNumber + 1,
+>>>>>>> 3dca31a (Add employees admin page (#3))
     meta: {
       triggerRefetch,
     },
@@ -112,9 +135,22 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+<<<<<<< HEAD
   }, [sorting, pagination.pageNumber, pagination.paginationSize, columnFilters, refetchIndex]);
 
   const initialFilterValue = (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
+=======
+  }, [
+    sorting,
+    pagination.pageNumber,
+    pagination.paginationSize,
+    columnFilters,
+    refetchIndex,
+  ]);
+
+  const initialFilterValue =
+    (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
+>>>>>>> 3dca31a (Add employees admin page (#3))
 
   const [filterValue, setFilterValue] = React.useState(initialFilterValue);
 
@@ -128,7 +164,16 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
   return (
     <>
       <div className="flex items-center py-4">
+<<<<<<< HEAD
         <Input placeholder="Sort by admin ID that approved the note" value={filterValue} onChange={(event) => setFilterValue(event.target.value)} className="max-w-sm" />
+=======
+        <Input
+          placeholder="Sort by admin ID that approved the note"
+          value={filterValue}
+          onChange={(event) => setFilterValue(event.target.value)}
+          className="max-w-sm"
+        />
+>>>>>>> 3dca31a (Add employees admin page (#3))
       </div>
       <div className="border">
         <Table>
@@ -148,7 +193,15 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
               <TableSkeleton colSpan={columns.length} rows={5} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
+<<<<<<< HEAD
                 <TableRow key={row.id} className="even:bg-[var(--filltable)]" data-state={row.getIsSelected() && "selected"}>
+=======
+                <TableRow
+                  key={row.id}
+                  className="even:bg-[var(--filltable)]"
+                  data-state={row.getIsSelected() && "selected"}
+                >
+>>>>>>> 3dca31a (Add employees admin page (#3))
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
@@ -161,7 +214,16 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+<<<<<<< HEAD
         <Button variant="outline" size="sm" onClick={() => handlePrev()} disabled={!table.getCanPreviousPage()}>
+=======
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePrev()}
+          disabled={!table.getCanPreviousPage()}
+        >
+>>>>>>> 3dca31a (Add employees admin page (#3))
           <StepBack />
           Previous
         </Button>

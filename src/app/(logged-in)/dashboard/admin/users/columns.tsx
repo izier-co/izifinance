@@ -1,11 +1,21 @@
 "use client";
+<<<<<<< HEAD
 import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
+=======
+import {
+  CommonRow,
+  SortableHeader,
+} from "@/components/sorting-datatable-header";
+>>>>>>> 3dca31a (Add employees admin page (#3))
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
 import { UserDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
+<<<<<<< HEAD
 import { MixedText } from "@/components/mixed-text";
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
 
 type RowWithMetadata = {
   user_metadata?: {
@@ -39,18 +49,24 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="User ID" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("id")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "email",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Email" />;
     },
+<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("email")} />;
     },
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "profile_picture",

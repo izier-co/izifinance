@@ -11,7 +11,11 @@ import { useEmployeeIDQuery } from "@/queries/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
+<<<<<<< HEAD
 import { IdCard, Loader2, MoreHorizontal, Star, StarOff, UserRoundCheck, UserRoundPen, UserRoundX, View } from "lucide-react";
+=======
+import { IdCard, Loader2, MoreHorizontal, Star, StarOff, UserRoundCheck, UserRoundX, View } from "lucide-react";
+>>>>>>> 3dca31a (Add employees admin page (#3))
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -377,7 +381,12 @@ function SetUUIDDialog({ row, table }: { row: Row<CommonRow>; table: Table<Commo
 export function EmployeeDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const router = useRouter();
   const checkAdminQuery = useEmployeeIDQuery();
+<<<<<<< HEAD
   const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+=======
+  const isAdmin: boolean =
+    checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
+>>>>>>> 3dca31a (Add employees admin page (#3))
 
   return (
     <DropdownMenu>
@@ -401,10 +410,18 @@ export function EmployeeDropdownMenu({ row, table }: { row: Row<CommonRow>; tabl
             {" "}
             <DropdownMenuItem
               onClick={() => {
+<<<<<<< HEAD
                 router.push(`/dashboard/employees/${row.getValue("txEmployeeCode")}/edit`);
               }}
             >
               <UserRoundPen className="text-[var(--sidebar-accent-foreground)]" />
+=======
+                router.push(
+                  `/dashboard/employees/${row.getValue("txEmployeeCode")}/edit`
+                );
+              }}
+            >
+>>>>>>> 3dca31a (Add employees admin page (#3))
               Edit Employee
             </DropdownMenuItem>
             <GrantRevokeDialogMenu row={row} table={table} />

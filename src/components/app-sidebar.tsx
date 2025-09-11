@@ -169,9 +169,13 @@ export async function AppSidebar({
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-extrabold text-lg">Izifinance</span>
+<<<<<<< HEAD
                   <span>
                     v<span className="font-numeric">1.0.0</span>
                   </span>
+=======
+                  <span>v1.0.0</span>
+>>>>>>> 3dca31a (Add employees admin page (#3))
                 </div>
               </Link>
             </SidebarMenuButton>

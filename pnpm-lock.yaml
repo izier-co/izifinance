@@ -62,9 +62,12 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+<<<<<<< HEAD
       '@tanstack/table-core':
         specifier: ^8.21.3
         version: 8.21.3
+=======
+>>>>>>> 3dca31a (Add employees admin page (#3))
       '@upstash/ratelimit':
         specifier: ^2.0.5
         version: 2.0.6(@upstash/redis@1.35.3)
