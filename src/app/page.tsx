@@ -14,24 +14,10 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import {
-  emailFormSchema,
-  EmailFormSchema,
-  emailSchema,
-  passwordSchema,
-} from "@/schemas/schema";
+import { emailFormSchema, EmailFormSchema, emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -188,32 +174,22 @@ export default function Home() {
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <div className="flex justify-end w-full">
-                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">
-                      Forgot Password
-                    </button>
+                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">Forgot Password</button>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Reset Password</DialogTitle>
-                    <DialogDescription>
-                      Insert the email of the account to be sent confirmation
-                      email for
-                    </DialogDescription>
+                    <DialogDescription>Insert the email of the account to be sent confirmation email for</DialogDescription>
                   </DialogHeader>
                   <Form {...emailForm}>
-                    <form
-                      id="change-description-form"
-                      onSubmit={emailForm.handleSubmit(sendForgetPassword)}
-                    >
+                    <form id="change-description-form" onSubmit={emailForm.handleSubmit(sendForgetPassword)}>
                       <FormField
                         control={emailForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="capitalize">
-                              Email :
-                            </FormLabel>
+                            <FormLabel className="capitalize">Email :</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -227,13 +203,7 @@ export default function Home() {
                             Cancel
                           </Button>
                         </DialogClose>
-                        <Button type="submit">
-                          {resetPasswordLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            "Submit"
-                          )}
-                        </Button>
+                        <Button type="submit">{resetPasswordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit"}</Button>
                       </DialogFooter>
                     </form>
                   </Form>

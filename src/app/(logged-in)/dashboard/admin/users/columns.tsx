@@ -1,13 +1,11 @@
 "use client";
-import {
-  CommonRow,
-  SortableHeader,
-} from "@/components/sorting-datatable-header";
+import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
 import { UserDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
+import { MixedText } from "@/components/mixed-text";
 
 type RowWithMetadata = {
   user_metadata?: {
@@ -41,11 +39,17 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="User ID" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("id")} />;
+    },
   },
   {
     accessorKey: "email",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Email" />;
+    },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("email")} />;
     },
   },
   {

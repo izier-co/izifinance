@@ -2,12 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-  CommonRow,
-  SortableHeader,
-} from "@/components/sorting-datatable-header";
+import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
 import { CategoryDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
+import { MixedText } from "@/components/mixed-text";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -32,6 +30,9 @@ export const columns: ColumnDef<CommonRow>[] = [
     accessorKey: "txCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category ID" />;
+    },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txCategoryID")} />;
     },
   },
   {

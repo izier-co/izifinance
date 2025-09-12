@@ -163,8 +163,21 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
+
+  input::placeholder {
+    @apply font-sans;
+  }
+
+  input {
+    @apply font-mono;
+  }
+}
+
+.font-numeric,
+time {
+  font-family: var(--font-geist-mono), monospace;
 }
 
 @keyframes shimmerPulse {

@@ -2,26 +2,9 @@
 
 import * as React from "react";
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
@@ -35,20 +18,12 @@ interface DataTableProps<TData, TValue> {
   triggerRefetch: () => void;
 }
 
-export function ReimbursementDatatable<TData, TValue>({
-  columns,
-  refetchIndex,
-  triggerRefetch,
-}: DataTableProps<TData, TValue>) {
+export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, triggerRefetch }: DataTableProps<TData, TValue>) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "daCreatedAt", desc: true },
-  ]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: "daCreatedAt", desc: true }]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = React.useState({
     isFirstPage: true,
     isLastPage: false,
@@ -65,12 +40,8 @@ export function ReimbursementDatatable<TData, TValue>({
       filterStr = ("&changedBy=" + columnFilters[0].value) as string;
     }
 
-    const sortQuery = sorting
-      .map(({ id, desc }) => (desc ? `-${id}` : `+${id}`))
-      .join(",");
-    const res = await fetch(
-      `/api/v1/reimbursements?sortArray=${encodeURIComponent(sortQuery)}&paginationPage=${pagination.pageNumber}${filterStr}`
-    );
+    const sortQuery = sorting.map(({ id, desc }) => (desc ? `-${id}` : `+${id}`)).join(",");
+    const res = await fetch(`/api/v1/reimbursements?sortArray=${encodeURIComponent(sortQuery)}&paginationPage=${pagination.pageNumber}${filterStr}`);
 
     const json = await res.json();
 
@@ -85,13 +56,7 @@ export function ReimbursementDatatable<TData, TValue>({
     setLoading(false);
   }
 
-  function PlaceholderRow({
-    colSpan,
-    text,
-  }: {
-    colSpan: number;
-    text: string;
-  }) {
+  function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
     return (
       <TableRow>
         <TableCell colSpan={colSpan} className="h-24 text-center">
@@ -120,9 +85,7 @@ export function ReimbursementDatatable<TData, TValue>({
         pageSize: pagination.paginationSize,
       },
     },
-    pageCount: pagination.isLastPage
-      ? pagination.pageNumber
-      : pagination.pageNumber + 1,
+    pageCount: pagination.isLastPage ? pagination.pageNumber : pagination.pageNumber + 1,
     meta: {
       triggerRefetch,
     },
@@ -149,16 +112,9 @@ export function ReimbursementDatatable<TData, TValue>({
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    sorting,
-    pagination.pageNumber,
-    pagination.paginationSize,
-    columnFilters,
-    refetchIndex,
-  ]);
+  }, [sorting, pagination.pageNumber, pagination.paginationSize, columnFilters, refetchIndex]);
 
-  const initialFilterValue =
-    (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
+  const initialFilterValue = (table.getColumn("txEmployeeCode")?.getFilterValue() as string) ?? "";
 
   const [filterValue, setFilterValue] = React.useState(initialFilterValue);
 
@@ -172,12 +128,7 @@ export function ReimbursementDatatable<TData, TValue>({
   return (
     <>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Sort by admin ID that approved the note"
-          value={filterValue}
-          onChange={(event) => setFilterValue(event.target.value)}
-          className="max-w-sm"
-        />
+        <Input placeholder="Sort by admin ID that approved the note" value={filterValue} onChange={(event) => setFilterValue(event.target.value)} className="max-w-sm" />
       </div>
       <div className="border">
         <Table>
@@ -185,16 +136,7 @@ export function ReimbursementDatatable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
+                  return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                 })}
               </TableRow>
             ))}
@@ -206,18 +148,9 @@ export function ReimbursementDatatable<TData, TValue>({
               <TableSkeleton colSpan={columns.length} rows={5} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="even:bg-[var(--filltable)]"
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} className="even:bg-[var(--filltable)]" data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -228,21 +161,11 @@ export function ReimbursementDatatable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePrev()}
-          disabled={!table.getCanPreviousPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => handlePrev()} disabled={!table.getCanPreviousPage()}>
           <StepBack />
           Previous
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleNext()}
-          disabled={!table.getCanNextPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => handleNext()} disabled={!table.getCanNextPage()}>
           Next
           <StepForward />
         </Button>
