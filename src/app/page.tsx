@@ -129,13 +129,15 @@ export default function Home() {
                   <Form {...form}>
                     <form id="login-form" className="flex flex-col gap-4 " onSubmit={form.handleSubmit(onSubmit)}>
                       <div className="flex flex-row items-center justify-center gap-2">
-                        <Mail className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">Email</FormLabel>
+                              <div className="flex flex-row justify-start items-center gap-2">
+                                <Mail className="text-[var(--sidebar-accent-foreground)]" />
+                                <FormLabel className="capitalize not-italic">Email</FormLabel>
+                              </div>
                               <FormControl>
                                 <Input placeholder="john.doe@example.com" {...field} />
                               </FormControl>
@@ -145,18 +147,18 @@ export default function Home() {
                         />
                       </div>
                       <div className="flex flex-row items-center justify-center gap-2">
-                        <Lock className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">Password</FormLabel>
-                              <div className="flex flex-row gap-1 justify-center item-center">
-                                <FormControl>
-                                  <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
-                                </FormControl>
+                              <div className="flex flex-row justify-start item-center gap-2">
+                                <Lock className="text-[var(--sidebar-accent-foreground)]" />
+                                <FormLabel className="capitalize not-italic">Password</FormLabel>
                               </div>
+                              <FormControl>
+                                <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
