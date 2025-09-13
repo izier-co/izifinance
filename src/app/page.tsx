@@ -133,7 +133,7 @@ export default function Home() {
                           render={({ field }) => (
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start items-center gap-2">
-                                <Mail className="text-[var(--sidebar-accent-foreground)]" />
+                                <Mail className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Email</FormLabel>
                               </div>
                               <FormControl>
@@ -151,7 +151,7 @@ export default function Home() {
                           render={({ field }) => (
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start item-center gap-2">
-                                <Lock className="text-[var(--sidebar-accent-foreground)]" />
+                                <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Password</FormLabel>
                               </div>
                               <FormControl>
