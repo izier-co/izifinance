@@ -87,7 +87,11 @@ export default function Page() {
         </>
       );
     }
-    return <>{dailyReimbursementQuery.data} more notes since last 24 hours</>;
+    return (
+      <>
+        <span className="font-numeric">{dailyReimbursementQuery.data}</span> more notes since last <span className="font-numeric">24</span> hours
+      </>
+    );
   }
   function PendingReimbursementMessage() {
     const pendingQuery = useQuery({
@@ -101,7 +105,11 @@ export default function Page() {
       console.error(pendingQuery.error.message);
       return <FetchErrorMessage message={"Something went wrong"} />;
     }
-    return <>{pendingQuery.data} notes are pending approval overall</>;
+    return (
+      <>
+        <span className="font-numeric">{pendingQuery.data}</span> notes are pending approval overall
+      </>
+    );
   }
 
   function PendingReimbursementValue() {
@@ -118,7 +126,7 @@ export default function Page() {
     }
     return (
       <>
-        IDR {pendingValueQuery.data} worth of reimbursements are still pending
+        IDR <span className="font-numeric">{pendingValueQuery.data}</span> worth of reimbursements are still pending
       </>
     );
   }

@@ -2,26 +2,9 @@
 
 import * as React from "react";
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
@@ -65,12 +48,8 @@ export function ReimbursementDatatable<TData, TValue>({
       filterStr = ("&changedBy=" + columnFilters[0].value) as string;
     }
 
-    const sortQuery = sorting
-      .map(({ id, desc }) => (desc ? `-${id}` : `+${id}`))
-      .join(",");
-    const res = await fetch(
-      `/api/v1/reimbursements?sortArray=${encodeURIComponent(sortQuery)}&paginationPage=${pagination.pageNumber}${filterStr}`
-    );
+    const sortQuery = sorting.map(({ id, desc }) => (desc ? `-${id}` : `+${id}`)).join(",");
+    const res = await fetch(`/api/v1/reimbursements?sortArray=${encodeURIComponent(sortQuery)}&paginationPage=${pagination.pageNumber}${filterStr}`);
 
     const json = await res.json();
 
@@ -85,13 +64,7 @@ export function ReimbursementDatatable<TData, TValue>({
     setLoading(false);
   }
 
-  function PlaceholderRow({
-    colSpan,
-    text,
-  }: {
-    colSpan: number;
-    text: string;
-  }) {
+  function PlaceholderRow({ colSpan, text }: { colSpan: number; text: string }) {
     return (
       <TableRow>
         <TableCell colSpan={colSpan} className="h-24 text-center">
@@ -185,16 +158,7 @@ export function ReimbursementDatatable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
+                  return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                 })}
               </TableRow>
             ))}
@@ -212,12 +176,7 @@ export function ReimbursementDatatable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -237,12 +196,7 @@ export function ReimbursementDatatable<TData, TValue>({
           <StepBack />
           Previous
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleNext()}
-          disabled={!table.getCanNextPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => handleNext()} disabled={!table.getCanNextPage()}>
           Next
           <StepForward />
         </Button>
