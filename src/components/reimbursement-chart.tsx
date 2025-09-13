@@ -1,6 +1,11 @@
 "use client";
 
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
@@ -63,9 +68,19 @@ export function ReimbursementChart() {
       <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
         <BarChart data={chartDataQuery.data} className="font-numeric">
           <CartesianGrid vertical={false} />
-          <XAxis dataKey="day" tickLine={false} tickMargin={5} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} />
+          <XAxis
+            dataKey="day"
+            tickLine={false}
+            tickMargin={5}
+            axisLine={false}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
           <ChartTooltip content={<ChartTooltipContent />} />
-          <Bar dataKey="reimbursement" fill="var(--color-reimbursement)" radius={2} />
+          <Bar
+            dataKey="reimbursement"
+            fill="var(--color-reimbursement)"
+            radius={2}
+          />
         </BarChart>
       </ChartContainer>
       <p className="text-center text-sm">

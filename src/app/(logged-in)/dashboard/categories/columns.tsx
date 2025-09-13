@@ -2,7 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
+import {
+  CommonRow,
+  SortableHeader,
+} from "@/components/sorting-datatable-header";
 import { CategoryDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
 import { MixedText } from "@/components/mixed-text";
