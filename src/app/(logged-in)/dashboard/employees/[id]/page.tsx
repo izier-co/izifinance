@@ -1,4 +1,5 @@
 "use client";
+import { MixedText } from "@/components/mixed-text";
 import { DetailViewSkeleton } from "@/components/skeletons";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { booleanToString, fetchJSONAPI } from "@/lib/lib";
@@ -52,23 +53,33 @@ function EmployeeTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
-          <TableCell>{data["daCreatedAt"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["daCreatedAt"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Updated At</TableCell>
-          <TableCell>{data["daUpdatedAt"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["daUpdatedAt"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Joined At</TableCell>
-          <TableCell>{data["daJoinDate"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["daJoinDate"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Join Year</TableCell>
-          <TableCell>{data["inYear"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["inYear"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Join Month</TableCell>
-          <TableCell>{data["inMonth"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["inMonth"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Full Name</TableCell>
@@ -76,11 +87,15 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Date of Birth</TableCell>
-          <TableCell>{data["daDateOfBirth"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["daDateOfBirth"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Home Address</TableCell>
-          <TableCell>{data["txHomeAddress"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txHomeAddress"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>National ID Number</TableCell>
@@ -108,7 +123,9 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Role Code</TableCell>
-          <TableCell>{data["txRoleCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txRoleCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Active Status</TableCell>
@@ -120,7 +137,9 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Employee Code</TableCell>
-          <TableCell>{data["txEmployeeCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txEmployeeCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Company Name</TableCell>
@@ -132,7 +151,9 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Email Address</TableCell>
-          <TableCell>{data["txEmailAddress"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txEmailAddress"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Type</TableCell>
@@ -148,7 +169,9 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>User ID</TableCell>
-          <TableCell>{data["uiUserID"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["uiUserID"]} />
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>

@@ -56,6 +56,9 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Role Code" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txRoleCode")} />;
+    },
   },
   {
     id: "status",
@@ -77,11 +80,17 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Employee Code" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txEmployeeCode")} />;
+    },
   },
   {
     accessorKey: "txPhoneNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Phone Number" />;
+    },
+    cell: ({ row }) => {
+      return <div className="font-numeric">{row.getValue("txPhoneNumber")}</div>;
     },
   },
   {
