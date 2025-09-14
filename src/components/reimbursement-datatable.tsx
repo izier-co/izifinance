@@ -146,8 +146,7 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
               <PlaceholderRow colSpan={columns.length} text={error} />
             ) : loading ? (
               <TableSkeleton colSpan={columns.length} rows={5} />
-            ) : // <PlaceholderRow colSpan={columns.length} text="Loading..." />
-            table.getRowModel().rows?.length ? (
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} className="even:bg-[var(--filltable)]" data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
@@ -172,6 +171,5 @@ export function ReimbursementDatatable<TData, TValue>({ columns, refetchIndex, t
         </Button>
       </div>
     </>
-    // </div>
   );
 }

@@ -62,10 +62,6 @@ async function getPendingReimbursementValue(): Promise<number> {
   return totalPending;
 }
 
-//unused function
-// function LoadingMessage() {
-//   return <>Loading Data...</>;
-// }
 
 function FetchErrorMessage({ message }: { message: string }) {
   return <>Error : {message}</>;
@@ -79,7 +75,6 @@ export default function Page() {
     });
     if (dailyReimbursementQuery.isLoading) {
       return <DashboardCardSkeleton />;
-      // return <LoadingMessage />;
     }
     if (dailyReimbursementQuery.isError) {
       console.error(dailyReimbursementQuery.error.message);
@@ -107,7 +102,6 @@ export default function Page() {
     });
     if (pendingQuery.isLoading) {
       return <DashboardCardSkeleton />;
-      // return <LoadingMessage />;
     }
     if (pendingQuery.isError) {
       console.error(pendingQuery.error.message);
@@ -127,7 +121,6 @@ export default function Page() {
     });
     if (pendingValueQuery.isLoading) {
       return <DashboardCardSkeleton />;
-      // return <LoadingMessage />;
     }
     if (pendingValueQuery.isError) {
       console.error(pendingValueQuery.error.message);

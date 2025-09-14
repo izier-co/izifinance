@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormField,
-} from "@/components/ui/form";
+import { Form, FormItem, FormLabel, FormControl, FormMessage, FormField } from "@/components/ui/form";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
@@ -20,16 +13,11 @@ import { useMutation } from "@tanstack/react-query";
 import { editEmployeeSchema, EditEmployeeSchema } from "./schemas";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QueryCombobox } from "../../../reimbursements/add/_components/query-combobox";
-import {
-  useBankQuery,
-  useCompanyQuery,
-  useReligionQuery,
-  useRoleQuery,
-  useEmploymentQuery,
-} from "../../add/queries";
+import { useBankQuery, useCompanyQuery, useReligionQuery, useRoleQuery, useEmploymentQuery } from "../../add/queries";
 import { useParams } from "next/dist/client/components/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useRouter } from "next/navigation";
+import { FormSkeleton } from "@/components/skeletons";
 
 export default function Page() {
   const { id } = useParams();
@@ -47,11 +35,7 @@ export default function Page() {
   });
 
   async function editEmployee(employeeData: EditEmployeeSchema) {
-    const res = await fetchJSONAPI(
-      "PUT",
-      `/api/v1/employees/${id}`,
-      employeeData
-    );
+    const res = await fetchJSONAPI("PUT", `/api/v1/employees/${id}`, employeeData);
     const json = await res.json();
     if (!res.ok) {
       throw new Error(json.error);
@@ -84,16 +68,13 @@ export default function Page() {
   }
 
   if (editEmployeeForm.formState.isLoading) {
-    return <p>Loading...</p>;
+    return <FormSkeleton fields={15} />;
   }
   return (
     <div className="">
-      <h1>Edit Employee</h1>
+      <h1 className="font-bold pb-4">Edit Employee</h1>
       <Form {...editEmployeeForm}>
-        <form
-          id="employee-form"
-          onSubmit={editEmployeeForm.handleSubmit(submitForm)}
-        >
+        <form id="employee-form" onSubmit={editEmployeeForm.handleSubmit(submitForm)}>
           <FormField
             control={editEmployeeForm.control}
             name="txFullName"
@@ -141,11 +122,7 @@ export default function Page() {
                 <FormItem className="my-3">
                   <FormLabel className="capitalize">Religion :</FormLabel>
                   <FormControl>
-                    <QueryCombobox
-                      value={field.value as string}
-                      onChange={field.onChange}
-                      query={religionComboboxQuery}
-                    />
+                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={religionComboboxQuery} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -171,10 +148,7 @@ export default function Page() {
             render={({ field }) => (
               <FormItem className="my-3">
                 <FormLabel className="capitalize">Marriage Status :</FormLabel>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormItem>
             )}
           />
@@ -183,9 +157,7 @@ export default function Page() {
             name="inNumOfDeps"
             render={({ field }) => (
               <FormItem className="my-3">
-                <FormLabel className="capitalize">
-                  Number of Departments :
-                </FormLabel>
+                <FormLabel className="capitalize">Number of Departments :</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
@@ -213,11 +185,7 @@ export default function Page() {
               <FormItem className="my-3">
                 <FormLabel className="capitalize">Role :</FormLabel>
                 <FormControl>
-                  <QueryCombobox
-                    value={field.value as string}
-                    onChange={field.onChange}
-                    query={roleComboboxQuery}
-                  />
+                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={roleComboboxQuery} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -230,11 +198,7 @@ export default function Page() {
               <FormItem className="my-3">
                 <FormLabel className="capitalize">Employment Type :</FormLabel>
                 <FormControl>
-                  <QueryCombobox
-                    value={field.value as string}
-                    onChange={field.onChange}
-                    query={employmentComboboxQuery}
-                  />
+                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={employmentComboboxQuery} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -247,11 +211,7 @@ export default function Page() {
               <FormItem className="my-3">
                 <FormLabel className="capitalize">Company :</FormLabel>
                 <FormControl>
-                  <QueryCombobox
-                    value={field.value as string}
-                    onChange={field.onChange}
-                    query={companyComboboxQuery}
-                  />
+                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={companyComboboxQuery} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -264,11 +224,7 @@ export default function Page() {
               <FormItem className="my-3">
                 <FormLabel className="capitalize">Bank :</FormLabel>
                 <FormControl>
-                  <QueryCombobox
-                    value={field.value as string}
-                    onChange={field.onChange}
-                    query={bankComboboxQuery}
-                  />
+                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={bankComboboxQuery} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -279,9 +235,7 @@ export default function Page() {
             name="txBankAccountNumber"
             render={({ field }) => (
               <FormItem className="my-3">
-                <FormLabel className="capitalize">
-                  Bank Account Number :
-                </FormLabel>
+                <FormLabel className="capitalize">Bank Account Number :</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -315,17 +269,9 @@ export default function Page() {
               </FormItem>
             )}
           />
-          {editEmployeeForm.formState.errors.root?.message && (
-            <p className="text-sm font-medium text-destructive mb-2">
-              {editEmployeeForm.formState.errors.root.message}
-            </p>
-          )}
+          {editEmployeeForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{editEmployeeForm.formState.errors.root.message}</p>}
           <Button type="submit" disabled={submitQuery.isPending}>
-            {submitQuery.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Edit Employee"
-            )}
+            {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Edit Employee"}
           </Button>
         </form>
       </Form>

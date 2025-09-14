@@ -213,6 +213,5 @@ export function ServerDataTable<TData, TValue>({
         </Button>
       </div>
     </>
-    // </div>
   );
 }

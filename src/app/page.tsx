@@ -16,7 +16,6 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
 import { emailFormSchema, EmailFormSchema, emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
-// import Link from "next/link";
 import { z } from "zod";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -115,7 +114,6 @@ export default function Home() {
         <div className={cn("flex flex-col gap-6")}>
           <div className="flex flex-col xl:flex-row items-center gap-16">
             <div className="flex flex-col items-center justify-center md:justify-end w-full md:w-1/3">
-              {/* <Image src="/images/logo.jpg" alt="Logo" width={150} height={150} className="xl:w-200  object-contain" /> */}
               <Image src="/images/logolight.jpg" alt="logo light mode" width={150} height={150} className="xl:w-200 object-contain dark:hidden" />
               <Image src="/images/logodark.jpg" alt="logo dark mode" width={150} height={150} className="xl:w-200 object-contain hidden dark:block " />
               <h1 className="font-bold text-2xl xl:text-3xl mt-2">Izifinance</h1>
@@ -135,7 +133,7 @@ export default function Home() {
                           render={({ field }) => (
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start items-center gap-2">
-                                <Mail className="text-[var(--sidebar-accent-foreground)]" />
+                                <Mail className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Email</FormLabel>
                               </div>
                               <FormControl>
@@ -153,7 +151,7 @@ export default function Home() {
                           render={({ field }) => (
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start item-center gap-2">
-                                <Lock className="text-[var(--sidebar-accent-foreground)]" />
+                                <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Password</FormLabel>
                               </div>
                               <FormControl>

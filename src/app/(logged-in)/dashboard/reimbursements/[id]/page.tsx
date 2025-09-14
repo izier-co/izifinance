@@ -10,6 +10,7 @@ import { use } from "react";
 import { DetailViewSkeleton } from "@/components/skeletons";
 import { notFound } from "next/navigation";
 import z from "zod";
+import { MixedText } from "@/components/mixed-text";
 
 const randomUUIDStringSchema = z
   .string()
@@ -57,11 +58,15 @@ function ReimbursementTable({ id }: { id: string }) {
       <TableBody>
         <TableRow>
           <TableCell>Created At</TableCell>
-          <TableCell>{new Date(data["daCreatedAt"]).toLocaleString()}</TableCell>
+          <TableCell>
+            <MixedText value={new Date(data["daCreatedAt"]).toLocaleString()} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Updated At</TableCell>
-          <TableCell>{new Date(data["daUpdatedAt"]).toLocaleString()}</TableCell>
+          <TableCell>
+            <MixedText value={new Date(data["daUpdatedAt"]).toLocaleString()} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Currency</TableCell>
@@ -69,7 +74,9 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Reimbursement ID</TableCell>
-          <TableCell>{data["txReimbursementNoteID"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txReimbursementNoteID"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Status</TableCell>
@@ -77,7 +84,9 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Description</TableCell>
-          <TableCell>{data["txDescriptionDetails"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txDescriptionDetails"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Name</TableCell>
@@ -89,7 +98,9 @@ function ReimbursementTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Change Reason</TableCell>
-          <TableCell>{data["txChangeReason"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txChangeReason"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Issued By</TableCell>
@@ -102,7 +113,7 @@ function ReimbursementTable({ id }: { id: string }) {
         <TableRow>
           <TableCell>Total Reimbursement Value</TableCell>
           <TableCell>
-            {data["txCurrency"]} {data["dcNominalReimbursement"]}
+            <span>{data["txCurrency"]}</span> <MixedText value={String(data["dcNominalReimbursement"])} />
           </TableCell>
         </TableRow>
         <TableRow>
