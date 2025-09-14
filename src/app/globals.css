@@ -175,14 +175,11 @@
   }
 }
 
-<<<<<<< HEAD
 .font-numeric,
 time {
   font-family: var(--font-geist-mono), monospace;
 }
 
-=======
->>>>>>> 3dca31a (Add employees admin page (#3))
 @keyframes shimmerPulse {
   0% {
     opacity: 0.6;

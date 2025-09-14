@@ -1,37 +1,8 @@
 import * as React from "react";
-import {
-  FilePlus,
-  FolderCog,
-  IdCardLanyard,
-  ListPlus,
-  Minus,
-  Plus,
-  ReceiptText,
-  Tag,
-  UserPen,
-  UserStar,
-  Wallet,
-} from "lucide-react";
+import { FilePlus, FolderCog, IdCardLanyard, ListPlus, Minus, Plus, ReceiptText, Tag, UserPen, UserStar, Wallet } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarRail,
-} from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
 import { getEmpInfo, getUser } from "@/queries/server-queries";
@@ -127,9 +98,7 @@ const userSidebarData = {
   ],
 };
 
-export async function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const empData = await getEmpInfo();
   const supabaseUser = await getUser();
   const user = {
@@ -152,30 +121,14 @@ export async function AppSidebar({
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-9 items-center justify-center rounded-lg">
-                  <Image
-                    src="/images/logolight-removedbg.jpg"
-                    alt="logo light mode"
-                    width={150}
-                    height={150}
-                    className="xl:w-200 object-contain dark:hidden"
-                  />
-                  <Image
-                    src="/images/logodark-removedbg.jpg"
-                    alt="logo dark mode"
-                    width={150}
-                    height={150}
-                    className="xl:w-200 object-contain hidden dark:block "
-                  />
+                  <Image src="/images/logolight-removedbg.jpg" alt="logo light mode" width={150} height={150} className="xl:w-200 object-contain dark:hidden" />
+                  <Image src="/images/logodark-removedbg.jpg" alt="logo dark mode" width={150} height={150} className="xl:w-200 object-contain hidden dark:block " />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-extrabold text-lg">Izifinance</span>
-<<<<<<< HEAD
                   <span>
                     v<span className="font-numeric">1.0.0</span>
                   </span>
-=======
-                  <span>v1.0.0</span>
->>>>>>> 3dca31a (Add employees admin page (#3))
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -186,11 +139,7 @@ export async function AppSidebar({
         <SidebarGroup>
           <SidebarMenu>
             {sidebarData.navMain.map((item, index) => (
-              <Collapsible
-                key={item.title}
-                defaultOpen={index === 1}
-                className="group/collapsible"
-              >
+              <Collapsible key={item.title} defaultOpen={index === 1} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
@@ -207,9 +156,7 @@ export async function AppSidebar({
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild>
                               <Link href={item.url}>
-                                {item.icon && (
-                                  <item.icon className="mr-2 h-4 w-4" />
-                                )}
+                                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
                                 {item.title}
                               </Link>
                             </SidebarMenuSubButton>
