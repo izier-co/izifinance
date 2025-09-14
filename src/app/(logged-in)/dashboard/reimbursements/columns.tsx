@@ -6,10 +6,7 @@ import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header
 import { QueryCell } from "./_components/query-cell-component";
 import { ReimbursementDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
-<<<<<<< HEAD
 import { MixedText } from "@/components/mixed-text";
-=======
->>>>>>> 3dca31a (Add employees admin page (#3))
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -65,12 +62,9 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Description" />;
     },
-<<<<<<< HEAD
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txDescriptionDetails")} />;
     },
-=======
->>>>>>> 3dca31a (Add employees admin page (#3))
   },
   {
     accessorKey: "txChangeReason",
@@ -96,19 +90,7 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Category" />;
     },
     cell: ({ row }) => {
-<<<<<<< HEAD
       return <QueryCell row={row} queryKey={["get-categories"]} queryUrl="/api/v1/categories" fieldKey="txCategoryID" targetFieldKey="txCategoryName" />;
-=======
-      return (
-        <QueryCell
-          row={row}
-          queryKey={["get-categories"]}
-          queryUrl="/api/v1/categories"
-          fieldKey="txCategoryID"
-          targetFieldKey="txCategoryName"
-        />
-      );
->>>>>>> 3dca31a (Add employees admin page (#3))
     },
   },
   {

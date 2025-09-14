@@ -54,10 +54,6 @@ export function ReimbursementChart() {
     return <BarChartSkeleton />;
   }
 
-<<<<<<< HEAD
-=======
-  // ambil bulan & tahun di komponen (simple)
->>>>>>> 3dca31a (Add employees admin page (#3))
   const now = new Date();
   const monthName = now.toLocaleString("default", { month: "long" });
   const year = now.getFullYear();
@@ -65,11 +61,7 @@ export function ReimbursementChart() {
   return (
     <div>
       <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-<<<<<<< HEAD
         <BarChart data={chartDataQuery.data} className="font-numeric">
-=======
-        <BarChart data={chartDataQuery.data}>
->>>>>>> 3dca31a (Add employees admin page (#3))
           <CartesianGrid vertical={false} />
           <XAxis dataKey="day" tickLine={false} tickMargin={5} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} />
           <ChartTooltip content={<ChartTooltipContent />} />
@@ -77,11 +69,7 @@ export function ReimbursementChart() {
         </BarChart>
       </ChartContainer>
       <p className="text-center text-sm">
-<<<<<<< HEAD
         {monthName} <span className="font-numeric">{year}</span>
-=======
-        {monthName} {year}
->>>>>>> 3dca31a (Add employees admin page (#3))
       </p>
     </div>
   );

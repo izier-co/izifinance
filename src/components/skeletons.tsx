@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-// src/components/skeletons.tsx
->>>>>>> 3dca31a (Add employees admin page (#3))
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
@@ -75,7 +71,6 @@ export function DetailViewSkeleton() {
     </>
   );
 }
-<<<<<<< HEAD
 
 export function FormSkeleton({ fields = 6 }: { fields?: number }) {
   return (
@@ -93,5 +88,3 @@ export function FormSkeleton({ fields = 6 }: { fields?: number }) {
     </div>
   );
 }
-=======
->>>>>>> 3dca31a (Add employees admin page (#3))

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
 import { SearchX } from "lucide-react";
 import Link from "next/link";
@@ -19,8 +18,4 @@ export default function Page() {
       </div>
     </>
   );
-=======
-export default function Page() {
-  return <>404 Not found</>;
->>>>>>> 3dca31a (Add employees admin page (#3))
 }

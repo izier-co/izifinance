@@ -62,7 +62,6 @@ async function getPendingReimbursementValue(): Promise<number> {
   return totalPending;
 }
 
-
 function FetchErrorMessage({ message }: { message: string }) {
   return <>Error : {message}</>;
 }
@@ -83,13 +82,9 @@ export default function Page() {
     if (dailyReimbursementQuery.data === 0) {
       return (
         <>
-<<<<<<< HEAD
           <span className="italic">
             No more notes since last <span className="font-numeric">24</span> hours
           </span>
-=======
-          <span className="italic">No more notes since last 24 hours</span>
->>>>>>> 3dca31a (Add employees admin page (#3))
         </>
       );
     }
@@ -157,14 +152,7 @@ export default function Page() {
 
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start  md:mb-4 md:ml-6 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-<<<<<<< HEAD
                 <LucideClipboardPlus size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
-=======
-                <LucideClipboardPlus
-                  size={24}
-                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
-                />
->>>>>>> 3dca31a (Add employees admin page (#3))
               </Link>
             </div>
           </div>
@@ -182,14 +170,7 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-<<<<<<< HEAD
                 <ListTodo size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
-=======
-                <ListTodo
-                  size={24}
-                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
-                />
->>>>>>> 3dca31a (Add employees admin page (#3))
               </Link>
             </div>
           </div>
@@ -207,14 +188,7 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-<<<<<<< HEAD
                 <DollarSign size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
-=======
-                <DollarSign
-                  size={24}
-                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
-                />
->>>>>>> 3dca31a (Add employees admin page (#3))
               </Link>
             </div>
           </div>
