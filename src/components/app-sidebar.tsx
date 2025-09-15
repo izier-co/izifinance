@@ -10,6 +10,7 @@ import {
   Tag,
   UserPen,
   UserStar,
+  UserPlus,
   Wallet,
 } from "lucide-react";
 
@@ -87,6 +88,16 @@ const adminSidebarData = {
           title: "Manage Employees",
           url: "/dashboard/employees",
           icon: IdCardLanyard,
+        },
+        {
+          title: "Add Employees",
+          url: "/dashboard/employees/add",
+          icon: UserPlus,
+        },
+        {
+          title: "Add User Account",
+          url: "/dashboard/admin/users/add",
+          icon: UserPlus,
         },
       ],
     },
