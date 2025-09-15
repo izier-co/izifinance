@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, Lock, Mail } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2, Lock, Mail } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +43,8 @@ export default function Home() {
   });
 
   const router = useRouter();
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -126,7 +127,7 @@ export default function Home() {
                 <CardContent>
                   <Form {...form}>
                     <form id="login-form" className="flex flex-col gap-4 " onSubmit={form.handleSubmit(onSubmit)}>
-                      <div className="flex flex-row items-center justify-center gap-2">
+                      <div className="flex flex-row items-center gap-2">
                         <FormField
                           control={form.control}
                           name="email"
@@ -144,7 +145,7 @@ export default function Home() {
                           )}
                         />
                       </div>
-                      <div className="flex flex-row items-center justify-center gap-2">
+                      <div className="flex flex-row items-center gap-2">
                         <FormField
                           control={form.control}
                           name="password"
@@ -154,9 +155,14 @@ export default function Home() {
                                 <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Password</FormLabel>
                               </div>
-                              <FormControl>
-                                <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
-                              </FormControl>
+                              <div className="flex flex-row items-center justofy-center gap-2">
+                                <FormControl>
+                                  <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
+                                </FormControl>
+                                <Button type="button" variant="outline" size="icon" className="size-9" onClick={() => setShowPassword((prev) => !prev)}>
+                                  {showPassword ? <EyeIcon className="w-4 h-4" /> : <EyeOffIcon className="w-4 h-4" />}
+                                </Button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}

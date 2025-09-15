@@ -90,7 +90,15 @@ export const columns: ColumnDef<CommonRow>[] = [
       return <SortableHeader column={column} title="Category" />;
     },
     cell: ({ row }) => {
-      return <QueryCell row={row} queryKey={["get-categories"]} queryUrl="/api/v1/categories" fieldKey="txCategoryID" targetFieldKey="txCategoryName" />;
+      return (
+        <QueryCell
+          row={row}
+          queryKey={["get-categories"]}
+          queryUrl="/api/v1/categories"
+          fieldKey="txCategoryID"
+          targetFieldKey="txCategoryName"
+        />
+      );
     },
   },
   {

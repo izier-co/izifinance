@@ -82,9 +82,7 @@ export default function Page() {
     if (dailyReimbursementQuery.data === 0) {
       return (
         <>
-          <span className="italic">
-            No more notes since last <span className="font-numeric">24</span> hours
-          </span>
+          <span className="italic">No more notes since last 24 hours</span>
         </>
       );
     }
@@ -152,7 +150,10 @@ export default function Page() {
 
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start  md:mb-4 md:ml-6 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <LucideClipboardPlus size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <LucideClipboardPlus
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>
@@ -170,7 +171,10 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <ListTodo size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <ListTodo
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>
@@ -188,7 +192,10 @@ export default function Page() {
             </div>
             <div className="bg-[var(--accent)] rounded-lg p-2 flex items-start md:ml-6 md:mb-4 self-start justify-center">
               <Link href="/dashboard/reimbursements">
-                <DollarSign size={24} className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]" />
+                <DollarSign
+                  size={24}
+                  className="text-[var(--sidebar-accent-foreground)] hover:text-[var(--primarybtnhover)]"
+                />
               </Link>
             </div>
           </div>

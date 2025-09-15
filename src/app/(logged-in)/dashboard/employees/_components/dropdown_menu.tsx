@@ -11,7 +11,7 @@ import { useEmployeeIDQuery } from "@/queries/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
-import { IdCard, Loader2, MoreHorizontal, Star, StarOff, UserRoundCheck, UserRoundPen, UserRoundX, View } from "lucide-react";
+import { IdCard, Loader2, MoreHorizontal, Star, StarOff, UserPen, UserRoundCheck, UserRoundX, View } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -404,7 +404,7 @@ export function EmployeeDropdownMenu({ row, table }: { row: Row<CommonRow>; tabl
                 router.push(`/dashboard/employees/${row.getValue("txEmployeeCode")}/edit`);
               }}
             >
-              <UserRoundPen className="text-[var(--sidebar-accent-foreground)]" />
+              <UserPen className="text-[var(--sidebar-accent-foreground)]" />
               Edit Employee
             </DropdownMenuItem>
             <GrantRevokeDialogMenu row={row} table={table} />

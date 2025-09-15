@@ -1,20 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-<<<<<<< HEAD
 import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
 import { CategoryDropdownMenu } from "./_components/dropdown_menu";
 import { DateCell } from "@/components/date-cell";
 import { MixedText } from "@/components/mixed-text";
-=======
-import {
-  CommonRow,
-  SortableHeader,
-} from "@/components/sorting-datatable-header";
-import { CategoryDropdownMenu } from "./_components/dropdown_menu";
-import { DateCell } from "@/components/date-cell";
->>>>>>> 3dca31a (Add employees admin page (#3))
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -39,12 +29,9 @@ export const columns: ColumnDef<CommonRow>[] = [
     accessorKey: "txCategoryID",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Category ID" />;
-<<<<<<< HEAD
     },
     cell: ({ row }) => {
       return <MixedText value={row.getValue("txCategoryID")} />;
-=======
->>>>>>> 3dca31a (Add employees admin page (#3))
     },
   },
   {
