@@ -98,17 +98,26 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Email Address" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txEmailAddress")} />;
+    },
   },
   {
     accessorKey: "txBankTypeCode",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Type" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txBankTypeCode")} />;
+    },
   },
   {
     accessorKey: "txBankAccountNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Account Number" />;
+    },
+    cell: ({ row }) => {
+      return <div className="font-numeric">{row.getValue("txBankAccountNumber")}</div>;
     },
   },
   {
