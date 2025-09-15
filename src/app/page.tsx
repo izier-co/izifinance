@@ -155,7 +155,7 @@ export default function Home() {
                                 <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
                                 <FormLabel className="capitalize not-italic">Password</FormLabel>
                               </div>
-                              <div className="flex flex-row items-center justofy-center gap-2">
+                              <div className="flex flex-row items-center justofy-center gap-1">
                                 <FormControl>
                                   <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
                                 </FormControl>

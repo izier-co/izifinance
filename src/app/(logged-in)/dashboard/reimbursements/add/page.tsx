@@ -118,7 +118,7 @@ export default function Page() {
   return (
     <div className="flex flex-col-reverse sm:flex-row">
       <div className="w-full sm:w-1/2">
-        <h1 className="font-bold pb-6">Add Reimbursement</h1>
+        <h1 className="font-bold mb-4">Add Reimbursement</h1>
         <Form {...reimbursementForm}>
           <form id="reimbursement-form" onSubmit={reimbursementForm.handleSubmit(submitReimbursement)}>
             <FormField
@@ -166,7 +166,7 @@ export default function Page() {
               }}
             />
             {reimbursementForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{reimbursementForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="mt-6 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
+            <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Reimbursement"}
             </Button>
@@ -244,11 +244,11 @@ export default function Page() {
                 />
                 <DialogFooter className="my-2">
                   <DialogClose asChild>
-                    <Button variant="secondary" type="button" className="mt-4 bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
+                    <Button variant="secondary" type="button" className="bg-[var(--secondarybtn)] hover:bg-[var(--secondarybtnhover)]">
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit" className="mt-4 bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
+                  <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
                     Add Items
                   </Button>
                 </DialogFooter>

@@ -72,7 +72,7 @@ export default function Page() {
   return (
     <div className="flex w-full ">
       <div className="w-full max-w-sm">
-        <h1 className="font-bold pb-6">Add Category</h1>
+        <h1 className="font-bold mb-4">Add Category</h1>
         <Form {...categoryForm}>
           <form id="category-form" onSubmit={categoryForm.handleSubmit(addCategory)} className="flex flex-col justify-center">
             <FormField
@@ -102,7 +102,7 @@ export default function Page() {
               )}
             />
             {categoryForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{categoryForm.formState.errors.root.message}</p>}
-            <Button type="submit" className=" mt-6 w-50 ">
+            <Button type="submit" className="w-50 ">
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Category"}
             </Button>

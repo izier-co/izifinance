@@ -99,15 +99,17 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>National ID Number</TableCell>
-          <TableCell>{data["txNationalIdNumber"]}</TableCell>
+          <TableCell className="font-numeric">{data["txNationalIdNumber"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Religion Code</TableCell>
-          <TableCell>{data["txReligionCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txReligionCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Tax Number</TableCell>
-          <TableCell>{data["txTaxNumber"]}</TableCell>
+          <TableCell className="font-numeric">{data["txTaxNumber"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Marriage Status</TableCell>
@@ -115,11 +117,14 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Number of Departments</TableCell>
-          <TableCell>{data["inNumOfDeps"]}</TableCell>
+          <TableCell className="font-numeric">{data["inNumOfDeps"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Salary</TableCell>
-          <TableCell>IDR {data["flSalary"]}</TableCell>
+          <TableCell>
+            IDR {""}
+            <MixedText value={data["flSalary"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Role Code</TableCell>
@@ -133,7 +138,9 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Employment Type</TableCell>
-          <TableCell>{data["txEmploymentTypeCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txEmploymentTypeCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Employee Code</TableCell>
@@ -143,11 +150,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Company Name</TableCell>
-          <TableCell>{data["txCompanyCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txCompanyCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Phone Number</TableCell>
-          <TableCell>{data["txPhoneNumber"]}</TableCell>
+          <TableCell className="font-numeric">{data["txPhoneNumber"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Email Address</TableCell>
@@ -157,11 +166,13 @@ function EmployeeTable({ id }: { id: string }) {
         </TableRow>
         <TableRow>
           <TableCell>Bank Type</TableCell>
-          <TableCell>{data["txBankTypeCode"]}</TableCell>
+          <TableCell>
+            <MixedText value={data["txBankTypeCode"]} />
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Bank Account Number</TableCell>
-          <TableCell>{data["txBankAccountNumber"]}</TableCell>
+          <TableCell className="font-numeric">{data["txBankAccountNumber"]}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>Admin Access</TableCell>
