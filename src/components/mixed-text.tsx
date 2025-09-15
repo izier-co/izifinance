@@ -1,5 +1,5 @@
-export function MixedText({ value, className = "" }: { value: string | null | undefined; className?: string }) {
-  const safeValue = value ?? "";
+export function MixedText({ value, className = "" }: { value: string | number | null | undefined; className?: string }) {
+  const safeValue = String(value ?? "");
   const parts = safeValue.split(/(\d+)/);
 
   return (
