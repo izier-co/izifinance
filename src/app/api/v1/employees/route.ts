@@ -170,8 +170,8 @@ export async function POST(req: NextRequest) {
   let roleID = "";
 
   if (roleInfo) {
-    if (roleInfo[0].txEmploymentTypeName === "Full Time") roleID = "F";
-    else if (roleInfo[0].txEmploymentTypeName === "Part Time") roleID = "P";
+    if (roleInfo[0].txEmploymentTypeName === "Full-Time") roleID = "F";
+    else if (roleInfo[0].txEmploymentTypeName === "Part-Time") roleID = "P";
     else if (roleInfo[0].txEmploymentTypeName === "Internship") roleID = "I";
   } else {
     return NextResponse.json({ error: "Invalid Role" }, { status: 400 });
@@ -190,7 +190,8 @@ export async function POST(req: NextRequest) {
       ascending: false,
     })
     .eq("inYear", employeeData.inYear)
-    .eq("inMonth", employeeData.inMonth);
+    .eq("inMonth", employeeData.inMonth)
+    .eq("txEmploymentTypeCode", employeeData.txEmploymentTypeCode);
 
   if (empIDLookupError)
     return NextResponse.json(
@@ -200,17 +201,19 @@ export async function POST(req: NextRequest) {
   let newEmpIDNumber = Number(
     `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}001`
   );
+  let newEmpIDStr = `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}001`;
+
   if (count !== null && count > 0) {
     const empCount = Number(empIDCounter[0].txEmployeeNumber);
     const empNum = String(empCount + 1).padStart(3, "0");
     newEmpIDNumber = Number(
       `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}${empNum}`
     );
+    newEmpIDStr = `${employeeData.inMonth}${employeeData.inYear.slice(2, 4)}${empNum}`;
   }
   const base64chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  const empID =
-    roleID + String(newEmpIDNumber) + base64chars[newEmpIDNumber % 64];
+  const empID = roleID + newEmpIDStr + base64chars[newEmpIDNumber % 64];
 
   const { data, error } = await supabase
     .from("m_employees")
