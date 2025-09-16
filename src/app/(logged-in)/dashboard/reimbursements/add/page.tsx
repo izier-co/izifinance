@@ -11,12 +11,13 @@ import { Card, CardHeader, CardTitle, CardContent, CardAction, CardDescription }
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import React from "react";
 import { FormCombobox, ComboboxItem } from "@/components/form-combobox";
-import { CirclePlus, ClipboardPlus, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, CirclePlus, ClipboardPlus, Loader2, Trash } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { addReimbursement, useCategoryQuery } from "./_queries/queries";
 import { QueryCombobox } from "./_components/query-combobox";
 import { reimbursementSchema, reimbursementItemSchema, type ReimbursementItemSchema, type ReimbursementSchema } from "./schemas";
 import { useEmployeeIDQuery } from "@/queries/queries";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const currencies: Array<ComboboxItem> = [
   {
@@ -83,16 +84,29 @@ export default function Page() {
   const categoryComboboxQuery = useCategoryQuery();
   const getEmpIDQuery = useEmployeeIDQuery();
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState<string | null>(null);
+
   const submitQuery = useMutation({
     mutationKey: ["reimbursement-send-mutation"],
     mutationFn: addReimbursement,
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/reimbursement");
-      refreshAndRevalidatePage("/");
+      setShowSuccess(true);
+      setShowError(null);
       reimbursementForm.reset();
+      setTimeout(() => {
+        setShowSuccess(false);
+        refreshAndRevalidatePage("/dashboard/reimbursement");
+        refreshAndRevalidatePage("/");
+      }, 3000);
       setItems([]);
     },
     onError: (error) => {
+      setShowError(error.message || "Failed to add reimbursement");
+      setShowSuccess(false);
+      setTimeout(() => {
+        setShowError(null);
+      }, 3000);
       _setReimbursementRootError(error.message);
     },
   });
@@ -170,6 +184,22 @@ export default function Page() {
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Reimbursement"}
             </Button>
+
+            {showSuccess && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]">
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>Reimbursement added successfully!</AlertDescription>
+              </Alert>
+            )}
+
+            {showError && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]" variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>Failed to add reimbursement. Please try again.</AlertDescription>
+              </Alert>
+            )}
           </form>
         </Form>
       </div>
@@ -273,6 +303,7 @@ export default function Page() {
                         deleteItem(item);
                       }}
                     >
+                      <Trash />
                       Delete
                     </Button>
                   </div>

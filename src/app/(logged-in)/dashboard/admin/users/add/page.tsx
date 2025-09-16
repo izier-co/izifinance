@@ -7,10 +7,11 @@ import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { EyeIcon, EyeOffIcon, Loader2, UserRoundPlus } from "lucide-react";
+import { AlertCircle, CheckCircle, EyeIcon, EyeOffIcon, Loader2, UserRoundPlus } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { UserCreationSchema, userCreationSchema } from "@/schemas/schema";
 import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,14 +23,27 @@ export default function Page() {
     },
   });
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState<string | null>(null);
+
   const submitQuery = useMutation({
     mutationKey: ["add-user-mutation"],
     mutationFn: _addUser,
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/admin/users");
+      setShowSuccess(true);
+      setShowError(null);
       addUserForm.reset();
+      setTimeout(() => {
+        setShowSuccess(false);
+        refreshAndRevalidatePage("/dashboard/admin/users");
+      }, 3000);
     },
     onError: (error) => {
+      setShowError(error.message || "Failed to add user account");
+      setShowSuccess(false);
+      setTimeout(() => {
+        setShowError(null);
+      }, 3000);
       _setRootError(error.message);
     },
   });
@@ -93,6 +107,22 @@ export default function Page() {
               <UserRoundPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add User"}
             </Button>
+
+            {showSuccess && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]">
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>User account added successfully!</AlertDescription>
+              </Alert>
+            )}
+
+            {showError && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]" variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>Failed to add user account. Please try again.</AlertDescription>
+              </Alert>
+            )}
           </form>
         </Form>
       </div>

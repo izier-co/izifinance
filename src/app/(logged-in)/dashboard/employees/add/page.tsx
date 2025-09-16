@@ -7,12 +7,14 @@ import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { Contact, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, Contact, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { addEmployee, useBankQuery, useCompanyQuery, useEmploymentQuery, useReligionQuery, useRoleQuery } from "./queries";
 import { AddEmployeeSchema, addEmployeeSchema } from "./schemas";
 import { QueryCombobox } from "../../reimbursements/add/_components/query-combobox";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useState } from "react";
 
 export default function Page() {
   const addEmployeeForm = useForm({
@@ -38,17 +40,30 @@ export default function Page() {
     },
   });
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState<string | null>(null);
+
   const submitQuery = useMutation({
     mutationKey: ["employee-add-mutation"],
     mutationFn: addEmployee,
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/employees");
+      setShowSuccess(true);
+      setShowError(null);
       addEmployeeForm.reset();
+      setTimeout(() => {
+        setShowSuccess(false);
+        refreshAndRevalidatePage("/dashboard/employees");
+      }, 3000);
     },
     onError: (error) => {
+      setShowError(error.message || "Failed to add employee");
+      setShowSuccess(false);
       addEmployeeForm.setError("root", {
         message: error.message,
       });
+      setTimeout(() => {
+        setShowError(null);
+      }, 3000);
     },
   });
 
@@ -291,6 +306,22 @@ export default function Page() {
             <Contact />
             {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Employee"}
           </Button>
+
+          {showSuccess && (
+            <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]">
+              <CheckCircle className="h-4 w-4" />
+              <AlertTitle>Success</AlertTitle>
+              <AlertDescription>Employee added successfully!</AlertDescription>
+            </Alert>
+          )}
+
+          {showError && (
+            <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]" variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>Failed to add employee. Please try again.</AlertDescription>
+            </Alert>
+          )}
         </form>
       </Form>
     </div>
