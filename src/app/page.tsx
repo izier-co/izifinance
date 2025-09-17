@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, Lock, Mail } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2, Lock, Mail } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,24 +14,10 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import {
-  emailFormSchema,
-  EmailFormSchema,
-  emailSchema,
-  passwordSchema,
-} from "@/schemas/schema";
+import { emailFormSchema, EmailFormSchema, emailSchema, passwordSchema } from "@/schemas/schema";
 import Image from "next/image";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -57,7 +43,8 @@ export default function Home() {
   });
 
   const router = useRouter();
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -141,15 +128,15 @@ export default function Home() {
                   <Form {...form}>
                     <form id="login-form" className="flex flex-col gap-4 " onSubmit={form.handleSubmit(onSubmit)}>
                       <div className="flex flex-row items-center gap-2">
-                        <Mail className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">
-                                Email
-                              </FormLabel>
+                              <div className="flex flex-row justify-start items-center gap-2">
+                                <Mail className="text-[var(--sidebar-accent-foreground)] size-4" />
+                                <FormLabel className="capitalize not-italic">Email</FormLabel>
+                              </div>
                               <FormControl>
                                 <Input placeholder="john.doe@example.com" {...field} />
                               </FormControl>
@@ -159,19 +146,22 @@ export default function Home() {
                         />
                       </div>
                       <div className="flex flex-row items-center gap-2">
-                        <Lock className="text-[var(--sidebar-accent-foreground)]" />
                         <FormField
                           control={form.control}
                           name="password"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel className="capitalize not-italic">
-                                Password
-                              </FormLabel>
-                              <div className="flex flex-row gap-1 justify-center item-center">
+                              <div className="flex flex-row justify-start item-center gap-2">
+                                <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
+                                <FormLabel className="capitalize not-italic">Password</FormLabel>
+                              </div>
+                              <div className="flex flex-row items-center justofy-center gap-1">
                                 <FormControl>
                                   <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
                                 </FormControl>
+                                <Button type="button" variant="outline" size="icon" className="size-9" onClick={() => setShowPassword((prev) => !prev)}>
+                                  {showPassword ? <EyeIcon className="w-4 h-4" /> : <EyeOffIcon className="w-4 h-4" />}
+                                </Button>
                               </div>
                               <FormMessage />
                             </FormItem>
@@ -190,32 +180,22 @@ export default function Home() {
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <div className="flex justify-end w-full">
-                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">
-                      Forgot Password
-                    </button>
+                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">Forgot Password</button>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Reset Password</DialogTitle>
-                    <DialogDescription>
-                      Insert the email of the account to be sent confirmation
-                      email for
-                    </DialogDescription>
+                    <DialogDescription>Insert the email of the account to be sent confirmation email for</DialogDescription>
                   </DialogHeader>
                   <Form {...emailForm}>
-                    <form
-                      id="change-description-form"
-                      onSubmit={emailForm.handleSubmit(sendForgetPassword)}
-                    >
+                    <form id="change-description-form" onSubmit={emailForm.handleSubmit(sendForgetPassword)}>
                       <FormField
                         control={emailForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="capitalize">
-                              Email :
-                            </FormLabel>
+                            <FormLabel className="capitalize">Email :</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -229,13 +209,7 @@ export default function Home() {
                             Cancel
                           </Button>
                         </DialogClose>
-                        <Button type="submit">
-                          {resetPasswordLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            "Submit"
-                          )}
-                        </Button>
+                        <Button type="submit">{resetPasswordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit"}</Button>
                       </DialogFooter>
                     </form>
                   </Form>

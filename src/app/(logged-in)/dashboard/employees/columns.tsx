@@ -1,13 +1,11 @@
 "use client";
 
-import {
-  CommonRow,
-  SortableHeader,
-} from "@/components/sorting-datatable-header";
+import { CommonRow, SortableHeader } from "@/components/sorting-datatable-header";
 import { ColumnDef } from "@tanstack/react-table";
 import { EmployeeDropdownMenu } from "./_components/dropdown_menu";
 import { booleanToString } from "@/lib/lib";
 import { DateCell } from "@/components/date-cell";
+import { MixedText } from "@/components/mixed-text";
 
 export const columns: ColumnDef<CommonRow>[] = [
   {
@@ -58,6 +56,9 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Role Code" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txRoleCode")} />;
+    },
   },
   {
     id: "status",
@@ -79,11 +80,17 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Employee Code" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txEmployeeCode")} />;
+    },
   },
   {
     accessorKey: "txPhoneNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Phone Number" />;
+    },
+    cell: ({ row }) => {
+      return <div className="font-numeric">{row.getValue("txPhoneNumber")}</div>;
     },
   },
   {
@@ -91,17 +98,26 @@ export const columns: ColumnDef<CommonRow>[] = [
     header: ({ column }) => {
       return <SortableHeader column={column} title="Email Address" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txEmailAddress")} />;
+    },
   },
   {
     accessorKey: "txBankTypeCode",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Type" />;
     },
+    cell: ({ row }) => {
+      return <MixedText value={row.getValue("txBankTypeCode")} />;
+    },
   },
   {
     accessorKey: "txBankAccountNumber",
     header: ({ column }) => {
       return <SortableHeader column={column} title="Bank Account Number" />;
+    },
+    cell: ({ row }) => {
+      return <div className="font-numeric">{row.getValue("txBankAccountNumber")}</div>;
     },
   },
   {

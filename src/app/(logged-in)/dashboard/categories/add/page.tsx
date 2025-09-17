@@ -10,8 +10,10 @@ import { useForm } from "react-hook-form";
 
 import { supabase } from "@/app/api/supabase.config";
 import { z } from "zod";
-import { ClipboardPlus, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, ClipboardPlus, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useState } from "react";
 
 const categorySchema = z.object({
   txCategoryName: z.string().nonempty("Category name must not empty").max(constValues.maxShortTextLength, "Input too long"),
@@ -29,14 +31,27 @@ export default function Page() {
     },
   });
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState<string | null>(null);
+
   const submitQuery = useMutation({
     mutationKey: ["category-send-mutation"],
     mutationFn: _addCategory,
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/categories");
+      setShowSuccess(true);
+      setShowError(null);
       categoryForm.reset();
+      setTimeout(() => {
+        setShowSuccess(false);
+        refreshAndRevalidatePage("/dashboard/categories");
+      }, 3000);
     },
     onError: (error) => {
+      setShowError(error.message || "Failed to add category");
+      setShowSuccess(false);
+      setTimeout(() => {
+        setShowError(null);
+      }, 3000);
       _setRootError(error.message);
     },
   });
@@ -72,7 +87,7 @@ export default function Page() {
   return (
     <div className="flex w-full ">
       <div className="w-full max-w-sm">
-        <h1 className="font-bold pb-6">Add Category</h1>
+        <h1 className="font-bold mb-4">Add Category</h1>
         <Form {...categoryForm}>
           <form id="category-form" onSubmit={categoryForm.handleSubmit(addCategory)} className="flex flex-col justify-center">
             <FormField
@@ -102,10 +117,26 @@ export default function Page() {
               )}
             />
             {categoryForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{categoryForm.formState.errors.root.message}</p>}
-            <Button type="submit" className=" mt-6 w-50 ">
+            <Button type="submit" className="w-50 ">
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Category"}
             </Button>
+
+            {showSuccess && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]">
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>Category added successfully!</AlertDescription>
+              </Alert>
+            )}
+
+            {showError && (
+              <Alert className="fixed bottom-4 right-4 w-96 z-50 border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]" variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>Failed to add category. Please try again.</AlertDescription>
+              </Alert>
+            )}
           </form>
         </Form>
       </div>

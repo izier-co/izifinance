@@ -12,7 +12,7 @@ export default async function Page() {
   const data = await getUsers();
   return (
     <>
-      <h1 className="font-bold mb-6">Users Page</h1>
+      <h1 className="font-bold mb-4">Users</h1>
       <DataTable columns={columns} data={data} />
     </>
   );

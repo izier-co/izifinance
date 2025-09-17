@@ -11,7 +11,7 @@ export default function Page() {
   };
   return (
     <>
-      <h1 className="font-bold mb-6">Categories</h1>
+      <h1 className="font-bold mb-4">Categories</h1>
       <ServerDataTable columns={columns} rowName="categories" refetchIndex={refetchIndex} triggerRefetch={triggerRefetch} />
     </>
   );
