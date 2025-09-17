@@ -171,6 +171,7 @@ export default function Home() {
                       className="flex flex-col gap-4 "
                       onSubmit={form.handleSubmit(onSubmit)}
                       method="POST"
+                      action="/api/v1/auth/signin"
                     >
                       <div className="flex flex-row items-center gap-2">
                         <FormField
