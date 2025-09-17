@@ -4,7 +4,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { EyeIcon, EyeOffIcon, Loader2, Lock, Mail } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -14,10 +21,24 @@ import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "./api/supabase.config";
-import { emailFormSchema, EmailFormSchema, emailSchema, passwordSchema } from "@/schemas/schema";
+import {
+  emailFormSchema,
+  EmailFormSchema,
+  emailSchema,
+  passwordSchema,
+} from "@/schemas/schema";
 import Image from "next/image";
 import { z } from "zod";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: emailSchema,
@@ -67,7 +88,10 @@ export default function Home() {
     if (data.user === null) {
       throw new Error("Unregistered Account");
     }
-    const empRes = await fetchJSONAPI("GET", `/api/v1/employees/get-id/${data.user.id}`);
+    const empRes = await fetchJSONAPI(
+      "GET",
+      `/api/v1/employees/get-id/${data.user.id}`
+    );
     const json = await empRes.json();
 
     if (!empRes.ok) {
@@ -115,18 +139,39 @@ export default function Home() {
         <div className={cn("flex flex-col gap-6")}>
           <div className="flex flex-col xl:flex-row items-center gap-16">
             <div className="flex flex-col items-center justify-center md:justify-end w-full md:w-1/3">
-              <Image src="/images/logolight.jpg" alt="logo light mode" width={150} height={150} className="xl:w-200 object-contain dark:hidden" />
-              <Image src="/images/logodark.jpg" alt="logo dark mode" width={150} height={150} className="xl:w-200 object-contain hidden dark:block " />
-              <h1 className="font-bold text-2xl xl:text-3xl mt-2">Izifinance</h1>
+              <Image
+                src="/images/logolight.jpg"
+                alt="logo light mode"
+                width={150}
+                height={150}
+                className="xl:w-200 object-contain dark:hidden"
+              />
+              <Image
+                src="/images/logodark.jpg"
+                alt="logo dark mode"
+                width={150}
+                height={150}
+                className="xl:w-200 object-contain hidden dark:block "
+              />
+              <h1 className="font-bold text-2xl xl:text-3xl mt-2">
+                Izifinance
+              </h1>
             </div>
             <div className="w-full xl:w-2/3">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-center">Login to your account</CardTitle>
+                  <CardTitle className="flex items-center justify-center">
+                    Login to your account
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Form {...form}>
-                    <form id="login-form" className="flex flex-col gap-4 " onSubmit={form.handleSubmit(onSubmit)}>
+                    <form
+                      id="login-form"
+                      className="flex flex-col gap-4 "
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      method="POST"
+                    >
                       <div className="flex flex-row items-center gap-2">
                         <FormField
                           control={form.control}
@@ -135,10 +180,15 @@ export default function Home() {
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start items-center gap-2">
                                 <Mail className="text-[var(--sidebar-accent-foreground)] size-4" />
-                                <FormLabel className="capitalize not-italic">Email</FormLabel>
+                                <FormLabel className="capitalize not-italic">
+                                  Email
+                                </FormLabel>
                               </div>
                               <FormControl>
-                                <Input placeholder="john.doe@example.com" {...field} />
+                                <Input
+                                  placeholder="john.doe@example.com"
+                                  {...field}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -153,14 +203,32 @@ export default function Home() {
                             <FormItem className="w-full">
                               <div className="flex flex-row justify-start item-center gap-2">
                                 <Lock className="text-[var(--sidebar-accent-foreground)] size-4" />
-                                <FormLabel className="capitalize not-italic">Password</FormLabel>
+                                <FormLabel className="capitalize not-italic">
+                                  Password
+                                </FormLabel>
                               </div>
                               <div className="flex flex-row items-center justofy-center gap-1">
                                 <FormControl>
-                                  <Input type={showPassword ? "text" : "password"} placeholder="Type your password here" {...field} />
+                                  <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Type your password here"
+                                    {...field}
+                                  />
                                 </FormControl>
-                                <Button type="button" variant="outline" size="icon" className="size-9" onClick={() => setShowPassword((prev) => !prev)}>
-                                  {showPassword ? <EyeIcon className="w-4 h-4" /> : <EyeOffIcon className="w-4 h-4" />}
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="icon"
+                                  className="size-9"
+                                  onClick={() =>
+                                    setShowPassword((prev) => !prev)
+                                  }
+                                >
+                                  {showPassword ? (
+                                    <EyeIcon className="w-4 h-4" />
+                                  ) : (
+                                    <EyeOffIcon className="w-4 h-4" />
+                                  )}
                                 </Button>
                               </div>
                               <FormMessage />
@@ -168,11 +236,24 @@ export default function Home() {
                           )}
                         />
                       </div>
-                      <Button form="login-form" type="submit" disabled={loading} className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]">
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin " /> : "Login"}
+                      <Button
+                        form="login-form"
+                        type="submit"
+                        disabled={loading}
+                        className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]"
+                      >
+                        {loading ? (
+                          <Loader2 className="w-4 h-4 animate-spin " />
+                        ) : (
+                          "Login"
+                        )}
                       </Button>
 
-                      {form.formState.errors.root?.message && <p className="text-sm font-medium text-destructive">{form.formState.errors.root.message}</p>}
+                      {form.formState.errors.root?.message && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.root.message}
+                        </p>
+                      )}
                     </form>
                   </Form>
                 </CardContent>
@@ -180,22 +261,32 @@ export default function Home() {
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <div className="flex justify-end w-full">
-                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">Forgot Password</button>
+                    <button className="font-light text-[var(--sidebar-accent-foreground)] hover:underline">
+                      Forgot Password
+                    </button>
                   </div>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Reset Password</DialogTitle>
-                    <DialogDescription>Insert the email of the account to be sent confirmation email for</DialogDescription>
+                    <DialogDescription>
+                      Insert the email of the account to be sent confirmation
+                      email for
+                    </DialogDescription>
                   </DialogHeader>
                   <Form {...emailForm}>
-                    <form id="change-description-form" onSubmit={emailForm.handleSubmit(sendForgetPassword)}>
+                    <form
+                      id="change-description-form"
+                      onSubmit={emailForm.handleSubmit(sendForgetPassword)}
+                    >
                       <FormField
                         control={emailForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="capitalize">Email :</FormLabel>
+                            <FormLabel className="capitalize">
+                              Email :
+                            </FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -209,7 +300,13 @@ export default function Home() {
                             Cancel
                           </Button>
                         </DialogClose>
-                        <Button type="submit">{resetPasswordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit"}</Button>
+                        <Button type="submit">
+                          {resetPasswordLoading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Submit"
+                          )}
+                        </Button>
                       </DialogFooter>
                     </form>
                   </Form>
