@@ -75,7 +75,7 @@ export default function Page() {
               control={addUserForm.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="my-3">
+                <FormItem className="my-3 w-60 md:w-110">
                   <FormLabel className="capitalize">Email :</FormLabel>
                   <FormControl>
                     <Input autoComplete="new-email" type="email" {...field} />
@@ -88,7 +88,7 @@ export default function Page() {
               control={addUserForm.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="my-3">
+                <FormItem className="my-3  w-60 md:w-110">
                   <FormLabel className="capitalize">Password :</FormLabel>
                   <div className="flex flex-row gap-1 justify-center item-center">
                     <FormControl>
@@ -103,7 +103,7 @@ export default function Page() {
               )}
             />
             {addUserForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{addUserForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="w-50">
+            <Button type="submit" className="w-60 md:w-50">
               <UserRoundPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add User"}
             </Button>

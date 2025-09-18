@@ -14,6 +14,7 @@ import { AlertCircle, CheckCircle, ClipboardPlus, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 const categorySchema = z.object({
   txCategoryName: z.string().nonempty("Category name must not empty").max(constValues.maxShortTextLength, "Input too long"),
@@ -94,7 +95,7 @@ export default function Page() {
               control={categoryForm.control}
               name="txCategoryName"
               render={({ field }) => (
-                <FormItem className="my-3">
+                <FormItem className="my-3 w-60 md:w-110">
                   <FormLabel className="capitalize">Category Name :</FormLabel>
                   <FormControl>
                     <Input {...field} />
@@ -107,17 +108,17 @@ export default function Page() {
               control={categoryForm.control}
               name="txCategoryDescription"
               render={({ field }) => (
-                <FormItem className="my-3">
+                <FormItem className="my-3  w-60 md:w-110">
                   <FormLabel className="capitalize">Description :</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {categoryForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{categoryForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="w-50 ">
+            <Button type="submit" className="w-60 md:w-50">
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Category"}
             </Button>
