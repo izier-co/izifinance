@@ -343,7 +343,7 @@ export default function Page() {
           </div>
 
           {addEmployeeForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{addEmployeeForm.formState.errors.root.message}</p>}
-          <Button type="submit" className="w-50" disabled={submitQuery.isPending}>
+          <Button type="submit" className="w-60 md:w-50 " disabled={submitQuery.isPending}>
             <Contact />
             {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Employee"}
           </Button>

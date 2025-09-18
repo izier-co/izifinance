@@ -181,7 +181,7 @@ export default function Page() {
               }}
             />
             {reimbursementForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{reimbursementForm.formState.errors.root.message}</p>}
-            <Button type="submit" className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]" disabled={submitQuery.isPending}>
+            <Button type="submit" className="w-60 md:w-50 " disabled={submitQuery.isPending}>
               <ClipboardPlus />
               {submitQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Reimbursement"}
             </Button>
