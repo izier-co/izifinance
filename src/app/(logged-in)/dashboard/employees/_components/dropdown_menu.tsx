@@ -1,5 +1,6 @@
 "use client";
 import { CommonRow } from "@/components/sorting-datatable-header";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -7,12 +8,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { fetchJSONAPI } from "@/lib/lib";
 import { refreshAndRevalidatePage } from "@/lib/server-lib";
+import { cn } from "@/lib/utils";
 import { useEmployeeIDQuery } from "@/queries/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
-import { IdCard, Loader2, MoreHorizontal, Star, StarOff, UserPen, UserRoundCheck, UserRoundX, View } from "lucide-react";
+import { AlertCircle, CheckCircle, IdCard, Loader2, MoreHorizontal, Star, StarOff, UserPen, UserRoundCheck, UserRoundX, View } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -26,6 +29,21 @@ declare module "@tanstack/table-core" {
 
 function GrantAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
+
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const grantAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
@@ -37,51 +55,84 @@ function GrantAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<Co
     },
     onError: (error) => {
       console.error(error);
+      showAlert("error", "Error", "Failed to grant admin rights");
       setError(error.message);
     },
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/employees");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Admin rights granted successfully!", () => {
+        refreshAndRevalidatePage("/dashboard/employees");
+        table.options.meta?.triggerRefetch();
+      });
     },
   });
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <Star className="text-[var(--sidebar-accent-foreground)]" />
-          Grant Admin Access
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>Are you sure to grant admin access to {row.getValue("txFullName")}</DialogDescription>
-        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary" type="button">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button
-            type="button"
-            onClick={() => {
-              grantAdminQuery.mutate();
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
             }}
           >
-            {grantAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Grant"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <Star className="text-[var(--sidebar-accent-foreground)]" />
+            Grant Admin Access
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Confirmation</DialogTitle>
+          <DialogDescription>Are you sure to grant admin access to {row.getValue("txFullName")}</DialogDescription>
+          {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="secondary" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              onClick={() => {
+                grantAdminQuery.mutate();
+              }}
+            >
+              {grantAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Grant"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed -bottom-77 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
 
 function RevokeAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
+
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const revokeAdminQuery = useMutation({
     mutationKey: ["grant-admin"],
     mutationFn: async () => {
@@ -93,51 +144,84 @@ function RevokeAdminDialog({ row, table }: { row: Row<CommonRow>; table: Table<C
     },
     onError: (error) => {
       console.error(error);
+      showAlert("error", "Error", "Failed to revoke admin rights");
       setError(error.message);
     },
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/employees");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Admin rights revoked successfully!", () => {
+        refreshAndRevalidatePage("/dashboard/employees");
+        table.options.meta?.triggerRefetch();
+      });
     },
   });
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <StarOff className="text-[var(--sidebar-accent-foreground)]" />
-          Revoke Admin Access
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>Are you sure to revoke admin access to {row.getValue("txFullName")}</DialogDescription>
-        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary" type="button">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button
-            type="button"
-            onClick={() => {
-              revokeAdminQuery.mutate();
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
             }}
           >
-            {revokeAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Revoke"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <StarOff className="text-[var(--sidebar-accent-foreground)]" />
+            Revoke Admin Access
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Confirmation</DialogTitle>
+          <DialogDescription>Are you sure to revoke admin access to {row.getValue("txFullName")}</DialogDescription>
+          {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="secondary" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              onClick={() => {
+                revokeAdminQuery.mutate();
+              }}
+            >
+              {revokeAdminQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Revoke"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed -bottom-77 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
 
 function ActivateEmployeeDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
+
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const query = useMutation({
     mutationKey: ["activate-employee"],
     mutationFn: async () => {
@@ -149,51 +233,84 @@ function ActivateEmployeeDialog({ row, table }: { row: Row<CommonRow>; table: Ta
     },
     onError: (error) => {
       console.error(error);
+      showAlert("error", "Error", "Failed to activate employee");
       setError(error.message);
     },
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/employees");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Employee activated successfully!", () => {
+        refreshAndRevalidatePage("/dashboard/employees");
+        table.options.meta?.triggerRefetch();
+      });
     },
   });
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <UserRoundCheck className="text-[var(--sidebar-accent-foreground)]" />
-          Activate Employee
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>Are you sure to activate employee status of {row.getValue("txFullName")}</DialogDescription>
-        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary" type="button">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button
-            type="button"
-            onClick={() => {
-              query.mutate();
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
             }}
           >
-            {query.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Activate"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <UserRoundCheck className="text-[var(--sidebar-accent-foreground)]" />
+            Activate Employee
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Confirmation</DialogTitle>
+          <DialogDescription>Are you sure to activate employee status of {row.getValue("txFullName")}</DialogDescription>
+          {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="secondary" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              onClick={() => {
+                query.mutate();
+              }}
+            >
+              {query.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Activate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed -bottom-77 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
 
 function DeactivateEmployeeDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const [error, setError] = useState("");
+
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const query = useMutation({
     mutationKey: ["deactivate-employee"],
     mutationFn: async () => {
@@ -205,46 +322,64 @@ function DeactivateEmployeeDialog({ row, table }: { row: Row<CommonRow>; table: 
     },
     onError: (error) => {
       console.error(error);
+      showAlert("error", "Error", "Failed to deactivate employee");
       setError(error.message);
     },
     onSuccess: () => {
-      refreshAndRevalidatePage("/dashboard/employees");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Employee deactivated successfully!", () => {
+        refreshAndRevalidatePage("/dashboard/employees");
+        table.options.meta?.triggerRefetch();
+      });
     },
   });
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <UserRoundX className="text-[var(--sidebar-accent-foreground)]" />
-          Deactivate Employee
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogDescription>Are you sure to deactivate employee status of {row.getValue("txFullName")}</DialogDescription>
-        {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary" type="button">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button
-            type="button"
-            onClick={() => {
-              query.mutate();
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
             }}
           >
-            {query.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Deactivate"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <UserRoundX className="text-[var(--sidebar-accent-foreground)]" />
+            Deactivate Employee
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Confirmation</DialogTitle>
+          <DialogDescription>Are you sure to deactivate employee status of {row.getValue("txFullName")}</DialogDescription>
+          {error && <p className="text-sm font-medium text-destructive mb-2">{error}</p>}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="secondary" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              onClick={() => {
+                query.mutate();
+              }}
+            >
+              {query.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Deactivate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed -bottom-77 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
 
@@ -277,6 +412,20 @@ function ActivateDeactivateDialogMenu({ row, table }: { row: Row<CommonRow>; tab
 }
 
 function SetUUIDDialog({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const userUUIDSchema = z.object({
     uuid: z.uuid("Invalid UUID"),
   });
@@ -296,10 +445,13 @@ function SetUUIDDialog({ row, table }: { row: Row<CommonRow>; table: Table<Commo
     mutationKey: ["uuid-mutation"],
     mutationFn: setUUIDUpdate,
     onSuccess: () => {
-      setModalOpen(false);
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "User ID added successfully!", () => {
+        setModalOpen(false);
+        table.options.meta?.triggerRefetch();
+      });
     },
     onError: (error) => {
+      showAlert("error", "Error", "Failed to add user ID");
       setUUIDForm.setError("root", {
         message: error.message,
       });
@@ -326,56 +478,72 @@ function SetUUIDDialog({ row, table }: { row: Row<CommonRow>; table: Table<Commo
   }
 
   return (
-    <Dialog open={modalOpen} onOpenChange={_setUUIDCleanup}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-            setModalOpen(true);
-          }}
-        >
-          <IdCard className="text-[var(--sidebar-accent-foreground)]" />
-          Add User ID
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-        <DialogTitle>Confirmation</DialogTitle>
-        <div className="flex items-center gap-2">
-          <div className="grid flex-1 gap-2">
-            <Form {...setUUIDForm}>
-              <form id="change-description-form" onSubmit={setUUIDForm.handleSubmit(setUUID)}>
-                <FormField
-                  control={setUUIDForm.control}
-                  name="uuid"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="capitalize">User ID :</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter className="my-2">
-                  <DialogClose asChild>
-                    <Button variant="secondary" type="button">
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit">{setUUIDMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}</Button>
-                </DialogFooter>
-              </form>
-            </Form>
+    <>
+      <Dialog open={modalOpen} onOpenChange={_setUUIDCleanup}>
+        <DialogTrigger asChild>
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
+              setModalOpen(true);
+            }}
+          >
+            <IdCard className="text-[var(--sidebar-accent-foreground)]" />
+            Add User ID
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          <DialogTitle>Confirmation</DialogTitle>
+          <div className="flex items-center gap-2">
+            <div className="grid flex-1 gap-2">
+              <Form {...setUUIDForm}>
+                <form id="change-description-form" onSubmit={setUUIDForm.handleSubmit(setUUID)}>
+                  <FormField
+                    control={setUUIDForm.control}
+                    name="uuid"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="capitalize">User ID :</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter className="my-2">
+                    <DialogClose asChild>
+                      <Button variant="secondary" type="button">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">{setUUIDMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed -bottom-77 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
 
 export function EmployeeDropdownMenu({ row, table }: { row: Row<CommonRow>; table: Table<CommonRow> }) {
   const router = useRouter();
+
   const checkAdminQuery = useEmployeeIDQuery();
   const isAdmin: boolean = checkAdminQuery.isSuccess && checkAdminQuery.data.adminStatus;
 

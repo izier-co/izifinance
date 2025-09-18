@@ -5,7 +5,7 @@ import { useEmployeeIDQuery } from "@/queries/queries";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
-import { MoreHorizontal, Loader2, View, FilePenLine, FileCheck, FileX, CircleOff } from "lucide-react";
+import { MoreHorizontal, Loader2, View, FilePenLine, FileCheck, FileX, CircleOff, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Column, Row, RowData, Table } from "@tanstack/react-table";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -15,6 +15,9 @@ import { ChangeDescriptionSchema, changeDescriptionSchema, ApprovalSchema, proce
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { CommonRow } from "@/components/sorting-datatable-header";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 declare module "@tanstack/table-core" {
   interface TableMeta<TData extends RowData> {
@@ -66,18 +69,35 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
   const isVoid: boolean = row.getValue("txStatus") === "Void";
   const isChanged: boolean = isApproved || isRejected || isVoid;
 
+  const [alert, setAlert] = React.useState<{
+    type: "success" | "error" | null;
+    title?: string;
+    message?: string;
+  }>({ type: null });
+
+  function showAlert(type: "success" | "error", title: string, message: string, callback?: () => void) {
+    setAlert({ type, title, message });
+    setTimeout(() => {
+      setAlert({ type: null });
+      if (callback) callback();
+    }, 3000);
+  }
+
   const approvalQuery = useMutation({
     mutationKey: ["approve-reimbursement-mutation"],
     mutationFn: _approve,
     onSuccess: () => {
       setApprovalModalOpen(false);
-      refreshAndRevalidatePage("/dashboard");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Note approved successfully!", () => {
+        refreshAndRevalidatePage("/dashboard");
+        table.options.meta?.triggerRefetch();
+      });
     },
     onError: (error) => {
       approveForm.setError("changeReason", {
         message: error.message,
       });
+      showAlert("error", "Error", "Failed to approve note");
     },
   });
 
@@ -86,13 +106,16 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
     mutationFn: _reject,
     onSuccess: () => {
       setRejectModalOpen(false);
-      refreshAndRevalidatePage("/dashboard");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Note rejected successfully!", () => {
+        refreshAndRevalidatePage("/dashboard");
+        table.options.meta?.triggerRefetch();
+      });
     },
     onError: (error) => {
       rejectForm.setError("changeReason", {
         message: error.message,
       });
+      showAlert("error", "Error", "Failed to reject note");
     },
   });
 
@@ -101,10 +124,13 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
     mutationFn: _void,
     onSuccess: () => {
       setVoidModalOpen(false);
-      refreshAndRevalidatePage("/dashboard");
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Note voided successfully!", () => {
+        refreshAndRevalidatePage("/dashboard");
+        table.options.meta?.triggerRefetch();
+      });
     },
     onError: (error) => {
+      showAlert("error", "Error", "Failed to void note");
       voidForm.setError("changeReason", {
         message: error.message,
       });
@@ -116,9 +142,13 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
     mutationFn: _setDescription,
     onSuccess: () => {
       setDescriptionModalOpen(false);
-      table.options.meta?.triggerRefetch();
+      showAlert("success", "Success", "Description updated successfully!", () => {
+        refreshAndRevalidatePage("/dashboard");
+        table.options.meta?.triggerRefetch();
+      });
     },
     onError: (error) => {
+      showAlert("error", "Error", "Failed to update description");
       changeDescriptionForm.setError("description", {
         message: error.message,
       });
@@ -168,11 +198,7 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
     changeDescriptionForm.clearErrors();
   }
   async function _approve(data: ApprovalSchema) {
-    const res = await fetchJSONAPI(
-      "PUT",
-      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`,
-      data
-    );
+    const res = await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/approve`, data);
     if (!res.ok) {
       const json = await res.json();
       throw new Error(json.error);
@@ -180,11 +206,7 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
   }
 
   async function _reject(data: RejectSchema) {
-    const res = await fetchJSONAPI(
-      "PUT",
-      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`,
-      data
-    );
+    const res = await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/reject`, data);
     if (!res.ok) {
       const json = await res.json();
       throw new Error(json.error);
@@ -192,11 +214,7 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
   }
 
   async function _void(data: VoidSchema) {
-    const res = await fetchJSONAPI(
-      "PUT",
-      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`,
-      data
-    );
+    const res = await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}/void`, data);
     if (!res.ok) {
       const json = await res.json();
       throw new Error(json.error);
@@ -204,11 +222,7 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
   }
 
   async function _setDescription(data: ChangeDescriptionSchema) {
-    const res = await fetchJSONAPI(
-      "PUT",
-      `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`,
-      data
-    );
+    const res = await fetchJSONAPI("PUT", `/api/v1/reimbursements/${row.getValue("txReimbursementNoteID")}`, data);
     if (!res.ok) {
       const json = await res.json();
       throw new Error(json.error);
@@ -216,216 +230,232 @@ export function ReimbursementDropdownMenu({ row, table }: { row: Row<CommonRow>;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => {
-            router.push(`/dashboard/reimbursements/${row.getValue("txReimbursementNoteID")}`);
-          }}
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={() => {
+              router.push(`/dashboard/reimbursements/${row.getValue("txReimbursementNoteID")}`);
+            }}
+          >
+            <View className="text-[var(--sidebar-accent-foreground)]" />
+            View Details
+          </DropdownMenuItem>
+          <Dialog open={descriptionModalOpen} onOpenChange={_descriptionModalCleanup}>
+            <DropdownMenuItem
+              className={isChanged ? "pointer-events-none opacity-50" : ""}
+              // prevents weird closing bug when opening
+              onSelect={(e) => {
+                e.preventDefault();
+                setDescriptionModalOpen(true);
+              }}
+            >
+              <FilePenLine className="text-[var(--sidebar-accent-foreground)]" />
+              Edit Description
+            </DropdownMenuItem>
+            <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+              <DialogHeader>
+                <DialogTitle>Edit Description</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center gap-2">
+                <div className="grid flex-1 gap-2">
+                  <Form {...changeDescriptionForm}>
+                    <form id="change-description-form" onSubmit={changeDescriptionForm.handleSubmit(changeDescription)}>
+                      <FormField
+                        control={changeDescriptionForm.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="capitalize">Description :</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <DialogFooter className="my-2">
+                        <DialogClose asChild>
+                          <Button variant="secondary" type="button">
+                            Cancel
+                          </Button>
+                        </DialogClose>
+                        <Button type="submit">{changeDescriptionQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}</Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* admin only block */}
+          {isAdmin && (
+            <>
+              <Dialog open={approvalModalOpen} onOpenChange={_approvalModalCleanup}>
+                <DropdownMenuItem
+                  className={isChanged ? "pointer-events-none opacity-50" : ""}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setApprovalModalOpen(true);
+                  }}
+                >
+                  <FileCheck className="text-[var(--sidebar-accent-foreground)]" />
+                  Approve
+                </DropdownMenuItem>
+                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                  <DialogHeader>
+                    <DialogTitle>Confirmation</DialogTitle>
+                    <DialogDescription>Are you sure to Approve this note?</DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="grid flex-1 gap-2">
+                      <Form {...approveForm}>
+                        <form id="approval-form" onSubmit={approveForm.handleSubmit(approve)}>
+                          <FormField
+                            control={approveForm.control}
+                            name="changeReason"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="capitalize">Change Reason :</FormLabel>
+                                <FormControl>
+                                  <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <DialogFooter className="my-2">
+                            <DialogClose asChild>
+                              <Button variant="secondary" type="button">
+                                Cancel
+                              </Button>
+                            </DialogClose>
+                            <Button type="submit">{approvalQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}</Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Dialog open={rejectModalOpen} onOpenChange={_rejectModalCleanup}>
+                <DropdownMenuItem
+                  className={isChanged ? "pointer-events-none opacity-50" : ""}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setRejectModalOpen(true);
+                  }}
+                >
+                  <FileX className="text-[var(--sidebar-accent-foreground)]" />
+                  Reject
+                </DropdownMenuItem>
+                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+                  <DialogHeader>
+                    <DialogTitle>Confirmation</DialogTitle>
+                    <DialogDescription>Are you sure to Reject this note?</DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2">
+                    <div className="grid flex-1 gap-2">
+                      <Form {...rejectForm}>
+                        <form id="reject-form" onSubmit={rejectForm.handleSubmit(rejectNote)}>
+                          <FormField
+                            control={rejectForm.control}
+                            name="changeReason"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="capitalize">Change Reason :</FormLabel>
+                                <FormControl>
+                                  <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <DialogFooter className="my-2">
+                            <DialogClose asChild>
+                              <Button variant="secondary" type="button">
+                                Cancel
+                              </Button>
+                            </DialogClose>
+                            <Button type="submit">{rejectQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reject"}</Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+          <Dialog open={voidModalOpen} onOpenChange={_voidModalCleanup}>
+            <DropdownMenuItem
+              className={isChanged ? "pointer-events-none opacity-50" : ""}
+              onSelect={(e) => {
+                e.preventDefault();
+                setVoidModalOpen(true);
+              }}
+            >
+              <CircleOff className="text-[var(--sidebar-accent-foreground)]" />
+              Void
+            </DropdownMenuItem>
+            <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+              <DialogHeader>
+                <DialogTitle>Confirmation</DialogTitle>
+                <DialogDescription>Are you sure to Void this note?</DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center gap-2">
+                <div className="grid flex-1 gap-2">
+                  <Form {...voidForm}>
+                    <form id="void-form" onSubmit={voidForm.handleSubmit(voidNote)}>
+                      <FormField
+                        control={voidForm.control}
+                        name="changeReason"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="capitalize">Change Reason :</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <DialogFooter className="my-2">
+                        <DialogClose asChild>
+                          <Button variant="secondary" type="button">
+                            Cancel
+                          </Button>
+                        </DialogClose>
+                        <Button type="submit">{voidQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Void"}</Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {alert.type && (
+        <Alert
+          className={cn(
+            "fixed bottom-4 right-4 w-96 z-50",
+            alert.type === "success" ? "border-[var(--border)] bg-[var(--accent)] text-[var(--foreground)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--foreground)]"
+          )}
+          variant={alert.type === "success" ? "default" : "destructive"}
         >
-          <View className="text-[var(--sidebar-accent-foreground)]" />
-          View Details
-        </DropdownMenuItem>
-        <Dialog open={descriptionModalOpen} onOpenChange={_descriptionModalCleanup}>
-          <DropdownMenuItem
-            className={isChanged ? "pointer-events-none opacity-50" : ""}
-            // prevents weird closing bug when opening
-            onSelect={(e) => {
-              e.preventDefault();
-              setDescriptionModalOpen(true);
-            }}
-          >
-            <FilePenLine className="text-[var(--sidebar-accent-foreground)]" />
-            Edit Description
-          </DropdownMenuItem>
-          <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-            <DialogHeader>
-              <DialogTitle>Edit Description</DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center gap-2">
-              <div className="grid flex-1 gap-2">
-                <Form {...changeDescriptionForm}>
-                  <form id="change-description-form" onSubmit={changeDescriptionForm.handleSubmit(changeDescription)}>
-                    <FormField
-                      control={changeDescriptionForm.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="capitalize">Description :</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter className="my-2">
-                      <DialogClose asChild>
-                        <Button variant="secondary" type="button">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-                      <Button type="submit">{changeDescriptionQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm"}</Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-        {/* admin only block */}
-        {isAdmin && (
-          <>
-            <Dialog open={approvalModalOpen} onOpenChange={_approvalModalCleanup}>
-              <DropdownMenuItem
-                className={isChanged ? "pointer-events-none opacity-50" : ""}
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setApprovalModalOpen(true);
-                }}
-              >
-                <FileCheck className="text-[var(--sidebar-accent-foreground)]" />
-                Approve
-              </DropdownMenuItem>
-              <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-                <DialogHeader>
-                  <DialogTitle>Confirmation</DialogTitle>
-                  <DialogDescription>Are you sure to Approve this note?</DialogDescription>
-                </DialogHeader>
-                <div className="flex items-center gap-2">
-                  <div className="grid flex-1 gap-2">
-                    <Form {...approveForm}>
-                      <form id="approval-form" onSubmit={approveForm.handleSubmit(approve)}>
-                        <FormField
-                          control={approveForm.control}
-                          name="changeReason"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="capitalize">Change Reason :</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <DialogFooter className="my-2">
-                          <DialogClose asChild>
-                            <Button variant="secondary" type="button">
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <Button type="submit">{approvalQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}</Button>
-                        </DialogFooter>
-                      </form>
-                    </Form>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <Dialog open={rejectModalOpen} onOpenChange={_rejectModalCleanup}>
-              <DropdownMenuItem
-                className={isChanged ? "pointer-events-none opacity-50" : ""}
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setRejectModalOpen(true);
-                }}
-              >
-                <FileX className="text-[var(--sidebar-accent-foreground)]" />
-                Reject
-              </DropdownMenuItem>
-              <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-                <DialogHeader>
-                  <DialogTitle>Confirmation</DialogTitle>
-                  <DialogDescription>Are you sure to Reject this note?</DialogDescription>
-                </DialogHeader>
-                <div className="flex items-center gap-2">
-                  <div className="grid flex-1 gap-2">
-                    <Form {...rejectForm}>
-                      <form id="reject-form" onSubmit={rejectForm.handleSubmit(rejectNote)}>
-                        <FormField
-                          control={rejectForm.control}
-                          name="changeReason"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="capitalize">Change Reason :</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <DialogFooter className="my-2">
-                          <DialogClose asChild>
-                            <Button variant="secondary" type="button">
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <Button type="submit">{rejectQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reject"}</Button>
-                        </DialogFooter>
-                      </form>
-                    </Form>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </>
-        )}
-        <Dialog open={voidModalOpen} onOpenChange={_voidModalCleanup}>
-          <DropdownMenuItem
-            className={isChanged ? "pointer-events-none opacity-50" : ""}
-            onSelect={(e) => {
-              e.preventDefault();
-              setVoidModalOpen(true);
-            }}
-          >
-            <CircleOff className="text-[var(--sidebar-accent-foreground)]" />
-            Void
-          </DropdownMenuItem>
-          <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-            <DialogHeader>
-              <DialogTitle>Confirmation</DialogTitle>
-              <DialogDescription>Are you sure to Void this note?</DialogDescription>
-            </DialogHeader>
-            <div className="flex items-center gap-2">
-              <div className="grid flex-1 gap-2">
-                <Form {...voidForm}>
-                  <form id="void-form" onSubmit={voidForm.handleSubmit(voidNote)}>
-                    <FormField
-                      control={voidForm.control}
-                      name="changeReason"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="capitalize">Change Reason :</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter className="my-2">
-                      <DialogClose asChild>
-                        <Button variant="secondary" type="button">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-                      <Button type="submit">{voidQuery.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Void"}</Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {alert.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          <AlertTitle>{alert.title}</AlertTitle>
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 }
