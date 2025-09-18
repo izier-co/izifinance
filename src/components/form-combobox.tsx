@@ -24,7 +24,7 @@ export function FormCombobox({ value, onChange, items, loading, error }: { value
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between" disabled={loading || error}>
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[240px] justify-between" disabled={loading || error}>
           {/* {loading
             ? "Loading..."
             : value
@@ -34,7 +34,7 @@ export function FormCombobox({ value, onChange, items, loading, error }: { value
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[240px] p-0">
         <Command>
           <CommandInput placeholder="Search items..." />
           <CommandList>

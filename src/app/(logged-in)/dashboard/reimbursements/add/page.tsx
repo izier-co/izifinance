@@ -18,6 +18,7 @@ import { QueryCombobox } from "./_components/query-combobox";
 import { reimbursementSchema, reimbursementItemSchema, type ReimbursementItemSchema, type ReimbursementSchema } from "./schemas";
 import { useEmployeeIDQuery } from "@/queries/queries";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 
 const currencies: Array<ComboboxItem> = [
   {
@@ -139,10 +140,10 @@ export default function Page() {
               control={reimbursementForm.control}
               name="txDescriptionDetails"
               render={({ field }) => (
-                <FormItem className="my-5 gap-3">
+                <FormItem className="my-5 gap-3 w-60 md:w-124">
                   <FormLabel className="capitalize">Description :</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

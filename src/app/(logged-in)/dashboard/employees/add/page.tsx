@@ -7,7 +7,7 @@ import { refreshAndRevalidatePage } from "@/lib/server-lib";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { AlertCircle, CheckCircle, Contact, Loader2 } from "lucide-react";
+import { AlertCircle, CalendarIcon, CheckCircle, Contact, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { addEmployee, useBankQuery, useCompanyQuery, useEmploymentQuery, useReligionQuery, useRoleQuery } from "./queries";
 import { AddEmployeeSchema, addEmployeeSchema } from "./schemas";
@@ -15,6 +15,9 @@ import { QueryCombobox } from "../../reimbursements/add/_components/query-combob
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 export default function Page() {
   const addEmployeeForm = useForm({
@@ -85,7 +88,7 @@ export default function Page() {
             control={addEmployeeForm.control}
             name="txFullName"
             render={({ field }) => (
-              <FormItem className="my-3">
+              <FormItem className="my-3 w-60 md:w-124 ">
                 <FormLabel className="capitalize">Full Name :</FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -94,86 +97,115 @@ export default function Page() {
               </FormItem>
             )}
           />
-          <FormField
-            control={addEmployeeForm.control}
-            name="daJoinDate"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Join Date :</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="daDateOfBirth"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Birth Date :</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txHomeAddress"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Address :</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txNationalIdNumber"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">ID card number :</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txReligionCode"
-            render={({ field }) => {
-              return (
+          <div className="flex flex-col md:flex-row gap-4 ">
+            <FormField
+              control={addEmployeeForm.control}
+              name="daJoinDate"
+              render={({ field }) => (
                 <FormItem className="my-3">
-                  <FormLabel className="capitalize">Religion :</FormLabel>
+                  <FormLabel className="capitalize">Join Date :</FormLabel>
                   <FormControl>
-                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={religionComboboxQuery} />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant={"outline"} className={`w-[240px] justify-start text-left ${!field.value && "text-muted-foreground"}`}>
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(new Date(field.value), "PPP") : <span>Select Date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto" align="start">
+                        <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date?.toISOString())} />
+                      </PopoverContent>
+                    </Popover>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              );
-            }}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txTaxNumber"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Tax Number :</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              )}
+            />
+
+            <FormField
+              control={addEmployeeForm.control}
+              name="txCompanyCode"
+              render={({ field }) => (
+                <FormItem className="my-3">
+                  <FormLabel className="capitalize">Company :</FormLabel>
+                  <FormControl>
+                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={companyComboboxQuery} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={addEmployeeForm.control}
+              name="daDateOfBirth"
+              render={({ field }) => (
+                <FormItem className="my-3">
+                  <FormLabel className="capitalize">Birth Date :</FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant={"outline"} className={`w-[240px] justify-start text-left ${!field.value && "text-muted-foreground"}`}>
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(new Date(field.value), "PPP") : <span>Select Date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto" align="start">
+                        <Calendar mode="single" selected={field.value ? new Date(field.value) : undefined} onSelect={(date) => field.onChange(date?.toISOString())} />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addEmployeeForm.control}
+              name="txReligionCode"
+              render={({ field }) => {
+                return (
+                  <FormItem className="my-3">
+                    <FormLabel className="capitalize">Religion :</FormLabel>
+                    <FormControl>
+                      <QueryCombobox value={field.value as string} onChange={field.onChange} query={religionComboboxQuery} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          </div>
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={addEmployeeForm.control}
+              name="txPhoneNumber"
+              render={({ field }) => (
+                <FormItem className="my-3 w-60">
+                  <FormLabel className="capitalize">Phone Number :</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={addEmployeeForm.control}
+              name="txEmailAddress"
+              render={({ field }) => (
+                <FormItem className="my-3 w-60">
+                  <FormLabel className="capitalize">Email Address :</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Controller
             control={addEmployeeForm.control}
             name="boMarriageStatus"
@@ -186,88 +218,10 @@ export default function Page() {
           />
           <FormField
             control={addEmployeeForm.control}
-            name="inNumOfDeps"
+            name="txHomeAddress"
             render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Number of Departments :</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="flSalary"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Salary :</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txRoleCode"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Role :</FormLabel>
-                <FormControl>
-                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={roleComboboxQuery} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txEmploymentTypeCode"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Employment Type :</FormLabel>
-                <FormControl>
-                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={employmentComboboxQuery} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txCompanyCode"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Company :</FormLabel>
-                <FormControl>
-                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={companyComboboxQuery} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txBankTypeCode"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Bank :</FormLabel>
-                <FormControl>
-                  <QueryCombobox value={field.value as string} onChange={field.onChange} query={bankComboboxQuery} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={addEmployeeForm.control}
-            name="txBankAccountNumber"
-            render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Bank Account Number :</FormLabel>
+              <FormItem className="my-3 w-60 md:w-124">
+                <FormLabel className="capitalize">Address :</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -277,12 +231,12 @@ export default function Page() {
           />
           <FormField
             control={addEmployeeForm.control}
-            name="txPhoneNumber"
+            name="txNationalIdNumber"
             render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Phone Number :</FormLabel>
+              <FormItem className="my-3  w-60 md:w-124">
+                <FormLabel className="capitalize">ID card number :</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -290,17 +244,104 @@ export default function Page() {
           />
           <FormField
             control={addEmployeeForm.control}
-            name="txEmailAddress"
+            name="txTaxNumber"
             render={({ field }) => (
-              <FormItem className="my-3">
-                <FormLabel className="capitalize">Email Address :</FormLabel>
+              <FormItem className="my-3  w-60 md:w-124">
+                <FormLabel className="capitalize">Tax Number :</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={addEmployeeForm.control}
+              name="inNumOfDeps"
+              render={({ field }) => (
+                <FormItem className="my-3 w-60">
+                  <FormLabel className="capitalize">Number of Departments :</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={addEmployeeForm.control}
+              name="flSalary"
+              render={({ field }) => (
+                <FormItem className="my-3 w-60">
+                  <FormLabel className="capitalize">Salary :</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={addEmployeeForm.control}
+              name="txRoleCode"
+              render={({ field }) => (
+                <FormItem className="my-3">
+                  <FormLabel className="capitalize">Role :</FormLabel>
+                  <FormControl>
+                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={roleComboboxQuery} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={addEmployeeForm.control}
+              name="txEmploymentTypeCode"
+              render={({ field }) => (
+                <FormItem className="my-3">
+                  <FormLabel className="capitalize">Employment Type :</FormLabel>
+                  <FormControl>
+                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={employmentComboboxQuery} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={addEmployeeForm.control}
+              name="txBankTypeCode"
+              render={({ field }) => (
+                <FormItem className="my-3">
+                  <FormLabel className="capitalize">Bank :</FormLabel>
+                  <FormControl>
+                    <QueryCombobox value={field.value as string} onChange={field.onChange} query={bankComboboxQuery} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={addEmployeeForm.control}
+              name="txBankAccountNumber"
+              render={({ field }) => (
+                <FormItem className="my-3 w-60">
+                  <FormLabel className="capitalize">Bank Account Number :</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           {addEmployeeForm.formState.errors.root?.message && <p className="text-sm font-medium text-destructive mb-2">{addEmployeeForm.formState.errors.root.message}</p>}
           <Button type="submit" className="w-50" disabled={submitQuery.isPending}>
             <Contact />
