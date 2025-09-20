@@ -16,7 +16,7 @@ import { EyeIcon, EyeOffIcon, Loader2, Lock, Mail } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchJSONAPI } from "@/lib/lib";
 import { useMutation } from "@tanstack/react-query";
@@ -69,6 +69,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   async function onSubmit(loginData: LoginSchema) {
     setLoading(true);
@@ -170,8 +176,6 @@ export default function Home() {
                       id="login-form"
                       className="flex flex-col gap-4 "
                       onSubmit={form.handleSubmit(onSubmit)}
-                      method="POST"
-                      action="/api/v1/auth/signin"
                     >
                       <div className="flex flex-row items-center gap-2">
                         <FormField
@@ -240,10 +244,10 @@ export default function Home() {
                       <Button
                         form="login-form"
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || !hydrated}
                         className="bg-[var(--primarybtn)] text-white hover:bg-[var(--primarybtnhover)]"
                       >
-                        {loading ? (
+                        {loading || !hydrated ? (
                           <Loader2 className="w-4 h-4 animate-spin " />
                         ) : (
                           "Login"

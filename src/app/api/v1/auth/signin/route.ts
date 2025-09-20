@@ -19,12 +19,11 @@ export async function POST(req: NextRequest) {
 
     if (session) {
       supabase.auth.setSession(session);
-      // return NextResponse.json({
-      //   message: "Sign In successful!",
-      //   access_token: session.access_token,
-      //   refresh_token: session.refresh_token,
-      // });
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.json({
+        message: "Sign In successful!",
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
     }
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
